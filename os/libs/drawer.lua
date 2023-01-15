@@ -53,10 +53,35 @@ end
 
 ------------------------------------------------------------------------settings
 
+function drawer:_begin()
+    if self.gpu.getScreen() ~= self.screen then
+        self.gpu.bind(self.screen, false)
+    end
+    if self.bufferSupport then
+        self.gpu.setActiveBuffer(0)
+    end
+end
+
+function drawer:setResolution(rx, ry)
+    if self.sizeX == rx and self.sizeY == ry then
+        return false
+    end
+
+    self:_begin()
+    self.gpu.setResolution(rx, ry)
+    if self.bufferSupport and self.hardwareBuffer then
+        local newbuffer = self.gpu.allocateBuffer(rx, ry)
+        self.gpu.bitblt(newbuffer, nil, nil, nil, nil, self.hardwareBuffer)
+        self.gpu.freeBuffer(self.hardwareBuffer)
+        self.hardwareBuffer = newbuffer
+    end
+
+    self.sizeX = rx
+    self.sizeY = ry
+    return true
+end
 
 ------------------------------------------------------------------------service
-
-
 
 function drawer:draw_begin()
     local function applyPalette()
@@ -69,12 +94,7 @@ function drawer:draw_begin()
         end
     end
 
-    if self.gpu.getScreen() ~= self.screen then
-        self.gpu.bind(self.screen, false)
-    end
-    if self.bufferSupport then
-        self.gpu.setActiveBuffer(0)
-    end
+    self:_begin()
     applyPalette()
     if self.bufferSupport then
         if self.hardwareBuffer then
