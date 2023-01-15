@@ -7,6 +7,11 @@
 
 local drawer = {}
 
+ --красивый список цветов, рекомендую использовать даже не третим тире, чтобы программа везде выглядела одинакого
+drawer.defaultPaletteTier2 = {16777215.0,16763955.0,13395660.0,6724095.0,16777011.0,3394611.0,16737945.0,3355443.0,13421772.0,3368601.0,10040268.0,3355545.0,6697728.0,3368448.0,16724787.0,0.0}
+ --от белого к черному
+drawer.defaultPaletteTier3 = {986895.0,1973790.0,2960685.0,3947580.0,4934475.0,5921370.0,6908265.0,7895160.0,8882055.0,9868950.0,10855845.0,11842740.0,12829635.0,13816530.0,14803425.0,15790320.0}
+
 function drawer.create(settings) --создает графическую системму, состоящию из видеокарты и монитора
     checkArg(1, settings, "table", "nil")
     
@@ -148,10 +153,11 @@ function drawer:_setColor(bg, fg)
     else
         self.gpu.setBackground(0x000000)
     end
+
     if fg then
         self.gpu.setForeground(fg, self.usingTheDefaultPalette)
     else
-        self.gpu.setBackground(0xffffff)
+        self.gpu.setForeground(0xffffff)
     end
 end
 

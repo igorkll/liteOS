@@ -40,7 +40,7 @@ local draw = drawer:create()
 
 while true do
     draw:draw_begin()
-    draw:clear(0x0000FF)
+    draw:clear(0xFFFF00)
     draw:fill(2, 2, 16, 16, 0xFF00FF, 0x00FF00, "@")
     draw:set(1, 1, 0xFFFFFF, 0xFF0000, "A")
     draw:draw_end()
