@@ -1,3 +1,10 @@
+--[[
+    для коректной отрисовке необходимо сначала вызвать draw_begin
+    отрисовать все что необходимо а зачем вызвать draw_end
+    между draw_begin и draw_end не должно быть прирываний(тех что могут переключить процесс)
+    так же в блоке отрисовке нужно вызывать только draw utiles методы методы settings следует вызывать до него
+]]
+
 local drawer = {}
 
 function drawer.create(settings) --создает графическую системму, состоящию из видеокарты и монитора
@@ -36,15 +43,22 @@ function drawer.create(settings) --создает графическую сис�
             end
         end
 
+        if gpu.setActiveBuffer then
+            obj.bufferSupport = true
+        end
+
         return obj
     end
 end
 
 ------------------------------------------------------------------------settings
 
+
 ------------------------------------------------------------------------service
 
-function drawer:begin_draw()
+
+
+function drawer:draw_begin()
     local function applyPalette()
         if self.palette then
             for i = 0, 15 do
@@ -55,20 +69,25 @@ function drawer:begin_draw()
         end
     end
 
-    if self.gpu.getScreen() ~= self.screen then self.gpu.bind(self.screen, false) end
-
-    if self.gpu.setActiveBuffer then
+    if self.gpu.getScreen() ~= self.screen then
+        self.gpu.bind(self.screen, false)
+    end
+    if self.bufferSupport then
         self.gpu.setActiveBuffer(0)
     end
     applyPalette()
-    if self.hardwareBuffer and self.gpu.setActiveBuffer then
-        self.gpu.setActiveBuffer(self.hardwareBuffer)
+    if self.bufferSupport then
+        if self.hardwareBuffer then
+            self.gpu.setActiveBuffer(self.hardwareBuffer)
+            applyPalette()
+        else
+            self.gpu.setActiveBuffer(0)
+        end
     end
-    applyPalette()
 end
 
-function drawer:end_draw()
-    if self.hardwareBuffer then
+function drawer:draw_end()
+    if self.bufferSupport and self.hardwareBuffer then
         self.gpu.bitblt()
     end
 end
