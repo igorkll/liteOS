@@ -16,7 +16,9 @@ function drawer.create(settings) --создает графическую сис�
     if gpu and screen then
         local obj = setmetatable({
             gpu = gpu,
-            screen = screen
+            screen = screen,
+            
+            usingTheDefaultPalette = not not settings.usingTheDefaultPalette
         }, {_index = drawer})
 
         gpu.bind(screen)
@@ -139,12 +141,37 @@ end
 
 ------------------------------------------------------------------------draw utiles
 
-function drawer:set()
-    
+function drawer:_setColor(bg, fg)
+    if bg then
+        self.gpu.setBackground(bg, self.usingTheDefaultPalette)
+    else
+        self.gpu.setBackground(0x000000)
+    end
+    if fg then
+        self.gpu.setForeground(fg, self.usingTheDefaultPalette)
+    else
+        self.gpu.setBackground(0xffffff)
+    end
 end
 
-function drawer:fill()
-    
+
+
+function drawer:set(x, y, bg, fg, char)
+    self:_setColor(bg, fg)
+    self.gpu.set(x, y, char)
+    return true
+end
+
+function drawer:fill(x, y, sx, sy, bg, fg, char)
+    self:_setColor(bg, fg)
+    self.gpu.fill(x, y, sx, sy, char)
+    return true
+end
+
+function drawer:clear(bg, fg, char)
+    self:_setColor(bg, fg)
+    self.gpu.fill(1, 1, self.sizeX, self.sizeY, char or " ")
+    return true
 end
 
 
