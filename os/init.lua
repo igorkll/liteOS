@@ -1,122 +1,36 @@
 bootaddress = computer.getBootAddress()
-
--------------------------------------------fake globals
-
-fakeglobals = {
-    components = {}
-}
-
-setmetatable(_G, function(tbl, key)
-    for key, value in pairs(fakeglobals) do
-        if value[key] then
-            return value[key]
-        end
-    end
-end)
-
--------------------------------------------background
+bootfs = component.proxy(bootaddress)
 
 do
-    local listens = {}
-    function addListen(func)
-        table.insert(listens, func)
-    end
-
-    function removeListen(func)
-        for index, value in ipairs(listens) do
-            if value == func then
-                table.remove(listens, index)
-            end
+    local function raw_require(name)
+        local function raw_readFile(fs, path)
+            checkArg(1, fs, "table", "string")
+            checkArg(2, path, "string")
+        
+            if type(fs) == "string" then fs = component.proxy(fs) end
+            if not fs.exists(path) then return nil, "file not found" end
+            if fs.isDirectory(path) then return nil, "is directory" end
+            local file, err = fs.open(path, "rb")
+            if not file then return nil, err or "unknown" end
+        
+            local buffer = ""
+            repeat
+                local data = fs.read(file, math.huge)
+                buffer = buffer .. (data or "")
+            until not data
+            fs.close(file)
+            return buffer
         end
-    end
 
-
-    do
-        local pullSignal = computer.pullSignal
-        function computer.pullSignal(time)
-            local data = {pullSignal(time)}
-            for index, value in ipairs(listens) do
-                value(table.unpack(data))
-            end
-            return table.unpack(data)
-        end
-    end
-end
-
--------------------------------------------global components
-
---[[
-function refreshComponentList()
-    fakeglobals.components = {}
-    for address, ctype in component.list() do
-        fakeglobals.components[ctype] = component.proxy(address)
-    end
-end
-
-addListen(function(eventType)
-    if eventType == "component_removed" or eventType == "component_added" then
-        refreshComponentList()
-    end
-end)
-]]
-
--------------------------------------------fs
-
-function readFile(fs, path)
-    checkArg(1, fs, "table", "string")
-    checkArg(2, path, "string")
-
-    if type(fs) == "string" then fs = component.proxy(fs) end
-    if not fs.exists(path) then return nil, "file not found" end
-    if fs.isDirectory(path) then return nil, "is directory" end
-    local file, err = fs.open(path, "rb")
-    if not file then return nil, err or "unknown" end
-
-    local buffer = ""
-    repeat
-        local data = fs.read(file, math.huge)
-        buffer = buffer .. (data or "")
-    until not data
-    fs.close(file)
-    return buffer
-end
-
-function saveFile(fs, path, data)
-    checkArg(1, fs, "table", "string")
-    checkArg(2, path, "string")
-    checkArg(3, data, "string")
-
-    if type(fs) == "string" then fs = component.proxy(fs) end
-    local file, err = fs.open(path, "wb")
-    if not file then return nil, err or "unknown" end
-
-    fs.write(file, data)
-    fs.close(file)
-    return buffer
-end
-
--------------------------------------------libs
-
-local loadlibs = {}
-loadlibs.package = {
-    loaded = loadlibs,
-    require = function(name)
-        checkArg(1, name, "string")
-
-        if loadlibs[name] then return loadlibs[name] end
-    
-        local text = assert(readFile(bootaddress, "/libs/" .. name .. ".lua"))
+        local text = assert(raw_readFile(bootaddress, "/libs/" .. name .. ".lua"))
         local code = assert(load(text))
         local lib = assert(code())
-
-        loadlibs[name] = lib
         return lib
     end
-}
-require = loadlibs.require
+    raw_require("package")
+end
 
--------------------------------------------graphic
+require("utilites")
 
+---------------------------------------------------
 
-
--------------------------------------------
