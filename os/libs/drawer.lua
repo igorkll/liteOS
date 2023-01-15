@@ -8,6 +8,7 @@
 local drawer = {}
 drawer.allowHardwareBuffer = true
 drawer.allowSoftwareBuffer = true
+drawer.softwareBufferPriority = true
 
  --красивый список цветов, рекомендую использовать даже не третим тире, чтобы программа везде выглядела одинакого
 drawer.defaultPaletteTier2 = {[0] = 16777215.0,16763955.0,13395660.0,6724095.0,16777011.0,3394611.0,16737945.0,3355443.0,13421772.0,3368601.0,10040268.0,3355545.0,6697728.0,3368448.0,16724787.0,0.0}
@@ -66,10 +67,18 @@ function drawer.create(settings) --создает графическую сис�
             obj.bufferSupport = true
         end
 
-        if obj.bufferSupport and settings.allowHardwareBuffer then
-            obj.hardwareBuffer = gpu.allocateBuffer(obj.sizeX, obj.sizeY)
-        elseif settings.allowSoftwareBuffer then
-            
+        if drawer.softwareBufferPriority then
+            if settings.allowSoftwareBuffer then
+                
+            elseif obj.bufferSupport and settings.allowHardwareBuffer then
+                obj.hardwareBuffer = gpu.allocateBuffer(obj.sizeX, obj.sizeY)
+            end
+        else
+            if obj.bufferSupport and settings.allowHardwareBuffer then
+                obj.hardwareBuffer = gpu.allocateBuffer(obj.sizeX, obj.sizeY)
+            elseif settings.allowSoftwareBuffer then
+                
+            end
         end
 
         obj.settings = settings
