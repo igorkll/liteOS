@@ -1,3 +1,5 @@
+bootaddress = computer.getBootAddress()
+
 -------------------------------------------fake globals
 
 fakeglobals = {
@@ -63,6 +65,8 @@ function readFile(fs, path)
     checkArg(2, path, "string")
 
     if type(fs) == "string" then fs = component.proxy(fs) end
+    if not fs.exists(path) then return nil, "file not found" end
+    if fs.isDirectory(path) then return nil, "is directory" end
     local file, err = fs.open(path, "rb")
     if not file then return nil, err or "unknown" end
 
@@ -92,7 +96,11 @@ end
 -------------------------------------------libs
 
 function require(name)
-    
+    checkArg(1, name, "string")
+
+    local text = assert(readFile(bootaddress, "/libs/" .. name .. ".lua"))
+    local code = assert(load(text))
+    return assert(code())
 end
 
 -------------------------------------------graphic
