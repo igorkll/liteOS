@@ -305,6 +305,26 @@ assert(filesystem.mount(computer.tmpAddress(), "/tmp"))
 
 ------------------------------------------------------------------------------------
 
+function filesystem.readFile(path)
+    checkArg(1, path, "string")
 
+    if not filesystem.exists(path) then return nil, "file not found" end
+    if filesystem.isDirectory(path) then return nil, "is directory" end
+    
+	local file = filesystem.open(path, "rb")
+	local buffer = file.readAll()
+    file.close()
+
+    return buffer
+end
+
+function filesystem.saveFile(path, data)
+    checkArg(1, path, "string")
+    checkArg(2, data, "string")
+
+
+
+    return true
+end
 
 return filesystem

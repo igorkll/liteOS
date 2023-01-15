@@ -28,7 +28,7 @@ function saveFile(fs, path, data)
 
     fs.write(file, data)
     fs.close(file)
-    return buffer
+    return true
 end
 
 function math.round(number)
