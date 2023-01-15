@@ -45,15 +45,26 @@ end
 ------------------------------------------------------------------------service
 
 function drawer:begin_draw()
-    if self.gpu.getScreen() ~= self.screen then
-        self.gpu.bind(self.screen, false)
+    local function applyPalette()
+        if self.palette then
+            for i = 0, 15 do
+                if self.palette[i] ~= self.gpu.getPaletteColor(i) then
+                    self.gpu.setPaletteColor(i)
+                end
+            end
+        end
     end
 
-    if self.
+    if self.gpu.getScreen() ~= self.screen then self.gpu.bind(self.screen, false) end
 
-    if self.hardwareBuffer then
+    if self.gpu.setActiveBuffer then
+        self.gpu.setActiveBuffer(0)
+    end
+    applyPalette()
+    if self.hardwareBuffer and self.gpu.setActiveBuffer then
         self.gpu.setActiveBuffer(self.hardwareBuffer)
     end
+    applyPalette()
 end
 
 function drawer:end_draw()
