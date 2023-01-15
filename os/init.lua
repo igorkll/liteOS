@@ -2,7 +2,7 @@ bootaddress = computer.getBootAddress()
 bootfs = component.proxy(bootaddress)
 
 do
-    local function raw_require(name)
+    function raw_require(name)
         local function raw_readFile(fs, path)
             checkArg(1, fs, "table", "string")
             checkArg(2, path, "string")
@@ -23,11 +23,12 @@ do
         end
 
         local text = assert(raw_readFile(bootaddress, "/libs/" .. name .. ".lua"))
-        local code = assert(load(text))
+        local code = assert(load(text, "=" .. name, "bt", _ENV))
         local lib = assert(code())
         return lib
     end
     raw_require("package")
+    raw_require = nil
 end
 
 require("utilites")
