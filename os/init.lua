@@ -38,16 +38,27 @@ require("utilites")
 local function autorun(folder)
     local fs = require("filesystem")
     local programs = require("programs")
+    local logger = require("logger")
+
+    logger.log("autorun", "start from: " .. folder)
 
     if fs.exists(folder) and fs.isDirectory(folder) then
         for _, path in ipairs(fs.list(folder)) do
             local fullpath = fs.concat(folder, path)
             if fs.exists(fullpath) then
-                
+                logger.log("autorun", "running: " .. fullpath)
+                local ok, err = programs.run(fullpath)
+                if not ok then
+                    logger.error("autorun", err)
+                else
+                    logger.log("autorun", "ok: " .. fullpath)
+                end
             end
         end
     end
 end
 
+autorun("/autorun")
+autorun("/data/autorun")
 
 require("programs").execute("desktop")

@@ -4,7 +4,7 @@ local env = require("env")
 ----------------------------------------
 
 local programs = {}
-programs.paths = {"/apps"}
+programs.paths = {"/apps", "/data/apps"}
 
 function programs.find(name)
     for _, path in ipairs(programs.paths) do

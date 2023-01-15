@@ -9,7 +9,7 @@ package.loaded = {
     utf8 = utf8,
     filesystem = raw_require("filesystem"),
 }
-package.paths = {"/libs"}
+package.paths = {"/libs", "/data/libs"}
 
 function package.require(name)
     checkArg(1, name, "string")
