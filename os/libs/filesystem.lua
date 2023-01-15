@@ -311,7 +311,8 @@ function filesystem.readFile(path)
     if not filesystem.exists(path) then return nil, "file not found" end
     if filesystem.isDirectory(path) then return nil, "is directory" end
     
-	local file = filesystem.open(path, "rb")
+	local file, err = filesystem.open(path, "rb")
+	if not file then return nil, err end
 	local buffer = file.readAll()
     file.close()
 
@@ -322,7 +323,10 @@ function filesystem.saveFile(path, data)
     checkArg(1, path, "string")
     checkArg(2, data, "string")
 
-
+	local file, err = filesystem.open(path, "wb")
+	if not file then return nil, err end
+	file.write(data)
+    file.close()
 
     return true
 end
