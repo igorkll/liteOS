@@ -45,6 +45,7 @@ end
 
 -------------------------------------------global components
 
+--[[
 function refreshComponentList()
     fakeglobals.components = {}
     for address, ctype in component.list() do
@@ -57,6 +58,7 @@ addListen(function(eventType)
         refreshComponentList()
     end
 end)
+]]
 
 -------------------------------------------fs
 
@@ -115,24 +117,6 @@ require = loadlibs.require
 
 -------------------------------------------graphic
 
-do --инициализация графической системмы
-    gpu.bind(component.list("screen")())
-    local rx, ry = gpu.maxResolution()
 
-    if gpu.setActiveBuffer then --если версия open computers поддерживает буферы
-        gpu.setActiveBuffer(0) --лутще их удалить, малоли что там будет
-        gpu.freeAllBuffers()
-    end
-
-    gpu.setDepth(1) --сброс палитры
-    gpu.setDepth(gpu.maxDepth())
-
-    gpu.setResolution(rx, ry) --ставим максимальное разрешения
-
-    gpu.setBackground(0) --цвета по умалчанию
-    gpu.setForeground(0xFFFFFF)
-
-    gpu.fill(1, 1, rx, ry, " ") --очистка экрана
-end
 
 -------------------------------------------
