@@ -1,8 +1,8 @@
 local drawer = {}
 
-function drawer.create() --создает графическую системму, состоящию из видеокарты и монитора
+function drawer.create(settings) --создает графическую системму, состоящию из видеокарты и монитора
     local gpu = component.proxy(component.list("gpu")() or "")
-    local screen = component.list("screen")()
+    local screen = settings.screen or component.list("screen")()
 
     if gpu and screen then
         local obj = setmetatable({
@@ -40,9 +40,17 @@ function drawer.create() --создает графическую системм�
     end
 end
 
-------------------------------------------------------------------------
+------------------------------------------------------------------------settings
+
+------------------------------------------------------------------------service
 
 function drawer:begin_draw()
+    if self.gpu.getScreen() ~= self.screen then
+        self.gpu.bind(self.screen, false)
+    end
+
+    if self.
+
     if self.hardwareBuffer then
         self.gpu.setActiveBuffer(self.hardwareBuffer)
     end
@@ -54,7 +62,7 @@ function drawer:end_draw()
     end
 end
 
-------------------------------------------------------------------------
+------------------------------------------------------------------------draw utiles
 
 function drawer:set()
     
@@ -63,8 +71,6 @@ end
 function drawer:fill()
     
 end
-
-
 
 
 return drawer
