@@ -36,14 +36,14 @@ require("utilites")
 ---------------------------------------------------
 
 local drawer = require("drawer")
-local draw = drawer:create()
+local drawzone = drawer:create()
 
 while true do
-    draw:draw_begin()
-    draw:clear(0xFFFF00)
-    draw:fill(2, 2, 16, 16, 0xFF00FF, 0x00FF00, "@")
-    draw:set(1, 1, 0xFFFFFF, 0xFF0000, "A")
-    draw:draw_end()
+    drawzone:draw_begin()
+    drawzone:clear(0xFFFF00)
+    drawzone:fill(2, 2, 16, 16, 0xFF00FF, 0x00FF00, "@")
+    drawzone:set(1, 1, 0xFFFFFF, 0xFF0000, "A")
+    drawzone:draw_end()
 
     os.sleep(1)
-end
+end 
