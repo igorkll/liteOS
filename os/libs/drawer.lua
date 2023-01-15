@@ -14,6 +14,7 @@ drawer.defaultPaletteTier3 = {[0] = 986895.0,1973790.0,2960685.0,3947580.0,49344
 
 function drawer.create(settings) --создает графическую системму, состоящию из видеокарты и монитора
     checkArg(1, settings, "table", "nil")
+    settings = settings or {allowHardwareBuffer = true, allowSoftwareBuffer = true}
     
     local gpu = component.proxy(component.list("gpu")() or "")
     local screen = settings.screen or component.list("screen")()
@@ -54,6 +55,12 @@ function drawer.create(settings) --создает графическую сис�
 
         if gpu.setActiveBuffer then
             obj.bufferSupport = true
+        end
+
+        if obj.bufferSupport and settings.allowHardwareBuffer then
+            settings.hardwareBuffer = gpu.allocateBuffer(obj.sizeX, obj.sizeY)
+        elseif settings.allowSoftwareBuffer then
+            
         end
 
         obj.settings = settings
@@ -163,9 +170,9 @@ end
 
 
 
-function drawer:set(x, y, bg, fg, char)
+function drawer:set(x, y, bg, fg, str)
     self:_setColor(bg, fg)
-    self.gpu.set(x, y, char)
+    self.gpu.set(x, y, str)
     return true
 end
 
