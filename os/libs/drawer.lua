@@ -8,6 +8,8 @@
 local drawer = {}
 
 function drawer.create(settings) --создает графическую системму, состоящию из видеокарты и монитора
+    checkArg(1, settings, "table", "nil")
+    
     local gpu = component.proxy(component.list("gpu")() or "")
     local screen = settings.screen or component.list("screen")()
 
@@ -63,6 +65,9 @@ function drawer:_begin()
 end
 
 function drawer:setResolution(rx, ry)
+    checkArg(1, rx, "number")
+    checkArg(2, ry, "number")
+
     if self.sizeX == rx and self.sizeY == ry then
         return false
     end
@@ -78,6 +83,26 @@ function drawer:setResolution(rx, ry)
 
     self.sizeX = rx
     self.sizeY = ry
+    return true
+end
+
+function drawer:getResolution()
+    return self.sizeX, self.sizeY
+end
+
+function drawer:getPaletteColor(index)
+    checkArg(1, index, "number")
+
+    if not self.palette then return 0 end
+    return self.palette[index]
+end
+
+function drawer:setPaletteColor(index, color)
+    checkArg(1, index, "number")
+    checkArg(2, color, "number")
+
+    if not self.palette then return false end
+    self.palette[index] = color
     return true
 end
 
