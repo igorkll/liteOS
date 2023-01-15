@@ -18,8 +18,8 @@ function drawer.create(settings) --создает графическую сис�
             gpu = gpu,
             screen = screen,
             
-            usingTheDefaultPalette = not not settings.usingTheDefaultPalette
-        }, {_index = drawer})
+            usingTheDefaultPalette = not not settings.usingTheDefaultPalette --если включить, то методы будует принимать цвета сразу в индексах палирт
+        }, {__index = drawer})
 
         gpu.bind(screen)
         local rx, ry = gpu.maxResolution()
@@ -43,7 +43,7 @@ function drawer.create(settings) --создает графическую сис�
         if obj.depth > 1 then
             obj.palette = {}
             for i = 0, 15 do
-                obj.palette[i] = gpu.getPaletteColor(i)
+                obj.palette[i] = (settings.palette and settings.palette[i]) or gpu.getPaletteColor(i)
             end
         end
 
@@ -51,6 +51,7 @@ function drawer.create(settings) --создает графическую сис�
             obj.bufferSupport = true
         end
 
+        obj.settings = settings
         return obj
     end
 end

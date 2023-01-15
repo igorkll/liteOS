@@ -34,3 +34,10 @@ end
 function math.round(number)
     return math.floor(number + 0.5)
 end
+
+function os.sleep(time)
+    local inTime = computer.uptime()
+    while computer.uptime() - inTime < time do
+        computer.pullSignal(time - (computer.uptime() - inTime))
+    end
+end
