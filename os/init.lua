@@ -95,13 +95,23 @@ end
 
 -------------------------------------------libs
 
-function require(name)
-    checkArg(1, name, "string")
+local loadlibs = {}
+loadlibs.package = {
+    loaded = loadlibs,
+    require = function(name)
+        checkArg(1, name, "string")
 
-    local text = assert(readFile(bootaddress, "/libs/" .. name .. ".lua"))
-    local code = assert(load(text))
-    return assert(code())
-end
+        if loadlibs[name] then return loadlibs[name] end
+    
+        local text = assert(readFile(bootaddress, "/libs/" .. name .. ".lua"))
+        local code = assert(load(text))
+        local lib = assert(code())
+
+        loadlibs[name] = lib
+        return lib
+    end
+}
+require = loadlibs.require
 
 -------------------------------------------graphic
 
