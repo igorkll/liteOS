@@ -35,4 +35,19 @@ require("utilites")
 
 ---------------------------------------------------
 
+local function autorun(folder)
+    local fs = require("filesystem")
+    local programs = require("programs")
+
+    if fs.exists(folder) and fs.isDirectory(folder) then
+        for _, path in ipairs(fs.list(folder)) do
+            local fullpath = fs.concat(folder, path)
+            if fs.exists(fullpath) then
+                
+            end
+        end
+    end
+end
+
+
 require("programs").execute("desktop")
