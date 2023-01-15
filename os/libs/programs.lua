@@ -30,8 +30,15 @@ function programs.load(name)
 end
 
 function programs.run(name, ...)
-    local code = programs.load(name)
+    local code, err = programs.load(name)
+    if not code then return nil, err or "unknown" end
     return pcall(code, ...)
+end
+
+function programs.execute(name, ...)
+    local code, err = programs.load(name)
+    if not code then return nil, err or "unknown" end
+    return assert(xpcall(code, debug.traceback, ...))
 end
 
 return programs

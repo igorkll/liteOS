@@ -6,6 +6,8 @@
 ]]
 
 local drawer = {}
+drawer.allowHardwareBuffer = true
+drawer.allowSoftwareBuffer = true
 
  --красивый список цветов, рекомендую использовать даже не третим тире, чтобы программа везде выглядела одинакого
 drawer.defaultPaletteTier2 = {[0] = 16777215.0,16763955.0,13395660.0,6724095.0,16777011.0,3394611.0,16737945.0,3355443.0,13421772.0,3368601.0,10040268.0,3355545.0,6697728.0,3368448.0,16724787.0,0.0}
@@ -14,7 +16,14 @@ drawer.defaultPaletteTier3 = {[0] = 986895.0,1973790.0,2960685.0,3947580.0,49344
 
 function drawer.create(settings) --создает графическую системму, состоящию из видеокарты и монитора
     checkArg(1, settings, "table", "nil")
-    settings = settings or {allowHardwareBuffer = true, allowSoftwareBuffer = true}
+    settings = settings or {}
+
+    if settings.allowHardwareBuffer == nil then --если значения не false не true то оно будет по умалчанию
+        settings.allowHardwareBuffer = drawer.allowHardwareBuffer
+    end
+    if settings.allowSoftwareBuffer == nil then
+        settings.allowSoftwareBuffer = drawer.allowSoftwareBuffer
+    end
     
     local gpu = component.proxy(component.list("gpu")() or "")
     local screen = settings.screen or component.list("screen")()
@@ -58,7 +67,7 @@ function drawer.create(settings) --создает графическую сис�
         end
 
         if obj.bufferSupport and settings.allowHardwareBuffer then
-            settings.hardwareBuffer = gpu.allocateBuffer(obj.sizeX, obj.sizeY)
+            obj.hardwareBuffer = gpu.allocateBuffer(obj.sizeX, obj.sizeY)
         elseif settings.allowSoftwareBuffer then
             
         end
@@ -128,7 +137,7 @@ function drawer:draw_begin()
         if self.palette then
             for i = 0, 15 do
                 if self.palette[i] ~= self.gpu.getPaletteColor(i) then
-                    self.gpu.setPaletteColor(i)
+                    self.gpu.setPaletteColor(i, self.palette[i])
                 end
             end
         end

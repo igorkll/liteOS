@@ -35,4 +35,4 @@ require("utilites")
 
 ---------------------------------------------------
 
-require("programs").run("desktop")
+require("programs").execute("desktop")
