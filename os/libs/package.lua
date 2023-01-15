@@ -17,7 +17,7 @@ function package.require(name)
 
     local filesystem = require("filesystem")
 
-    local lib
+    local lib, finded
     for index, value in ipairs(package.paths) do
         local path = filesystem.concat(value, name .. ".lua")
 
@@ -26,9 +26,15 @@ function package.require(name)
             local code = assert(load(text, "=" .. name, "bt", _ENV))
             lib = code()
             
+            finded = true
             break
         end
     end
+
+    if not finded then
+        error("lib " .. name .. " not found")
+    end
+
     package.loaded[name] = lib or true
     return lib or true
 end
