@@ -2,7 +2,7 @@ bootaddress = computer.getBootAddress()
 bootfs = component.proxy(bootaddress)
 
 do
-    function raw_require(name)
+    function require(name)
         local function raw_readFile(fs, path)
             checkArg(1, fs, "table", "string")
             checkArg(2, path, "string")
@@ -27,31 +27,26 @@ do
         local lib = assert(code())
         return lib
     end
-    raw_require("package")
-    raw_require = nil
+    require("package")
 end
 
 require("utilites")
+local logger = require("logger")
 
 ---------------------------------------------------
 
 local function autorun(folder)
     local fs = require("filesystem")
     local programs = require("programs")
-    local logger = require("logger")
-
-    logger.log("autorun", "start from: " .. folder)
 
     if fs.exists(folder) and fs.isDirectory(folder) then
         for _, path in ipairs(fs.list(folder)) do
             local fullpath = fs.concat(folder, path)
             if fs.exists(fullpath) then
-                logger.log("autorun", "running: " .. fullpath)
+                logger.log("autorun running: " .. fullpath)
                 local ok, err = programs.run(fullpath)
                 if not ok then
-                    logger.error("autorun", err)
-                else
-                    logger.log("autorun", "ok: " .. fullpath)
+                    logger.log("autorun error: " .. err .. "; folder: " .. fullpath)
                 end
             end
         end

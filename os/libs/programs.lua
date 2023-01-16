@@ -21,11 +21,11 @@ function programs.find(name)
     end
 end
 
-function programs.load(name, env)
+function programs.load(name, envtbl)
     local path = programs.find(name)
     local text, err = fs.readFile(path)
     if not text then return nil, err end
-    local code, err = load(text, "=" .. name, "bt", env or env.create())
+    local code, err = load(text, "=" .. name, "bt", envtbl or env.createProgrammEnv())
     if not code then return nil, err end
     return code
 end

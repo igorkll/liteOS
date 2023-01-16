@@ -7,7 +7,7 @@ package.loaded = {
     component = component,
     unicode = unicode,
     utf8 = utf8,
-    filesystem = raw_require("filesystem"),
+    filesystem = require("filesystem"),
 }
 package.paths = {"/libs", "/data/libs"}
 
