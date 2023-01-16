@@ -1,6 +1,10 @@
 return {create = function(gpu_address, usePaletteIndex)
     local invoke, insert, concat, len, sub = component.invoke, table.insert, table.concat, unicode.len, unicode.sub
 
+    local currentFrameBackgrounds, currentFrameForegrounds, currentFrameSymbols, newFrameBackgrounds, newFrameForegrounds, newFrameSymbols
+    local bufferWidth, bufferHeight, drawLimitX1, drawLimitY1, drawLimitX2, drawLimitY2
+
+
     --------------------------------------------------------------------------------
 
     local function flush(width, height)
@@ -26,6 +30,7 @@ return {create = function(gpu_address, usePaletteIndex)
             end
         end
     end
+    flush(invoke(gpu_address, "getResolution"))
 
     local function setResolution(width, height)
         invoke(gpu_address, "setResolution", width, height)

@@ -8,7 +8,7 @@
 local softwareBuffer = require("softwareBuffer")
 local drawer = {}
 drawer.allowHardwareBuffer = true
-drawer.allowSoftwareBuffer = false
+drawer.allowSoftwareBuffer = true
 drawer.softwareBufferPriority = true
 
  --красивый список цветов, рекомендую использовать даже не третим тире, чтобы программа везде выглядела одинакого
@@ -87,6 +87,8 @@ function drawer.create(settings) --создает графическую сис�
         if gpu.setActiveBuffer then
             obj.bufferSupport = true
         end
+
+        obj.maxFg = settings.usingTheDefaultPalette and 15 or 0xFFFFFF
 
         if drawer.softwareBufferPriority then
             if settings.allowSoftwareBuffer then
@@ -197,24 +199,15 @@ end
 ------------------------------------------------------------------------draw utiles
 
 function drawer:_setColor(bg, fg)
-    if bg then
-        self.gpu.setBackground(bg, self.usingTheDefaultPalette)
-    else
-        self.gpu.setBackground(0x000000)
-    end
-
-    if fg then
-        self.gpu.setForeground(fg, self.usingTheDefaultPalette)
-    else
-        self.gpu.setForeground(0xffffff)
-    end
+    self.gpu.setBackground(bg or 0, self.usingTheDefaultPalette)
+    self.gpu.setForeground(fg or self.maxFg, self.usingTheDefaultPalette)
 end
 
 
 
 function drawer:set(x, y, bg, fg, str)
     if self.softwareBuffer then
-        self.softwareBuffer.set(x, y, bg, fg, str)
+        self.softwareBuffer.set(x, y, bg or 0, fg or self.maxFg, str)
     else
         self:_setColor(bg, fg)
         self.gpu.set(x, y, str)
@@ -223,14 +216,26 @@ function drawer:set(x, y, bg, fg, str)
 end
 
 function drawer:fill(x, y, sx, sy, bg, fg, char)
-    self:_setColor(bg, fg)
-    self.gpu.fill(x, y, sx, sy, char)
+    if self.softwareBuffer then
+        for cx = x, x + (sx - 1) do
+            for cy = y, y + (sy - 1) do
+                self.softwareBuffer.set(cx, cy, bg or 0, fg or self.maxFg, char)
+            end
+        end
+    else
+        self:_setColor(bg, fg)
+        self.gpu.fill(x, y, sx, sy, char)
+    end
     return true
 end
 
 function drawer:clear(bg, fg, char)
-    self:_setColor(bg, fg)
-    self.gpu.fill(1, 1, self.sizeX, self.sizeY, char or " ")
+    if self.softwareBuffer then
+        self:fill(1, 1, self.sizeX, self.sizeY, bg, fg, char or " ")
+    else
+        self:_setColor(bg, fg)
+        self.gpu.fill(1, 1, self.sizeX, self.sizeY, char or " ")
+    end
     return true
 end
 
