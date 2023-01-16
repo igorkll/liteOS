@@ -90,7 +90,7 @@ function drawer.create(settings) --создает графическую сис�
 
         if drawer.softwareBufferPriority then
             if settings.allowSoftwareBuffer then
-                obj.softwareBuffer = softwareBuffer.create(gpu.address)
+                obj.softwareBuffer = softwareBuffer.create(gpu.address, settings.usingTheDefaultPalette)
             elseif obj.bufferSupport and settings.allowHardwareBuffer then
                 obj.hardwareBuffer = gpu.allocateBuffer(obj.sizeX, obj.sizeY)
             end
@@ -98,7 +98,7 @@ function drawer.create(settings) --создает графическую сис�
             if obj.bufferSupport and settings.allowHardwareBuffer then
                 obj.hardwareBuffer = gpu.allocateBuffer(obj.sizeX, obj.sizeY)
             elseif settings.allowSoftwareBuffer then
-                obj.softwareBuffer = softwareBuffer.create(gpu.address)
+                obj.softwareBuffer = softwareBuffer.create(gpu.address, settings.usingTheDefaultPalette)
             end
         end
 
@@ -214,7 +214,7 @@ end
 
 function drawer:set(x, y, bg, fg, str)
     if self.softwareBuffer then
-        
+        self.softwareBuffer.set(x, y, bg, fg, str)
     else
         self:_setColor(bg, fg)
         self.gpu.set(x, y, str)
