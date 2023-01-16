@@ -1,4 +1,4 @@
-return {create = function(gpu_address)
+return {create = function(gpu_address, usePaletteIndex)
     local invoke, insert, concat, len, sub = component.invoke, table.insert, table.concat, unicode.len, unicode.sub
 
     --------------------------------------------------------------------------------
@@ -16,12 +16,12 @@ return {create = function(gpu_address)
 
         for y = 1, bufferHeight do
             for x = 1, bufferWidth do
-                insert(currentFrameBackgrounds, 0x010101)
-                insert(currentFrameForegrounds, 0xFEFEFE)
+                insert(currentFrameBackgrounds, 0)
+                insert(currentFrameForegrounds, usePaletteIndex and 15 or 0xFFFFFF)
                 insert(currentFrameSymbols, " ")
 
-                insert(newFrameBackgrounds, 0x010101)
-                insert(newFrameForegrounds, 0xFEFEFE)
+                insert(newFrameBackgrounds, 0)
+                insert(newFrameForegrounds, usePaletteIndex and 15 or 0xFFFFFF)
                 insert(newFrameSymbols, " ")
             end
         end
@@ -43,7 +43,7 @@ return {create = function(gpu_address)
             local index = bufferWidth * (y - 1) + x
             return newFrameBackgrounds[index], newFrameForegrounds[index], newFrameSymbols[index]
         else
-            return 0x000000, 0x000000, " "
+            return 0, 0, " "
         end
     end
 
@@ -121,11 +121,11 @@ return {create = function(gpu_address)
         end
         
         for background, foregrounds in pairs(changes) do
-            invoke(gpu_address, "setBackground", background)
+            invoke(gpu_address, "setBackground", background, usePaletteIndex)
 
             for foreground, pixels in pairs(foregrounds) do
                 if currentForeground ~= foreground then
-                    invoke(gpu_address, "setForeground", foreground)
+                    invoke(gpu_address, "setForeground", foreground, usePaletteIndex)
                     currentForeground = foreground
                 end
 

@@ -5,6 +5,7 @@
     так же в блоке отрисовке нужно вызывать только draw utiles методы методы settings следует вызывать до него
 ]]
 
+local softwareBuffer = require("softwareBuffer")
 local drawer = {}
 drawer.allowHardwareBuffer = true
 drawer.allowSoftwareBuffer = false
@@ -46,7 +47,7 @@ function drawer.create(settings) --создает графическую сис�
         settings.allowSoftwareBuffer = drawer.allowSoftwareBuffer
     end
     
-    local gpu = component.proxy(component.list("gpu")() or "")
+    local gpu = component.proxy((settings.gpu or component.list("gpu")()) or "")
     local screen = settings.screen or component.list("screen")()
 
     if gpu and screen then
@@ -89,7 +90,7 @@ function drawer.create(settings) --создает графическую сис�
 
         if drawer.softwareBufferPriority then
             if settings.allowSoftwareBuffer then
-                
+                obj.softwareBuffer = softwareBuffer.create(gpu.address)
             elseif obj.bufferSupport and settings.allowHardwareBuffer then
                 obj.hardwareBuffer = gpu.allocateBuffer(obj.sizeX, obj.sizeY)
             end
@@ -97,7 +98,7 @@ function drawer.create(settings) --создает графическую сис�
             if obj.bufferSupport and settings.allowHardwareBuffer then
                 obj.hardwareBuffer = gpu.allocateBuffer(obj.sizeX, obj.sizeY)
             elseif settings.allowSoftwareBuffer then
-                
+                obj.softwareBuffer = softwareBuffer.create(gpu.address)
             end
         end
 
@@ -185,8 +186,11 @@ function drawer:draw_begin()
 end
 
 function drawer:draw_end()
-    if self.bufferSupport and self.hardwareBuffer then
+    if self.hardwareBuffer then
         self.gpu.bitblt()
+    end
+    if self.softwareBuffer then
+        self.softwareBuffer.update()
     end
 end
 
@@ -209,8 +213,12 @@ end
 
 
 function drawer:set(x, y, bg, fg, str)
-    self:_setColor(bg, fg)
-    self.gpu.set(x, y, str)
+    if self.softwareBuffer then
+        
+    else
+        self:_setColor(bg, fg)
+        self.gpu.set(x, y, str)
+    end
     return true
 end
 
