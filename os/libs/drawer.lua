@@ -123,7 +123,7 @@ function drawer.create(settings) --создает графическую сис�
         end
         
         obj.flushed = true
-        
+
         obj.settings = settings
         return obj
     end
@@ -231,6 +231,14 @@ function drawer:_setColor(bg, fg)
 end
 
 
+
+function drawer:copy(x, y, sx, sy, tx, ty)
+    if self.softwareBuffer then
+        self.softwareBuffer.copy(x, y, sx, sy, tx, ty, true)
+    end
+    self.gpu.copy(x, y, sx, sy, tx, ty)
+    return true
+end
 
 function drawer:set(x, y, bg, fg, str)
     if self.softwareBuffer then

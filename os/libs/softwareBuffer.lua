@@ -63,6 +63,58 @@ return {create = function(gpu_address, usePaletteIndex)
 
     --------------------------------------------------------------------------------
 
+    --doNotRedraw делать пиклеси "уже отрисоваными" и скопировый участок не будет перерисовываться, используйте gpu.copy с данным флагом
+    local function copy(x, y, width, height, startX, startY, doNotRedraw)
+        local copyArray, index = { width, height }
+    
+        for j = y, y + height - 1 do
+            for i = x, x + width - 1 do
+                if i >= 1 and j >= 1 and i <= bufferWidth and j <= bufferHeight then
+                    index = bufferWidth * (j - 1) + i
+                    tableInsert(copyArray, newFrameBackgrounds[index])
+                    tableInsert(copyArray, newFrameForegrounds[index])
+                    tableInsert(copyArray, newFrameSymbols[index])
+                else
+                    tableInsert(copyArray, 0x0)
+                    tableInsert(copyArray, 0x0)
+                    tableInsert(copyArray, " ")
+                end
+            end
+        end
+    
+        local function paste(startX, startY, picture)
+            local imageWidth = picture[1]
+            local screenIndex, pictureIndex, screenIndexStepOnReachOfImageWidth = bufferWidth * (startY - 1) + startX, 3, bufferWidth - imageWidth
+        
+            for y = startY, startY + picture[2] - 1 do
+                if y >= drawLimitY1 and y <= drawLimitY2 then
+                    for x = startX, startX + imageWidth - 1 do
+                        if x >= drawLimitX1 and x <= drawLimitX2 then
+                            newFrameBackgrounds[screenIndex] = picture[pictureIndex]
+                            newFrameForegrounds[screenIndex] = picture[pictureIndex + 1]
+                            newFrameSymbols[screenIndex] = picture[pictureIndex + 2]
+                            if doNotRedraw then
+                                currentFrameBackgrounds[screenIndex] = newFrameBackgrounds[screenIndex]
+                                currentFrameForegrounds[screenIndex] = newFrameForegrounds[screenIndex]
+                                currentFrameSymbols[screenIndex] = newFrameSymbols[screenIndex]
+                            end
+                        end
+        
+                        screenIndex, pictureIndex = screenIndex + 1, pictureIndex + 3
+                    end
+        
+                    screenIndex = screenIndex + screenIndexStepOnReachOfImageWidth
+                else
+                    screenIndex, pictureIndex = screenIndex + bufferWidth, pictureIndex + imageWidth * 3
+                end
+            end
+        end
+
+        paste(startX, startY, copyArray)
+    end
+
+    --------------------------------------------------------------------------------
+
     local function update(force)
         local index, indexStepOnEveryLine, changes = bufferWidth * (drawLimitY1 - 1) + drawLimitX1, (bufferWidth - drawLimitX2 + drawLimitX1 - 1), {}
         local x, equalChars, equalCharsIndex, charX, charIndex, currentForeground
@@ -146,6 +198,8 @@ return {create = function(gpu_address, usePaletteIndex)
     --------------------------------------------------------------------------------
 
     return {
+        copy = copy,
+
         setResolution = setResolution,
         getResolution = getResolution,
 
