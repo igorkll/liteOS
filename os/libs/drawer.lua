@@ -20,22 +20,22 @@ drawer.palette_defaultTier2 = {[0] = 16777215.0,16763955.0,13395660.0,6724095.0,
 drawer.palette_defaultTier3 = {[0] = 986895.0,1973790.0,2960685.0,3947580.0,4934475.0,5921370.0,6908265.0,7895160.0,8882055.0,9868950.0,10855845.0,11842740.0,12829635.0,13816530.0,14803425.0,15790320.0}
 
 drawer.palette_computercraft = { --цвета computercraft
-    [0] = 0x191919,
-    0xCC4C4C,
-    0x57A64E,
-    0x7F664C,
-    0x3366CC,
-    0xB266E5,
-    0x4C99B2,
-    0x999999,
-    0x4C4C4C,
-    0xF2B2CC,
-    0x7FCC19,
-    0xDEDE6C,
-    0x99B2F2,
-    0xE57FD8,
-    0xF2B233,
-    0xF0F0F0,
+    [0] = 0xF0F0F0, --1)  white
+    0xF2B233, --2)  orange
+    0xE57FD8, --3)  magenta
+    0x99B2F2, --4)  lightBlue
+    0xDEDE6C, --5)  yellow
+    0x7FCC19, --6)  lime
+    0xF2B2CC, --7)  pink
+    0x4C4C4C, --8)  gray
+    0x999999, --9)  lightGray
+    0x4C99B2, --10) cyan
+    0xB266E5, --11) purple
+    0x3366CC, --12) blue
+    0x7F664C, --13) brown
+    0x57A64E, --14) green
+    0xCC4C4C, --15) red
+    0x191919  --16) black
 }
 
 
