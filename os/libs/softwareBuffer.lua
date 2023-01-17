@@ -86,7 +86,6 @@ return {create = function(gpu_address, usePaletteIndex)
     end
 
     --doNotRedraw делать пиклеси "уже отрисоваными" и скопировый участок не будет перерисовываться, используйте gpu.copy с данным флагом
-    
     local function paste(startX, startY, picture, doNotRedraw)
         local imageWidth = picture[1]
         local screenIndex, pictureIndex, screenIndexStepOnReachOfImageWidth = bufferWidth * (startY - 1) + startX, 3, bufferWidth - imageWidth
@@ -112,6 +111,57 @@ return {create = function(gpu_address, usePaletteIndex)
             else
                 screenIndex, pictureIndex = screenIndex + bufferWidth, pictureIndex + imageWidth * 3
             end
+        end
+    end
+
+    local function move(x, y, width, height, startX, startY, doNotRedraw)
+        local data = copy(x, y, width, height)
+        paste(startX, startY, data, doNotRedraw)
+    end
+
+    --------------------------------------------------------------------------------
+
+    local function fill(x, y, width, height, background, foreground, symbol)
+        local temp
+    
+        -- Clipping left
+        if x < drawLimitX1 then
+            width = width - drawLimitX1 + x
+            x = drawLimitX1
+        end
+    
+        -- Right
+        temp = x + width - 1
+        if temp > drawLimitX2 then
+            width = width - temp + drawLimitX2
+        end
+    
+        -- Top
+        if y < drawLimitY1 then
+            height = height - drawLimitY1 + y
+            y = drawLimitY1
+        end
+    
+        -- Bottom
+        temp = y + height - 1
+        if temp > drawLimitY2 then
+            height = height - temp + drawLimitY2
+        end
+    
+        temp = bufferWidth * (y - 1) + x
+    
+        local indexStepOnEveryLine = bufferWidth - width
+    
+        for j = 1, height do
+            for i = 1, width do
+                newFrameBackgrounds[temp],
+                newFrameForegrounds[temp],
+                newFrameSymbols[temp] = background, foreground, symbol
+
+                temp = temp + 1
+            end
+
+            temp = temp + indexStepOnEveryLine
         end
     end
 
@@ -201,6 +251,10 @@ return {create = function(gpu_address, usePaletteIndex)
 
     return {
         copy = copy,
+        paste = paste,
+        move = move,
+
+        fill = fill,
 
         setResolution = setResolution,
         getResolution = getResolution,
