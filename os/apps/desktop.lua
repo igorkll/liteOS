@@ -1,7 +1,5 @@
 local drawer = require("drawer")
 local drawzone = drawer.create({
-    allowSoftwareBuffer = false,
-    allowHardwareBuffer = false,
     palette = drawer.palette_computercraft,
     usingTheDefaultPalette = true
 })
@@ -24,5 +22,5 @@ while true do
     ]]
     drawzone:draw_end()
 
-    os.sleep(1)
+    os.sleep(0.1)
 end
