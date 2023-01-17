@@ -3,12 +3,11 @@ local background = require("background")
 
 ----------------------------------------------
 
-local function listen(...)
-    local eventData = {...}
+local function listen(self, eventData)
     if eventData[2] == obj.drawzone.settings.screen then
         
     end
-    if table.contains(component.invoke(obj.drawzone.settings.screen, "getKeyboards"), eventData[2]) then
+    if table.contains(self.keyboards, eventData[2]) then
         
     end 
 end
@@ -18,13 +17,16 @@ local function tick()
 end
 
 local function exit(self)
-    self.running = false
-    self.drawzone:destroy()
-    background.removeListen(self.listen)
+    if self.running then
+        self.running = false
+        self.drawzone:destroy()
+        background.removeListen(self.listen)
+    end
 end
 
 local function run(self, func)
     while self.running do
+        tick()
         if func then
             func()
         end
@@ -36,13 +38,15 @@ return {create = function(settings)
     obj.running = true
     obj.settings = settings or {}
     obj.drawzone = drawer.create(settings.renderSettings)
+    obj.keyboards = component.invoke(obj.drawzone.settings.screen, "getKeyboards")
 
     obj.listen = listen
     obj.tick = tick
     obj.exit = exit
     obj.run = run
 
-    background.addListen(obj.listen)
-
+    background.addListen(function(...)
+        obj.listen(obj, {...})
+    end)
     return obj
 end}
