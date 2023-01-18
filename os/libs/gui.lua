@@ -8,26 +8,42 @@ local background = require("background")
 
 local createWidget
 do
-    function createWidget()
-        
+    local function destroy(self)
+        table.removeMatches(self.layout.widgets, self)
+    end
+
+    function createWidget(self)
+        local widget = {}
+
+        widget.destroy = destroy
+
+        self.layout = self
+        table.insert(self.widgets, widget)
+        return widget
     end
 end
 
-----------------------------------------------SCENE
+----------------------------------------------LAYOUT
 
 local createLayout
 do
     local function destroy(self)
-        table.removeMatches(self.gui.scenes, self)
+        table.removeMatches(self.scene.layouts, self)
     end
-    
+
     function createLayout(self, bg, sizeX, sizeY, dragged)
         local layout = {}
         layout.bg = bg and (type(bg) == "number" and {bg, self.gui.drawzone.maxFg, " "} or bg) or {0, self.gui.drawzone.maxFg, " "}
         layout.sizeX = sizeX or self.gui.drawzone.maxSizeX
         layout.sizeY = sizeY or self.gui.drawzone.maxSizeY
         layout.dragged = dragged
+        layout.widgets = {}
 
+        layout.destroy = destroy
+
+        layout.createWidget = createWidget
+
+        self.scene = self
         table.insert(self.layouts, layout)
         return layout
     end
@@ -50,13 +66,12 @@ do
         scene.usingTheDefaultPalette = usingTheDefaultPalette
         scene.layouts = {}
 
-        scene.createLayout = createLayout
         scene.destroy = destroy
 
-        scene.createWidget = createWidget
+        scene.createLayout = createLayout
 
-        table.insert(self.scenes, scene)
         scene.gui = self
+        table.insert(self.scenes, scene)
         return scene
     end
 end
