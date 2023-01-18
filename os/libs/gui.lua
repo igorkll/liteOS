@@ -31,7 +31,7 @@ do
 
     local function draw(self)
         local posX, posY = mathPos(self)
-        
+        if self.settings.
     end
 
     function createWidget(self, settings)

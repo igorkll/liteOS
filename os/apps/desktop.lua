@@ -37,6 +37,8 @@ local gui = require("gui").create()
 scene1 = gui:createScene(colors.purple, 50, 16, drawer.palette_computercraft, true)
 scene1_window1 = scene1:createLayout(colors.lime, 3, 3, 16, 8, true)
 scene1_window1_text = scene1_window1:createWidget({
+    type = "text",
+
     posX = 2,
     posY = 2,
     sizeX = 32,
@@ -44,6 +46,8 @@ scene1_window1_text = scene1_window1:createWidget({
     label = "current scene 1",
 })
 scene1_window1_button = scene1_window1:createWidget({
+    type = "button",
+
     posX = 2,
     posY = 4,
     sizeX = 16,
@@ -58,6 +62,8 @@ scene1_window1_button = scene1_window1:createWidget({
 scene2 = gui:createScene(colors.green, 80, 10, drawer.palette_defaultTier2, true)
 scene2_window1 = scene1:createLayout(colors.red, 3, 3, 16, 8, true)
 scene2_window1_text = scene2_window1:createWidget({
+    type = "text",
+
     posX = 2,
     posY = 2,
     sizeX = 32,
@@ -65,6 +71,8 @@ scene2_window1_text = scene2_window1:createWidget({
     label = "current scene 2",
 })
 scene2_window1_button = scene2_window1:createWidget({
+    type = "button",
+    
     posX = 2,
     posY = 4,
     sizeX = 16,
