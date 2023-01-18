@@ -9,6 +9,8 @@ end
 
 local function fillFakeColor(self, posX, posY, sizeX, sizeY, text, bg, fg) --фековый цвет позваляет смешивать цвета символами unicode, и отрисовывать серый даже на экранах первого уровня
     self.drawzone:fill(posX, posY, sizeX, sizeY, table.unpack(bg))
+    local centerX, centerY = math.round(posX + (sizeX / 2)), math.round(posY + (sizeY / 2))
+    self.drawzone:set(centerX, centerY, bg[1], fg[1], text)
 end
 
 ----------------------------------------------WIDGET
@@ -45,9 +47,22 @@ do
         local posX, posY = mathPos(self)
         
 
-        if self.settings.type == "text" then
-            
-        else
+        if self.settings.type == "text" or self.settings.type == "button" then
+            local bg, fg = self.settings.bg, self.settings.fg
+            if self.state then
+                bg = self.settings.pressed_bg
+                fg = self.settings.pressed_fg
+            end
+
+            fillFakeColor(self,
+                self.settings.posX,
+                self.settings.posY,
+                self.settings.sizeX,
+                self.settings.sizeY,
+                self.settings.text,
+                bg,
+                fg
+            )
         end
     end
 

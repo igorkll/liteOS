@@ -42,7 +42,7 @@ scene1_window1_text = scene1_window1:createWidget({
     posY = 2,
     sizeX = 32,
     sizeY = 1,
-    label = "current scene 1",
+    text = "current scene 1",
 })
 scene1_window1_button = scene1_window1:createWidget({
     type = "button",
@@ -51,7 +51,7 @@ scene1_window1_button = scene1_window1:createWidget({
     posY = 4,
     sizeX = 16,
     sizeY = 1,
-    label = "to scene 2",
+    text = "to scene 2",
 
     onClick = function()
         gui:selectScene(scene2)
@@ -67,7 +67,7 @@ scene2_window1_text = scene2_window1:createWidget({
     posY = 2,
     sizeX = 32,
     sizeY = 1,
-    label = "current scene 2",
+    text = "current scene 2",
 })
 scene2_window1_button = scene2_window1:createWidget({
     type = "button",
@@ -76,7 +76,7 @@ scene2_window1_button = scene2_window1:createWidget({
     posY = 4,
     sizeX = 16,
     sizeY = 1,
-    label = "to scene 1",
+    text = "to scene 1",
 
     onClick = function()
         gui:selectScene(scene1)
