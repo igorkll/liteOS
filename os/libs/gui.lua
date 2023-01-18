@@ -11,11 +11,13 @@ local function createLayout()
     
 end
 
-local function createScene(sizeX, sizeY, palette)
+local function createScene(self, bg, sizeX, sizeY, palette)
     local scene = {}
+    scene.bg = bg and (type(bg) == "number" and {bg, self.drawzone.maxFg, " "} or bg) or {0, self.drawzone.maxFg, " "}
     scene.sizeX = sizeX
     scene.sizeY = sizeY
     scene.palette = palette
+    scene.layouts = {}
 
     scene.createLayout = createLayout
     return scene
@@ -53,9 +55,18 @@ local function run(self, func)
     end
 end
 
+local function redraw(self)
+    self.drawzone:draw_end()
+
+    self.drawzone:clear(table.unpack(self.scene.bg))
+
+    self.drawzone:draw_begin()
+end
+
 local function selectScene(self, scene)
     self.scene = scene
-    
+    self.drawzone:setPalette(scene.palette)
+    self.drawzone:setResolution(scene.sizeX, scene.sizeY)
 end
 
 return {create = function(settings)
@@ -64,14 +75,17 @@ return {create = function(settings)
     obj.settings = settings or {}
     obj.drawzone = drawer.create(settings.renderSettings)
     obj.keyboards = component.invoke(obj.drawzone.settings.screen, "getKeyboards")
+    obj.scenes = {}
 
     obj.listen = listen
     obj.tick = tick
     obj.exit = exit
     obj.run = run
+    obj.redraw = redraw
+    obj.selectScene = selectScene
+
 
     obj.createScene = createScene
-    obj.selectScene = selectScene
     
     background.addListen(function(...)
         obj.listen(obj, {...})
