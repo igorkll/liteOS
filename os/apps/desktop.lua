@@ -58,7 +58,7 @@ scene1_window1_button = scene1_window1:createWidget({
     end
 })
 scene1_window2 = scene1:createLayout(colors.red, 3, 3, 32, 8, true)
-scene1_window2_text = scene1_window1:createWidget({
+scene1_window2_text = scene1_window2:createWidget({
     type = "text",
 
     posX = 1,
@@ -67,7 +67,7 @@ scene1_window2_text = scene1_window1:createWidget({
     sizeY = 1,
     text = "new window",
 })
-scene1_window2_button = scene1_window1:createWidget({
+scene1_window2_button = scene1_window2:createWidget({
     type = "button",
 
     posX = 2,
@@ -80,7 +80,7 @@ scene1_window2_button = scene1_window1:createWidget({
         computer.beep()
     end
 })
-scene1_window2_button2 = scene1_window1:createWidget({
+scene1_window2_button2 = scene1_window2:createWidget({
     type = "button",
 
     posX = 2,

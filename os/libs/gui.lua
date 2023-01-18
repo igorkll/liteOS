@@ -187,6 +187,8 @@ do
                 if tx >= layout.posX and ty >= layout.posY and tx < (layout.posX + layout.sizeX) and ty < (layout.posX + layout.sizeX) then
                     self.layouts[#self.layouts] = self.layouts[i]
                     self.layouts[i] = upLayout
+                    self.gui.redrawFlag = true
+                    layout:listen(eventData)
                     break
                 end
             end
