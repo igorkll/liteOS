@@ -107,26 +107,21 @@ do
             tx, ty = eventData[3], eventData[4]
         end
 
-        local widgetTouched
+        local moveLock
         
         for _, widget in ipairs(self.widgets) do
-            widget:listen(eventData)
-            if tx and ty and
-            tx >= widget.settings.posX and
-            ty >= widget.settings.posY and
-            (tx < widget.settings.posX + widget.settings.sizeX) and
-            (ty <= widget.settings.posY + widget.settings.sizeY) then
-                widgetTouched = true
+            
+            if widget:listen(eventData) then
+                moveLock = true
             end
         end
 
-        if not widgetTouched and eventData[1] == "drag" and tx and self.tx then
+        if not moveLock and eventData[1] == "drag" and tx and self.tx then
             local moveX, moveY = tx - self.tx, ty - self.ty
             if moveX ~= 0 or moveY ~= 0 then
                 self.posX = self.posX + moveX
                 self.posY = self.posY + moveY
                 self.scene.gui.redrawFlag = true
-                error("asd")
             end
         end
 
@@ -209,7 +204,7 @@ end
 
 do
     local function listen(self, eventData)
-        if eventData[2] == self.drawzone.settings.screen then
+        if eventData[2] == self.drawzone.screen then
             self.scene:listen(eventData)
         elseif table.contains(self.keyboards, eventData[2]) then
             self.scene:listen(eventData)
