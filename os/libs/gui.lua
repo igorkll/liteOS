@@ -13,6 +13,10 @@ local function fillFakeColor(self, posX, posY, sizeX, sizeY, text, bg, fg) --Ñ„Ð
     self.drawzone:set(centerX - math.floor(unicode.len(text) / 2), centerY, bg[1], fg[1], text)
 end
 
+local function touchInBox(box, eventData)
+    return eventData[3] >= box.posX and eventData[4] >= box.posY and eventData[3] < (box.posX + box.sizeX) and eventData[4] < (box.posY + box.sizeY)
+end
+
 ----------------------------------------------WIDGET
 
 local createWidget
@@ -108,7 +112,7 @@ do
         end
 
         if eventData[1] == "touch" then
-            if tx and tx >= self.posX and ty >= self.posY and tx < (self.posX + self.sizeX) and ty < (self.posY + self.sizeY) then
+            if touchInBox(self, eventData) then
                 self.selected = true
             end
         elseif eventData[1] == "drop" then
@@ -180,11 +184,9 @@ do
         local upLayout = self.layouts[#self.layouts]
         upLayout:listen(eventData)
         if not upLayout.selected and eventData[1] == "touch" then
-            local tx, ty = eventData[3], eventData[4]
-
             for i = #self.layouts - 1, 1 do
                 local layout = self.layouts[i]
-                if tx >= layout.posX and ty >= layout.posY and tx < (layout.posX + layout.sizeX) and ty < (layout.posX + layout.sizeX) then
+                if touchInBox(layout, eventData) then
                     self.layouts[#self.layouts] = self.layouts[i]
                     self.layouts[i] = upLayout
                     self.gui.redrawFlag = true
