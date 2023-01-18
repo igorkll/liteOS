@@ -13,8 +13,11 @@ local function fillFakeColor(self, posX, posY, sizeX, sizeY, text, bg, fg) --Ñ„Ð
     self.drawzone:set(centerX - math.floor(unicode.len(text) / 2), centerY, bg[1], fg[1], text)
 end
 
-local function touchInBox(box, eventData)
-    return eventData[3] >= box.posX and eventData[4] >= box.posY and eventData[3] < (box.posX + box.sizeX) and eventData[4] < (box.posY + box.sizeY)
+local function touchInBox(box, eventData, startX, startY)
+    if not startX then startX = 1 end
+    if not startY then startY = 1 end
+    local tx, ty = eventData[3] - (startX - 1), eventData[4] - (startY - 1)
+    return tx >= box.posX and ty >= box.posY and tx < (box.posX + box.sizeX) and ty < (box.posY + box.sizeY)
 end
 
 ----------------------------------------------WIDGET
@@ -38,30 +41,32 @@ do
     ----------------------------------------------callbacks
 
     local function listen(self, eventData)
-        if self.settings.togle then
-            if eventData[1] == "touch" and touchInBox(self, eventData) then
-                self.state = not self.state
-                
+        if self.settings.type == "button" then
+            if self.settings.togle then
+                if eventData[1] == "touch" and touchInBox(self, eventData, self.layout.posX, self.layout.posY) then
+                    self.state = not self.state
+                    
+                    self.drawzone:draw_begin()
+                    self:draw()
+                    self.drawzone:draw_end()
+                end
+            else
+                if eventData[1] == "touch" and touchInBox(self, eventData, self.layout.posX, self.layout.posY) then
+                    self.state = true
+                elseif eventData[1] == "drop" and touchInBox(self, eventData, self.layout.posX, self.layout.posY) then
+                    self.state = false
+                end
                 self.drawzone:draw_begin()
                 self:draw()
                 self.drawzone:draw_end()
             end
-        else
-            if eventData[1] == "touch" and touchInBox(self, eventData) then
-                self.state = true
-            elseif eventData[1] == "drop" and touchInBox(self, eventData) then
-                self.state = false
-            end
-            self.drawzone:draw_begin()
-            self:draw()
-            self.drawzone:draw_end()
-        end
 
-        if self.state ~= self.oldstate then
-            if self.state then
-                callback(self, "onClick")
-            else
-                callback(self, "onRelease")
+            if self.state ~= self.oldstate then
+                if self.state then
+                    callback(self, "onClick")
+                else
+                    callback(self, "onRelease")
+                end
             end
         end
     end
