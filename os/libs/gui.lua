@@ -18,6 +18,7 @@ do
 
     function createWidget(self, settings)
         local widget = {}
+        widget.settings = settings
 
         widget.destroy = destroy
         widget.draw = draw
