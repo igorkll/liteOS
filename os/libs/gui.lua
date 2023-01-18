@@ -50,9 +50,11 @@ do
         if self.settings.type == "text" or self.settings.type == "button" then
             local bg, fg = self.settings.bg, self.settings.fg
             if self.state then
-                bg = self.settings.pressed_bg
-                fg = self.settings.pressed_fg
+                bg = self.settings.pressed_bg or self.settings.bg
+                fg = self.settings.pressed_fg or self.settings.fg
             end
+            if not bg then bg = {0, 0, " "} end
+            if not fg then fg = {self.drawzone.maxFg, 0, " "} end
 
             fillFakeColor(self,
                 self.settings.posX,

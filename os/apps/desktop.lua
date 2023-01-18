@@ -33,7 +33,7 @@ local gui = require("gui").create()
 
 -------------------------------------------
 
-scene1 = gui:createScene(colors.purple, 50, 16, drawer.palette_computercraft, true)
+scene1 = gui:createScene({colors.purple, colors.red, "#"}, 50, 16, drawer.palette_computercraft, true)
 scene1_window1 = scene1:createLayout(colors.lime, 3, 3, 16, 8, true)
 scene1_window1_text = scene1_window1:createWidget({
     type = "text",
