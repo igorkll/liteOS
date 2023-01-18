@@ -6,7 +6,7 @@ function background.addListen(func)
 end
 
 function background.removeListen(func)
-    for index, value in ipairs(listens) do
+    for index, value in ipairs(background.listens) do
         if value == func then
             table.remove(background.listens, index)
         end

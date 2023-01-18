@@ -28,7 +28,7 @@ do
     end
 
     local function mathPos(self)
-        return self.settings.posX + (self.layout.posX - 1), self.settings.posY + (self.layout.posY - 1)
+        return self.posX + (self.layout.posX - 1), self.posY + (self.layout.posY - 1)
     end
 
     local function callback(self, name, ...)
@@ -38,7 +38,32 @@ do
     ----------------------------------------------callbacks
 
     local function listen(self, eventData)
-        
+        if self.settings.togle then
+            if eventData[1] == "touch" and touchInBox(self, eventData) then
+                self.state = not self.state
+                
+                self.drawzone:draw_begin()
+                self:draw()
+                self.drawzone:draw_end()
+            end
+        else
+            if eventData[1] == "touch" and touchInBox(self, eventData) then
+                self.state = true
+            elseif eventData[1] == "drop" and touchInBox(self, eventData) then
+                self.state = false
+            end
+            self.drawzone:draw_begin()
+            self:draw()
+            self.drawzone:draw_end()
+        end
+
+        if self.state ~= self.oldstate then
+            if self.state then
+                callback(self, "onClick")
+            else
+                callback(self, "onRelease")
+            end
+        end
     end
 
     ----------------------------------------------interface
@@ -49,24 +74,25 @@ do
 
     local function draw(self)
         local posX, posY = mathPos(self)
-        
 
         if self.settings.type == "text" or self.settings.type == "button" then
             local posX, posY = mathPos(self)
 
             local bg, fg = self.settings.bg, self.settings.fg
-            if self.state then
-                bg = self.settings.pressed_bg or self.settings.bg
-                fg = self.settings.pressed_fg or self.settings.fg
-            end
             if not bg then bg = {0, 0, " "} end
             if not fg then fg = {self.drawzone.maxFg, 0, " "} end
-
+            if self.state then
+                bg = self.settings.pressed_bg
+                fg = self.settings.pressed_fg
+                if not bg then bg = {self.drawzone.maxFg, 0, " "} end
+                if not fg then fg = {0, 0, " "} end
+            end
+            
             fillFakeColor(self,
                 posX,
                 posY,
-                self.settings.sizeX,
-                self.settings.sizeY,
+                self.sizeX,
+                self.sizeY,
                 self.settings.text,
                 bg,
                 fg
@@ -77,6 +103,13 @@ do
     function createWidget(self, settings)
         local widget = {}
         widget.settings = settings
+
+        widget.state = settings.state or false
+        widget.oldstate = widget.state
+        widget.posX = settings.posX
+        widget.posY = settings.posY
+        widget.sizeX = settings.sizeX
+        widget.sizeY = settings.sizeY
 
         widget.destroy = destroy
         widget.draw = draw
