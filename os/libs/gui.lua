@@ -101,26 +101,29 @@ do
         end
     end
 
-    local function setPos(posX, posY)
-        
-    end
-
     local function listen(self, eventData)
         local tx, ty
         if eventData[1] == "touch" or eventData[1] == "drag" then
-            if 
+            tx, ty = eventData[3], eventData[4]
         end
 
         local widgetTouched
         
         for _, widget in ipairs(self.widgets) do
             widget:listen(eventData)
-            if 
+            if tx and ty and tx >= widget.posX or ty >= widget.posY and tx < widget.posX + widget.sizeX and ty <= widget.posY + widget.sizeY then
+                widgetTouched = true
+            end
         end
 
-        if not widgetTouched then
-            
+        if not widgetTouched and eventData[1] == "drag" and tx and self.tx then
+            local moveX, moveY = tx - self.tx, ty - self.ty
+            self.posX = self.posX + moveX
+            self.posY = self.posY + moveY
         end
+
+        self.tx = tx
+        self.ty = ty
     end
 
     
