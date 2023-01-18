@@ -182,8 +182,8 @@ do
     end
 
     
-
-    function createLayout(self, bg, posX, posY, sizeX, sizeY, dragged)
+    --notSelectable стоит использовать только для background layout`а, иначе вы можете сломать всю сцену
+    function createLayout(self, bg, posX, posY, sizeX, sizeY, dragged, notSelectable)
         local layout = {}
         layout.bg = mathColor(self, bg)
         layout.posX = posX or 1
@@ -191,6 +191,7 @@ do
         layout.sizeX = sizeX or self.gui.drawzone.maxSizeX
         layout.sizeY = sizeY or self.gui.drawzone.maxSizeY
         layout.dragged = dragged
+        layout.notSelectable = notSelectable
         layout.widgets = {}
 
         layout.destroy = destroy
@@ -227,7 +228,7 @@ do
         if not upLayout.selected and eventData[1] == "touch" then
             for i = #self.layouts - 1, 1 do
                 local layout = self.layouts[i]
-                if layout and touchInBox(layout, eventData) then
+                if layout and not layout.notSelectable and touchInBox(layout, eventData) then
                     self.layouts[#self.layouts] = self.layouts[i]
                     self.layouts[i] = upLayout
                     self.gui.redrawFlag = true

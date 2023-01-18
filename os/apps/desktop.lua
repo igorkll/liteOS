@@ -34,6 +34,17 @@ local gui = require("gui").create()
 -------------------------------------------
 
 scene1 = gui:createScene(colors.black, 50, 16, drawer.palette_computercraft, true)
+scene1_window3 = scene1:createLayout(colors.red, 1, 1, 16, 8, false, true)
+scene1_window3_text = scene1_window3:createWidget({
+    type = "text",
+
+    posX = 2,
+    posY = 2,
+    sizeX = 14,
+    sizeY = 1,
+    text = "background",
+})
+
 scene1_window1 = scene1:createLayout(colors.lime, 3, 3, 32, 8, true)
 scene1_window1_text = scene1_window1:createWidget({
     type = "text",
@@ -57,6 +68,7 @@ scene1_window1_button = scene1_window1:createWidget({
         gui:selectScene(scene2)
     end
 })
+
 scene1_window2 = scene1:createLayout(colors.red, 3, 3, 32, 8, true)
 scene1_window2_text = scene1_window2:createWidget({
     type = "text",
@@ -77,12 +89,6 @@ scene1_window2_button = scene1_window2:createWidget({
     text = "beep",
 
     togle = true,
-
-    bg = {colors.red, colors.yellow, "▒"},
-    fg = {colors.blue, colors.lightblue, "▒"},
-
-    pressed_bg = {colors.green, colors.lime, "▒"},
-    pressed_fg = {colors.lightblue, colors.blue, "▒"},
 
     onClick = function()
         computer.beep()
