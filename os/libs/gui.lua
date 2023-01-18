@@ -3,12 +3,20 @@ local background = require("background")
 
 ----------------------------------------------FUNCS
 
+local function mathColor(self, color)
+    return color and (type(color) == "number" and {color, self.drawzone.maxFg, " "} or color) or {0, self.drawzone.maxFg, " "}
+end
 
 ----------------------------------------------WIDGET
 
 local createWidget
 do
     ----------------------------------------------functions
+
+    local function getColors(self)
+        return mathColor(self, self.settings.bg), mathColor(self, self.settings.fg)
+    end
+
     local function mathPos(self)
         return self.settings.posX + (self.layout.posX - 1), self.settings.posY + (self.layout.posY - 1)
     end
@@ -31,7 +39,12 @@ do
 
     local function draw(self)
         local posX, posY = mathPos(self)
-        if self.settings.
+        
+
+        if self.settings.type == "text" then
+            
+        else
+        end
     end
 
     function createWidget(self, settings)
@@ -65,7 +78,7 @@ do
 
     function createLayout(self, bg, posX, posY, sizeX, sizeY, dragged)
         local layout = {}
-        layout.bg = bg and (type(bg) == "number" and {bg, self.gui.drawzone.maxFg, " "} or bg) or {0, self.gui.drawzone.maxFg, " "}
+        layout.bg = mathColor(self, bg)
         layout.posX = posX or 1
         layout.posY = posY or 1
         layout.sizeX = sizeX or self.gui.drawzone.maxSizeX
@@ -102,7 +115,7 @@ do
 
     function createScene(self, bg, sizeX, sizeY, palette, usingTheDefaultPalette)
         local scene = {}
-        scene.bg = bg and (type(bg) == "number" and {bg, self.drawzone.maxFg, " "} or bg) or {0, self.drawzone.maxFg, " "}
+        scene.bg = mathColor(self, bg)
         scene.sizeX = sizeX or self.drawzone.maxSizeX
         scene.sizeY = sizeY or self.drawzone.maxSizeY
         scene.palette = palette
