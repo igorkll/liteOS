@@ -3,6 +3,12 @@ local background = require("background")
 
 ----------------------------------------------
 
+local function createScene(rx, ry, palette)
+    
+end
+
+----------------------------------------------
+
 local function listen(self, eventData)
     if eventData[2] == obj.drawzone.settings.screen then
         

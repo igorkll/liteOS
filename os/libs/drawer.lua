@@ -182,6 +182,12 @@ function drawer:setPaletteColor(index, color)
     return true
 end
 
+function drawer:setPalette(palette)
+    for i = 0, 15 do
+        self.palette[i] = palette[i]
+    end
+end
+
 ------------------------------------------------------------------------service
 
 function drawer:draw_begin()
