@@ -11,12 +11,13 @@ local function createLayout()
     
 end
 
-local function createScene(self, bg, sizeX, sizeY, palette)
+local function createScene(self, bg, sizeX, sizeY, palette, usingTheDefaultPalette)
     local scene = {}
     scene.bg = bg and (type(bg) == "number" and {bg, self.drawzone.maxFg, " "} or bg) or {0, self.drawzone.maxFg, " "}
-    scene.sizeX = sizeX
-    scene.sizeY = sizeY
+    scene.sizeX = sizeX or self.drawzone.maxSizeX
+    scene.sizeY = sizeY or self.drawzone.maxSizeY
     scene.palette = palette
+    scene.usingTheDefaultPalette = usingTheDefaultPalette
     scene.layouts = {}
 
     scene.createLayout = createLayout
@@ -71,6 +72,7 @@ local function selectScene(self, scene)
     self.scene = scene
     self.drawzone:setPalette(scene.palette)
     self.drawzone:setResolution(scene.sizeX, scene.sizeY)
+    self.redrawFlag = true
 end
 
 return {create = function(settings)

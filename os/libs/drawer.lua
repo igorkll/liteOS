@@ -63,8 +63,8 @@ function drawer.create(settings) --создает графическую сис�
         local obj = setmetatable({
             gpu = gpu,
             screen = screen,
-            
-            usingTheDefaultPalette = not not settings.usingTheDefaultPalette --если включить, то методы будует принимать цвета сразу в индексах палирт
+
+            settings = settings,
         }, {__index = drawer})
 
         gpu.bind(screen)
@@ -84,7 +84,12 @@ function drawer.create(settings) --создает графическую сис�
         obj.sizeX = rx
         obj.sizeY = ry
 
+        obj.maxSizeX = rx
+        obj.maxSizeY = ry
+
         ------------------------------------
+
+        obj:setUsingTheDefaultPalette(settings.usingTheDefaultPalette) --если включить, то методы будует принимать цвета сразу в индексах палирт
 
         if obj.depth > 1 then
             obj.palette = {}
@@ -97,8 +102,7 @@ function drawer.create(settings) --создает графическую сис�
             obj.bufferSupport = true
         end
 
-        obj.maxFg = settings.usingTheDefaultPalette and 15 or 0xFFFFFF
-
+        
         if settings.allowCombineBuffers then
             if obj.bufferSupport and settings.allowHardwareBuffer then
                 obj.hardwareBuffer = gpu.allocateBuffer(obj.sizeX, obj.sizeY)
@@ -123,8 +127,6 @@ function drawer.create(settings) --создает графическую сис�
         end
         
         obj.flushed = true
-
-        obj.settings = settings
         return obj
     end
 end
@@ -187,9 +189,15 @@ function drawer:setPalette(palette)
         gpu.setDepth(1) --сброс палитры
         gpu.setDepth(gpu.maxDepth())
     end
+
     for i = 0, 15 do
         self.palette[i] = palette and palette[i] or self.gpu.getPaletteColor(i)
     end
+end
+
+function drawer:setUsingTheDefaultPalette(flag)
+    self.usingTheDefaultPalette = flag
+    self.maxFg = self.usingTheDefaultPalette and 15 or 0xFFFFFF
 end
 
 ------------------------------------------------------------------------service

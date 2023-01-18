@@ -28,6 +28,15 @@ while true do
 end
 ]]
 
+local colors = require("colors")
+local drawer = require("drawer")
+
+-------------------------------------------
+
 local gui = require("gui").create()
+local scene1 = gui:createScene(colors.purple, 50, 16, drawer.palette_computercraft, true)
+local scene2 = gui:createScene(colors.green, 80, 10, drawer.palette_defaultTier2, true)
+
+
 
 gui:run()
