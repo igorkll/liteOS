@@ -228,7 +228,7 @@ do
         if not upLayout.selected and eventData[1] == "touch" then
             for i = #self.layouts - 1, 1 do
                 local layout = self.layouts[i]
-                if touchInBox(layout, eventData) then
+                if layout and touchInBox(layout, eventData) then
                     self.layouts[#self.layouts] = self.layouts[i]
                     self.layouts[i] = upLayout
                     self.gui.redrawFlag = true
