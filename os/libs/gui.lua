@@ -107,8 +107,15 @@ do
             tx, ty = eventData[3], eventData[4]
         end
 
+        if eventData[1] == "touch" then
+            if tx and tx >= self.posX and ty >= self.posY and tx < (self.posX + self.sizeX) and ty < (self.posY + self.sizeY) then
+                self.selected = true
+            end
+        elseif eventData[1] == "drop" then
+            self.selected = false
+        end
+
         local moveLock
-        
         for _, widget in ipairs(self.widgets) do
             
             if widget:listen(eventData) then
@@ -116,7 +123,7 @@ do
             end
         end
 
-        if not moveLock and eventData[1] == "drag" and tx and self.tx then
+        if not moveLock and eventData[1] == "drag" and tx and self.tx and self.dragged then
             local moveX, moveY = tx - self.tx, ty - self.ty
             if moveX ~= 0 or moveY ~= 0 then
                 self.posX = self.posX + moveX
