@@ -48,7 +48,7 @@ do
         
 
         if self.settings.type == "text" or self.settings.type == "button" then
-            local posX, posY = mathPos()
+            local posX, posY = mathPos(self)
 
             local bg, fg = self.settings.bg, self.settings.fg
             if self.state then
@@ -101,11 +101,29 @@ do
         end
     end
 
+    local function setPos(posX, posY)
+        
+    end
+
     local function listen(self, eventData)
+        local tx, ty
+        if eventData[1] == "touch" or eventData[1] == "drag" then
+            if 
+        end
+
+        local widgetTouched
+        
         for _, widget in ipairs(self.widgets) do
             widget:listen(eventData)
+            if 
+        end
+
+        if not widgetTouched then
+            
         end
     end
+
+    
 
     function createLayout(self, bg, posX, posY, sizeX, sizeY, dragged)
         local layout = {}
