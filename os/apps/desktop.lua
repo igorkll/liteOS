@@ -57,6 +57,42 @@ scene1_window1_button = scene1_window1:createWidget({
         gui:selectScene(scene2)
     end
 })
+scene1_window2 = scene1:createLayout(colors.red, 3, 3, 32, 8, true)
+scene1_window2_text = scene1_window1:createWidget({
+    type = "text",
+
+    posX = 1,
+    posY = 1,
+    sizeX = 32,
+    sizeY = 1,
+    text = "new window",
+})
+scene1_window2_button = scene1_window1:createWidget({
+    type = "button",
+
+    posX = 2,
+    posY = 4,
+    sizeX = 16,
+    sizeY = 1,
+    text = "beep",
+
+    onClick = function()
+        computer.beep()
+    end
+})
+scene1_window2_button2 = scene1_window1:createWidget({
+    type = "button",
+
+    posX = 2,
+    posY = 5,
+    sizeX = 16,
+    sizeY = 1,
+    text = "exit",
+
+    onClick = function()
+        gui:exit()
+    end
+})
 
 scene2 = gui:createScene(colors.green, 80, 10, drawer.palette_defaultTier2, true)
 scene2_window1 = scene2:createLayout(colors.red, 3, 3, 16, 8, true)
