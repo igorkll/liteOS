@@ -45,6 +45,11 @@ do
             if self.settings.togle then
                 if eventData[1] == "touch" and touchInBox(self, eventData, self.layout.posX, self.layout.posY) then
                     self.state = not self.state
+                    if self.state then
+                        callback(self, "onClick")
+                    else
+                        callback(self, "onRelease")
+                    end
                     
                     self.drawzone:draw_begin()
                     self:draw()
@@ -53,20 +58,20 @@ do
             else
                 if eventData[1] == "touch" and touchInBox(self, eventData, self.layout.posX, self.layout.posY) then
                     self.state = true
-                elseif eventData[1] == "drop" and touchInBox(self, eventData, self.layout.posX, self.layout.posY) then
+                    self.drawzone:draw_begin()
+                    self:draw()
+                    self.drawzone:draw_end()
+                    callback(self, "onClick")
+
                     self.state = false
+                    self.drawzone:draw_begin()
+                    self:draw()
+                    self.drawzone:draw_end()
+                    callback(self, "onRelease")
                 end
                 self.drawzone:draw_begin()
                 self:draw()
                 self.drawzone:draw_end()
-            end
-
-            if self.state ~= self.oldstate then
-                if self.state then
-                    callback(self, "onClick")
-                else
-                    callback(self, "onRelease")
-                end
             end
         end
     end
@@ -110,7 +115,6 @@ do
         widget.settings = settings
 
         widget.state = settings.state or false
-        widget.oldstate = widget.state
         widget.posX = settings.posX
         widget.posY = settings.posY
         widget.sizeX = settings.sizeX
@@ -308,6 +312,7 @@ do
         self.drawzone:setUsingTheDefaultPalette(scene.usingTheDefaultPalette)
         self.drawzone:setResolution(scene.sizeX, scene.sizeY)
         self.redrawFlag = true
+        self.drawzone.flushed = true
     end
 
     return {create = function(settings)
