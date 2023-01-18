@@ -12,12 +12,18 @@ do
         table.removeMatches(self.layout.widgets, self)
     end
 
-    function createWidget(self)
+    local function draw(self)
+        
+    end
+
+    function createWidget(self, settings)
         local widget = {}
 
         widget.destroy = destroy
+        widget.draw = draw
 
-        self.layout = self
+        widget.layout = self
+        widget.drawzone = self.drawzone
         table.insert(self.widgets, widget)
         return widget
     end
@@ -31,19 +37,30 @@ do
         table.removeMatches(self.scene.layouts, self)
     end
 
-    function createLayout(self, bg, sizeX, sizeY, dragged)
+    local function draw(self)
+        self.drawzone:fill(self.posX, self.posY, self.sizeX, self.sizeY, table.unpack(self.bg))
+        for _, widget in ipairs(self.widgets) do
+            widget:draw()
+        end
+    end
+
+    function createLayout(self, bg, posX, posY, sizeX, sizeY, dragged)
         local layout = {}
         layout.bg = bg and (type(bg) == "number" and {bg, self.gui.drawzone.maxFg, " "} or bg) or {0, self.gui.drawzone.maxFg, " "}
+        layout.posX = posX or 1
+        layout.posY = posY or 1
         layout.sizeX = sizeX or self.gui.drawzone.maxSizeX
         layout.sizeY = sizeY or self.gui.drawzone.maxSizeY
         layout.dragged = dragged
         layout.widgets = {}
 
         layout.destroy = destroy
+        layout.draw = draw
 
         layout.createWidget = createWidget
 
-        self.scene = self
+        layout.scene = self
+        layout.drawzone = self.drawzone
         table.insert(self.layouts, layout)
         return layout
     end
@@ -57,6 +74,13 @@ do
         table.removeMatches(self.gui.scenes, self)
     end
 
+    local function draw(self)
+        self.drawzone:clear(table.unpack(self.bg))
+        for _, layout in ipairs(self.layouts) do
+            layout:draw()
+        end
+    end
+
     function createScene(self, bg, sizeX, sizeY, palette, usingTheDefaultPalette)
         local scene = {}
         scene.bg = bg and (type(bg) == "number" and {bg, self.drawzone.maxFg, " "} or bg) or {0, self.drawzone.maxFg, " "}
@@ -67,10 +91,12 @@ do
         scene.layouts = {}
 
         scene.destroy = destroy
+        scene.draw = draw
 
         scene.createLayout = createLayout
 
         scene.gui = self
+        scene.drawzone = self.drawzone
         table.insert(self.scenes, scene)
         return scene
     end
@@ -114,10 +140,7 @@ do
 
     local function draw(self)
         self.drawzone:draw_end()
-        self.drawzone:clear(table.unpack(self.scene.bg))
-        for _, layout in ipairs(self.scene.layouts) do
-            layout:draw()
-        end
+        self.scene:draw()
         self.drawzone:draw_begin()
     end
 
