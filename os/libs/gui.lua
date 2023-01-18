@@ -8,10 +8,22 @@ local background = require("background")
 
 local createWidget
 do
+    ----------------------------------------------functions
     local function mathPos(self)
         return self.settings.posX + (self.layout.posX - 1), self.settings.posY + (self.layout.posY - 1)
     end
 
+    local function callback(self, name, ...)
+        return (self.settings[name] or function() end)(...)
+    end
+
+    ----------------------------------------------callbacks
+
+    local function listen(self, eventData)
+        
+    end
+
+    ----------------------------------------------interface
 
     local function destroy(self)
         table.removeMatches(self.layout.widgets, self)
