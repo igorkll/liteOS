@@ -123,7 +123,7 @@ do
             end
         end
 
-        if not moveLock and eventData[1] == "drag" and tx and self.tx and self.dragged then
+        if not moveLock and eventData[1] == "drag" and tx and self.tx and self.dragged and self.selected then
             local moveX, moveY = tx - self.tx, ty - self.ty
             if moveX ~= 0 or moveY ~= 0 then
                 self.posX = self.posX + moveX
