@@ -7,8 +7,8 @@ local function mathColor(self, color)
     return color and (type(color) == "number" and {color, self.drawzone.maxFg, " "} or color) or {0, self.drawzone.maxFg, " "}
 end
 
-local function fillFakeColor(posX, posY, sizeX, sizeY, text, color)
-    
+local function fillFakeColor(self, posX, posY, sizeX, sizeY, text, bg, fg) --фековый цвет позваляет смешивать цвета символами unicode, и отрисовывать серый даже на экранах первого уровня
+    self.drawzone:fill(posX, posY, sizeX, sizeY, table.unpack(bg))
 end
 
 ----------------------------------------------WIDGET
@@ -134,6 +134,9 @@ do
 
     function createScene(self, bg, sizeX, sizeY, palette, usingTheDefaultPalette)
         local scene = {}
+
+        self.drawzone:setUsingTheDefaultPalette(usingTheDefaultPalette) --для правильной работы mathColor
+        
         scene.bg = mathColor(self, bg)
         scene.sizeX = sizeX or self.drawzone.maxSizeX
         scene.sizeY = sizeY or self.drawzone.maxSizeY

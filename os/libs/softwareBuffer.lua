@@ -21,11 +21,11 @@ return {create = function(gpu_address, usePaletteIndex)
         for y = 1, bufferHeight do
             for x = 1, bufferWidth do
                 insert(currentFrameBackgrounds, 0)
-                insert(currentFrameForegrounds, usePaletteIndex and 15 or 0xFFFFFF)
+                insert(currentFrameForegrounds, 0)
                 insert(currentFrameSymbols, " ")
 
                 insert(newFrameBackgrounds, 0)
-                insert(newFrameForegrounds, usePaletteIndex and 15 or 0xFFFFFF)
+                insert(newFrameForegrounds, 0)
                 insert(newFrameSymbols, " ")
             end
         end
@@ -262,5 +262,9 @@ return {create = function(gpu_address, usePaletteIndex)
         get = get,
         set = set,
         update = update,
+
+        setUsingTheDefaultPalette = function(state)
+            usePaletteIndex = state
+        end
     }
 end}

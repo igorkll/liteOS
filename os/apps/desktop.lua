@@ -4,10 +4,9 @@ local colors = require("colors")
 
 ----------------------------------------
 
-local drawzone = drawer.create({
-    palette = drawer.palette_computercraft,
-    usingTheDefaultPalette = true
-})
+local drawzone = drawer.create()
+drawzone:setPalette(drawer.palette_computercraft)
+drawzone:setUsingTheDefaultPalette(true)
 
 ----------------------------------------
 

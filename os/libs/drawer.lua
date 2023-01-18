@@ -198,6 +198,9 @@ end
 function drawer:setUsingTheDefaultPalette(flag)
     self.usingTheDefaultPalette = flag
     self.maxFg = self.usingTheDefaultPalette and 15 or 0xFFFFFF
+    if self.softwareBuffer then
+        self.softwareBuffer.setUsingTheDefaultPalette(flag)
+    end
 end
 
 ------------------------------------------------------------------------service
