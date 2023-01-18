@@ -1,3 +1,4 @@
+--[[
 local drawer = require("drawer")
 local colors = require("colors")
 
@@ -25,3 +26,8 @@ while true do
     end
     drawzone:draw_end()
 end
+]]
+
+local gui = require("gui").create()
+
+gui:run()

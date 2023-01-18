@@ -34,8 +34,11 @@ local function listen(self, eventData)
     end 
 end
 
-local function tick()
-    
+local function tick(self)
+    if self.redrawFlag then
+        self:draw()
+        self.redrawFlag = nil
+    end
 end
 
 local function exit(self)
@@ -55,11 +58,12 @@ local function run(self, func)
     end
 end
 
-local function redraw(self)
+local function draw(self)
     self.drawzone:draw_end()
-
     self.drawzone:clear(table.unpack(self.scene.bg))
-
+    for _, layout in ipairs(self.scene.layouts) do
+        layout:draw()
+    end
     self.drawzone:draw_begin()
 end
 
@@ -70,18 +74,18 @@ local function selectScene(self, scene)
 end
 
 return {create = function(settings)
-    local obj = {}
+    local obj = {redrawFlag = true}
     obj.running = true
     obj.settings = settings or {}
-    obj.drawzone = drawer.create(settings.renderSettings)
-    obj.keyboards = component.invoke(obj.drawzone.settings.screen, "getKeyboards")
+    obj.drawzone = drawer.create(obj.settings.renderSettings)
+    obj.keyboards = component.invoke(obj.drawzone.screen, "getKeyboards")
     obj.scenes = {}
 
     obj.listen = listen
     obj.tick = tick
     obj.exit = exit
     obj.run = run
-    obj.redraw = redraw
+    obj.draw = draw
     obj.selectScene = selectScene
 
 
