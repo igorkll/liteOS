@@ -29,11 +29,14 @@ end
 
 local colors = require("colors")
 local drawer = require("drawer")
-local gui = require("gui").create()
+local gui = require("gui").create({renderSettings = {
+    softwareBufferPriority = false,
+}})
 
 -------------------------------------------
 
 scene1 = gui:createScene(colors.black, 50, 16, drawer.palette_computercraft, true)
+--[[
 scene1_window3 = scene1:createLayout(colors.red, 1, 1, 16, 8, false, true)
 scene1_window3_text = scene1_window3:createWidget({
     type = "text",
@@ -44,6 +47,7 @@ scene1_window3_text = scene1_window3:createWidget({
     sizeY = 1,
     text = "background",
 })
+]]
 
 scene1_window1 = scene1:createLayout(colors.lime, 3, 3, 32, 8, true)
 scene1_window1_text = scene1_window1:createWidget({
