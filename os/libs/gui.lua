@@ -58,6 +58,8 @@ do
         widget.destroy = destroy
         widget.draw = draw
 
+        widget.listen = listen
+
         widget.layout = self
         widget.drawzone = self.drawzone
         table.insert(self.widgets, widget)
@@ -98,6 +100,7 @@ do
 
         layout.destroy = destroy
         layout.draw = draw
+        layout.listen = listen
 
         layout.createWidget = createWidget
 
@@ -140,6 +143,7 @@ do
 
         scene.destroy = destroy
         scene.draw = draw
+        scene.listen = listen
 
         scene.createLayout = createLayout
 
@@ -154,11 +158,10 @@ end
 
 do
     local function listen(self, eventData)
-        if eventData[2] == obj.drawzone.settings.screen then
-            self.scene.listen(eventData)
-        end
-        if table.contains(self.keyboards, eventData[2]) then
-            
+        if eventData[2] == self.drawzone.settings.screen then
+            self.scene:listen(eventData)
+        elseif table.contains(self.keyboards, eventData[2]) then
+            self.scene:listen(eventData)
         end 
     end
 
@@ -179,10 +182,11 @@ do
 
     local function run(self, func)
         while self.running do
-            tick()
+            tick(self)
             if func then
                 func()
             end
+            computer.pullSignal(0.5)
         end
     end
 
