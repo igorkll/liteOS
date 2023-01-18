@@ -177,8 +177,19 @@ do
     end
 
     local function listen(self, eventData)
-        for _, layout in ipairs(self.layouts) do
-            layout:listen(eventData)
+        local upLayout = self.layouts[#self.layouts]
+        upLayout:listen(eventData)
+        if not upLayout.selected and eventData[1] == "touch" then
+            local tx, ty = eventData[3], eventData[4]
+
+            for i = #self.layouts - 1, 1 do
+                local layout = self.layouts[i]
+                if tx >= layout.posX and ty >= layout.posY and tx < (layout.posX + layout.sizeX) and ty < (layout.posX + layout.sizeX) then
+                    self.layouts[#self.layouts] = self.layouts[i]
+                    self.layouts[i] = upLayout
+                    break
+                end
+            end
         end
     end
 
