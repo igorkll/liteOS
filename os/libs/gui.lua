@@ -8,12 +8,18 @@ local background = require("background")
 
 local createWidget
 do
+    local function mathPos(self)
+        return self.settings.posX + (self.layout.posX - 1), self.settings.posY + (self.layout.posY - 1)
+    end
+
+
     local function destroy(self)
         table.removeMatches(self.layout.widgets, self)
     end
 
     local function draw(self)
-        
+        local sizeX, sizeY = mathPos(self)
+
     end
 
     function createWidget(self, settings)
