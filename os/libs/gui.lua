@@ -7,6 +7,10 @@ local function mathColor(self, color)
     return color and (type(color) == "number" and {color, self.drawzone.maxFg, " "} or color) or {0, self.drawzone.maxFg, " "}
 end
 
+local function fillFakeColor(posX, posY, sizeX, sizeY, text, color)
+    
+end
+
 ----------------------------------------------WIDGET
 
 local createWidget
@@ -76,6 +80,12 @@ do
         end
     end
 
+    local function listen(self, eventData)
+        for _, widget in ipairs(self.widgets) do
+            widget:listen(eventData)
+        end
+    end
+
     function createLayout(self, bg, posX, posY, sizeX, sizeY, dragged)
         local layout = {}
         layout.bg = mathColor(self, bg)
@@ -113,6 +123,12 @@ do
         end
     end
 
+    local function listen(self, eventData)
+        for _, layout in ipairs(self.layouts) do
+            layout:listen(eventData)
+        end
+    end
+
     function createScene(self, bg, sizeX, sizeY, palette, usingTheDefaultPalette)
         local scene = {}
         scene.bg = mathColor(self, bg)
@@ -139,7 +155,7 @@ end
 do
     local function listen(self, eventData)
         if eventData[2] == obj.drawzone.settings.screen then
-            
+            self.scene.listen(eventData)
         end
         if table.contains(self.keyboards, eventData[2]) then
             
@@ -179,7 +195,7 @@ do
     local function selectScene(self, scene)
         self.scene = scene
         self.drawzone:setPalette(scene.palette)
-        self.drawzone:setUsingTheDefaultPalette(self.usingTheDefaultPalette)
+        self.drawzone:setUsingTheDefaultPalette(scene.usingTheDefaultPalette)
         self.drawzone:setResolution(scene.sizeX, scene.sizeY)
         self.redrawFlag = true
     end
@@ -203,7 +219,7 @@ do
         obj.createScene = createScene
         
         background.addListen(function(...)
-            obj.listen(obj, {...})
+            obj:listen({...})
         end)
         return obj
     end}
