@@ -111,7 +111,7 @@ do
         
         for _, widget in ipairs(self.widgets) do
             widget:listen(eventData)
-            if tx and ty and tx >= widget.posX or ty >= widget.posY and tx < widget.posX + widget.sizeX and ty <= widget.posY + widget.sizeY then
+            if tx and ty and tx >= widget.settings.posX or ty >= widget.settings.posY and tx < widget.settings.posX + widget.settings.sizeX and ty <= widget.settings.posY + widget.settings.sizeY then
                 widgetTouched = true
             end
         end
