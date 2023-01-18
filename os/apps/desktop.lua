@@ -30,13 +30,51 @@ end
 
 local colors = require("colors")
 local drawer = require("drawer")
+local gui = require("gui").create()
 
 -------------------------------------------
 
-local gui = require("gui").create()
-local scene1 = gui:createScene(colors.purple, 50, 16, drawer.palette_computercraft, true)
-local scene2 = gui:createScene(colors.green, 80, 10, drawer.palette_defaultTier2, true)
+scene1 = gui:createScene(colors.purple, 50, 16, drawer.palette_computercraft, true)
+scene1_window1 = scene1:createLayout(colors.lime, 3, 3, 16, 8, true)
+scene1_window1_text = scene1_window1:createWidget({
+    posX = 2,
+    posY = 2,
+    sizeX = 32,
+    sizeY = 1,
+    label = "current scene 1",
+})
+scene1_window1_button = scene1_window1:createWidget({
+    posX = 2,
+    posY = 4,
+    sizeX = 16,
+    sizeY = 1,
+    label = "to scene 2",
 
+    onClick = function()
+        gui:selectScene(scene2)
+    end
+})
 
+scene2 = gui:createScene(colors.green, 80, 10, drawer.palette_defaultTier2, true)
+scene2_window1 = scene1:createLayout(colors.red, 3, 3, 16, 8, true)
+scene2_window1_text = scene2_window1:createWidget({
+    posX = 2,
+    posY = 2,
+    sizeX = 32,
+    sizeY = 1,
+    label = "current scene 2",
+})
+scene2_window1_button = scene2_window1:createWidget({
+    posX = 2,
+    posY = 4,
+    sizeX = 16,
+    sizeY = 1,
+    label = "to scene 1",
 
+    onClick = function()
+        gui:selectScene(scene1)
+    end
+})
+
+gui:selectScene(scene1)
 gui:run()

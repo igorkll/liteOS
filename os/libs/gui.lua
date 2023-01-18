@@ -18,8 +18,8 @@ do
     end
 
     local function draw(self)
-        local sizeX, sizeY = mathPos(self)
-
+        local posX, posY = mathPos(self)
+        
     end
 
     function createWidget(self, settings)
@@ -154,6 +154,7 @@ do
     local function selectScene(self, scene)
         self.scene = scene
         self.drawzone:setPalette(scene.palette)
+        self.drawzone:setUsingTheDefaultPalette(self.usingTheDefaultPalette)
         self.drawzone:setResolution(scene.sizeX, scene.sizeY)
         self.redrawFlag = true
     end
