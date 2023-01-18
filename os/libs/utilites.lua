@@ -42,10 +42,20 @@ function os.sleep(time)
     end
 end
 
+
 function table.contains(tbl, element)
     for _, value in pairs(tbl) do
         if value == element then
             return true
+        end
+    end
+    return false
+end
+
+function table.removeMatches(tbl, v)
+    for index, value in pairs(tbl) do
+        if value == v then
+            table.remove(tbl, index)
         end
     end
     return false
