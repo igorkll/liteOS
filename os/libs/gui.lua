@@ -45,15 +45,16 @@ do
             if self.settings.togle then
                 if eventData[1] == "touch" and touchInBox(self, eventData, self.layout.posX, self.layout.posY) then
                     self.state = not self.state
+
+                    self.drawzone:draw_begin()
+                    self:draw()
+                    self.drawzone:draw_end()
+
                     if self.state then
                         callback(self, "onClick")
                     else
                         callback(self, "onRelease")
                     end
-                    
-                    self.drawzone:draw_begin()
-                    self:draw()
-                    self.drawzone:draw_end()
                 end
             else
                 if eventData[1] == "touch" and touchInBox(self, eventData, self.layout.posX, self.layout.posY) then
@@ -154,9 +155,7 @@ do
         end
 
         if eventData[1] == "touch" then
-            if touchInBox(self, eventData) then
-                self.selected = true
-            end
+            self.selected = touchInBox(self, eventData)
         elseif eventData[1] == "drop" then
             self.selected = false
         end

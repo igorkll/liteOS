@@ -33,7 +33,7 @@ local gui = require("gui").create()
 
 -------------------------------------------
 
-scene1 = gui:createScene({colors.purple, colors.red, "#"}, 50, 16, drawer.palette_computercraft, true)
+scene1 = gui:createScene(colors.black, 50, 16, drawer.palette_computercraft, true)
 scene1_window1 = scene1:createLayout(colors.lime, 3, 3, 32, 8, true)
 scene1_window1_text = scene1_window1:createWidget({
     type = "text",
@@ -76,8 +76,19 @@ scene1_window2_button = scene1_window2:createWidget({
     sizeY = 1,
     text = "beep",
 
+    togle = true,
+
+    bg = {colors.red, colors.yellow, "▒"},
+    fg = {colors.blue, colors.lightblue, "▒"},
+
+    pressed_bg = {colors.green, colors.lime, "▒"},
+    pressed_fg = {colors.lightblue, colors.blue, "▒"},
+
     onClick = function()
         computer.beep()
+    end,
+    onRelease = function()
+        computer.beep(800)
     end
 })
 scene1_window2_button2 = scene1_window2:createWidget({
@@ -95,22 +106,22 @@ scene1_window2_button2 = scene1_window2:createWidget({
 })
 
 scene2 = gui:createScene(colors.green, 80, 10, drawer.palette_defaultTier2, true)
-scene2_window1 = scene2:createLayout(colors.red, 3, 3, 16, 8, true)
+scene2_window1 = scene2:createLayout(colors.red, 3, 3, 18, 8, true)
 scene2_window1_text = scene2_window1:createWidget({
     type = "text",
 
-    posX = 2,
+    posX = 3,
     posY = 2,
-    sizeX = 32,
+    sizeX = 14,
     sizeY = 1,
-    text = "current scene 2",
+    text = "scene 2",
 })
 scene2_window1_button = scene2_window1:createWidget({
     type = "button",
 
-    posX = 2,
+    posX = 3,
     posY = 4,
-    sizeX = 16,
+    sizeX = 14,
     sizeY = 1,
     text = "to scene 1",
 
