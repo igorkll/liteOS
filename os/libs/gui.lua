@@ -1,13 +1,27 @@
 local drawer = require("drawer")
 local background = require("background")
 
-----------------------------------------------
+----------------------------------------------WIDGET
 
-local function createScene(rx, ry, palette)
+
+
+----------------------------------------------SCENE
+
+local function createLayout()
     
 end
 
-----------------------------------------------
+local function createScene(sizeX, sizeY, palette)
+    local scene = {}
+    scene.sizeX = sizeX
+    scene.sizeY = sizeY
+    scene.palette = palette
+
+    scene.createLayout = createLayout
+    return scene
+end
+
+----------------------------------------------GUI
 
 local function listen(self, eventData)
     if eventData[2] == obj.drawzone.settings.screen then
@@ -39,6 +53,11 @@ local function run(self, func)
     end
 end
 
+local function selectScene(self, scene)
+    self.scene = scene
+    
+end
+
 return {create = function(settings)
     local obj = {}
     obj.running = true
@@ -51,6 +70,9 @@ return {create = function(settings)
     obj.exit = exit
     obj.run = run
 
+    obj.createScene = createScene
+    obj.selectScene = selectScene
+    
     background.addListen(function(...)
         obj.listen(obj, {...})
     end)

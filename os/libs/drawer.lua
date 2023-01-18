@@ -183,8 +183,12 @@ function drawer:setPaletteColor(index, color)
 end
 
 function drawer:setPalette(palette)
+    if not palette then
+        gpu.setDepth(1) --сброс палитры
+        gpu.setDepth(gpu.maxDepth())
+    end
     for i = 0, 15 do
-        self.palette[i] = palette[i]
+        self.palette[i] = palette and palette[i] or self.gpu.getPaletteColor(i)
     end
 end
 
