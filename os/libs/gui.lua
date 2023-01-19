@@ -303,6 +303,7 @@ do
 
         layout.createWidget = createWidget
         layout.createLabel = createLabel
+        layout.createFullscreenText = createFullscreenText
 
         layout.createExitButton = createExitButton
 
@@ -431,7 +432,11 @@ do
 
     local function draw(self)
         self.drawzone:draw_begin()
-        self.scene:draw()
+        if self.scene then
+            self.scene:draw()
+        else
+            self.drawzone:set(1, 1, "scene is not selected")
+        end
         self.drawzone:draw_end()
     end
 

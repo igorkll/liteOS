@@ -10,7 +10,7 @@ local scene = gui:createScene(
     colors.cyan,
     gui.drawzone.maxSizeX,
     gui.drawzone.maxSizeY,
-    drawer.palette_defaultTier2,
+    drawer.palette_computercraft,
     true
 )
 
@@ -59,5 +59,16 @@ local function runProgramm(name)
         getWindowPos = getWindowPos,
         createMessage = createMessage,
     }))
-    
+    if not code then
+        createMessage(colors.red, err or "unknown", "error")
+    end
+
+    local ok, err = pcall(code)
+    if not ok then
+        createMessage(colors.red, err or "unknown", "error")
+    end
 end
+
+gui:selectScene(scene)
+runProgramm("hello")
+gui:run()
