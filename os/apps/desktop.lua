@@ -36,18 +36,34 @@ local gui = require("gui").create({renderSettings = {
 -------------------------------------------
 
 scene1 = gui:createScene(colors.black, 50, 16, drawer.palette_computercraft, true)
---[[
-scene1_window3 = scene1:createLayout(colors.red, 1, 1, 16, 8, false, true)
+scene1_window3 = scene1:createLayout(colors.cyan, 1, 1, scene1.sizeX, scene1.sizeY, false, true)
 scene1_window3_text = scene1_window3:createWidget({
     type = "text",
 
     posX = 2,
     posY = 2,
-    sizeX = 14,
+    sizeX = 16,
     sizeY = 1,
     text = "background",
 })
-]]
+scene1_window3_button = scene1_window3:createWidget({
+    type = "button",
+
+    posX = 2,
+    posY = 4,
+    sizeX = 16,
+    sizeY = 1,
+    text = "test button",
+})
+scene1_window3_button2 = scene1_window3:createWidget({
+    type = "button",
+
+    posX = 2,
+    posY = 5,
+    sizeX = 16,
+    sizeY = 1,
+    text = "test button 2",
+})
 
 scene1_window1 = scene1:createLayout(colors.lime, 3, 3, 32, 8, true)
 scene1_window1_text = scene1_window1:createWidget({

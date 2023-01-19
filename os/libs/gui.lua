@@ -46,9 +46,7 @@ do
                 if eventData[1] == "touch" and touchInBox(self, eventData, self.layout.posX, self.layout.posY) then
                     self.state = not self.state
 
-                    self.drawzone:draw_begin()
-                    self:draw()
-                    self.drawzone:draw_end()
+                    self.gui:draw()
 
                     if self.state then
                         callback(self, "onClick")
@@ -59,20 +57,13 @@ do
             else
                 if eventData[1] == "touch" and touchInBox(self, eventData, self.layout.posX, self.layout.posY) then
                     self.state = true
-                    self.drawzone:draw_begin()
-                    self:draw()
-                    self.drawzone:draw_end()
+                    self.gui:draw()
                     callback(self, "onClick")
 
                     self.state = false
-                    self.drawzone:draw_begin()
-                    self:draw()
-                    self.drawzone:draw_end()
+                    self.gui:draw()
                     callback(self, "onRelease")
                 end
-                self.drawzone:draw_begin()
-                self:draw()
-                self.drawzone:draw_end()
             end
         end
     end
@@ -87,15 +78,13 @@ do
         local posX, posY = mathPos(self)
 
         if self.settings.type == "text" or self.settings.type == "button" then
-            local posX, posY = mathPos(self)
-
             local bg, fg = self.settings.bg, self.settings.fg
             if not bg then bg = {0, 0, " "} end
-            if not fg then fg = {self.drawzone.maxFg, 0, " "} end
+            if not fg then fg = {self.maxFg, 0, " "} end
             if self.state then
                 bg = self.settings.pressed_bg
                 fg = self.settings.pressed_fg
-                if not bg then bg = {self.drawzone.maxFg, 0, " "} end
+                if not bg then bg = {self.maxFg, 0, " "} end
                 if not fg then fg = {0, 0, " "} end
             end
             
@@ -127,7 +116,10 @@ do
         widget.listen = listen
 
         widget.layout = self
+        self.drawzone:setUsingTheDefaultPalette(self.scene.usingTheDefaultPalette) --для правильной работы mathColor
         widget.drawzone = self.drawzone
+        widget.maxFg = self.drawzone.maxFg
+        widget.gui = self.scene.gui
         table.insert(self.widgets, widget)
         return widget
     end
@@ -183,15 +175,18 @@ do
 
     
     --notSelectable стоит использовать только для background layout`а, иначе вы можете сломать всю сцену
-    function createLayout(self, bg, posX, posY, sizeX, sizeY, dragged, notSelectable)
+    function createLayout(self, bg, posX, posY, sizeX, sizeY, dragged, doNotMoveToTheUpperLevel)
         local layout = {}
+
+        self.drawzone:setUsingTheDefaultPalette(self.usingTheDefaultPalette) --для правильной работы mathColor
+
         layout.bg = mathColor(self, bg)
         layout.posX = posX or 1
         layout.posY = posY or 1
         layout.sizeX = sizeX or self.gui.drawzone.maxSizeX
         layout.sizeY = sizeY or self.gui.drawzone.maxSizeY
         layout.dragged = dragged
-        layout.notSelectable = notSelectable
+        layout.doNotMoveToTheUpperLevel = doNotMoveToTheUpperLevel
         layout.widgets = {}
 
         layout.destroy = destroy
@@ -224,17 +219,32 @@ do
 
     local function listen(self, eventData)
         local upLayout = self.layouts[#self.layouts]
-        upLayout:listen(eventData)
-        if not upLayout.selected and eventData[1] == "touch" then
-            for i = #self.layouts - 1, 1 do
+        if eventData[1] == "touch" or eventData[1] == "drop" or eventData[1] == "drag" or eventData[1] == "scroll" then
+            if self.lastLayout then
+                if not self.lastLayout.selected then
+                    self.lastLayout = nil
+                else
+                    self.lastLayout:listen(eventData)
+                    return
+                end
+            end
+
+            for i = #self.layouts, 1, -1 do
                 local layout = self.layouts[i]
-                if layout and not layout.notSelectable and touchInBox(layout, eventData) then
-                    self.layouts[#self.layouts] = self.layouts[i]
-                    self.layouts[i] = upLayout
-                    self.gui.redrawFlag = true
+                if touchInBox(layout, eventData) then
+                    if not layout.doNotMoveToTheUpperLevel then
+                        self.layouts[#self.layouts] = self.layouts[i]
+                        self.layouts[i] = upLayout
+                        self.gui.redrawFlag = true
+                    end
                     layout:listen(eventData)
+                    self.lastLayout = layout
                     break
                 end
+            end
+        else
+            for _, layout in ipairs(self.layouts) do
+                layout:listen(eventData)
             end
         end
     end
@@ -296,7 +306,7 @@ do
             if func then
                 func()
             end
-            computer.pullSignal(0.5)
+            computer.pullSignal(0.1)
         end
     end
 

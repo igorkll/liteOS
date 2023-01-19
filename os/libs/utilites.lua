@@ -53,9 +53,18 @@ function table.contains(tbl, element)
 end
 
 function table.removeMatches(tbl, v)
-    for index, value in pairs(tbl) do
+    for index, value in ipairs(tbl) do
         if value == v then
             table.remove(tbl, index)
+        end
+    end
+    return false
+end
+
+function table.removeAllMatches(tbl, v)
+    for key, value in pairs(tbl) do
+        if value == v then
+            tbl[key] = nil
         end
     end
     return false
