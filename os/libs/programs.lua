@@ -21,6 +21,16 @@ function programs.find(name)
     end
 end
 
+function programs.list()
+    local files = {}
+    for _, folder in ipairs(programs.paths) do
+        for _, path in ipairs(fs.list(folder)) do
+            table.insert(files, fs.hideExtension(path))
+        end
+    end
+    return files
+end
+
 function programs.load(name, envtbl)
     local path = programs.find(name)
     local text, err = fs.readFile(path)

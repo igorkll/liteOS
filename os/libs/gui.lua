@@ -255,7 +255,7 @@ do
         }
     end
     
-    --notSelectable стоит использовать только для background layout`а, иначе вы можете сломать всю сцену
+    --doNotMoveToTheUpperLevel стоит использовать только для background layout`а, иначе вы можете сломать всю сцену
     function createLayout(self, bg, posX, posY, sizeX, sizeY, dragged, doNotMoveToTheUpperLevel)
         local layout = {}
 
