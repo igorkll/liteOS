@@ -196,24 +196,7 @@ scene1_nicknamegetter_text = scene1_nicknamegetter:createWidget({
     sizeY = 1,
     text = "nickname recipient",
 })
-scene1_nicknamegetter_closebutton = scene1_nicknamegetter:createWidget({
-    type = "button",
-
-    posX = 32,
-    posY = 1,
-    sizeX = 1,
-    sizeY = 1,
-    text = "X",
-
-    bg = colors.red,
-    fg = colors.white,
-    pressed_bg = colors.brown,
-    pressed_fg = colors.black,
-
-    onClick = function()
-        scene1_nicknamegetter:destroy()
-    end
-})
+scene1_nicknamegetter_closebutton = scene1_nicknamegetter:createExitButton()
 
 scene1_nicknamegetter_button = scene1_nicknamegetter:createWidget({
     type = "button",

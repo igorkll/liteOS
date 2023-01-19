@@ -1,5 +1,6 @@
 local drawer = require("drawer")
 local advmath = require("advmath")
+local colors = require("colors")
 
 ----------------------------------------------FUNCS
 
@@ -20,15 +21,19 @@ local function touchInBox(box, eventData, startX, startY)
     return tx >= box.posX and ty >= box.posY and tx < (box.posX + box.sizeX) and ty < (box.posY + box.sizeY)
 end
 
+local function getColor(self, name)
+    if self.drawzone.usingTheDefaultPalette then
+        return colors[name]
+    else
+        return drawer.palette_defaultTier2[colors[name]]
+    end
+end
+
 ----------------------------------------------WIDGET
 
 local createWidget
 do
     ----------------------------------------------functions
-
-    local function getColors(self)
-        return mathColor(self, self.settings.bg), mathColor(self, self.settings.fg)
-    end
 
     local function mathPos(self)
         return self.posX + (self.layout.posX - 1), self.posY + (self.layout.posY - 1)
@@ -66,8 +71,10 @@ do
                     elseif eventData[1] == "drop" then
                         if self.state then
                            self.state = false
-                            self.gui:draw()
-                            callback(self, "onRelease", eventData[6])
+                            self.gui.redrawFlag = true
+                            if not self.settings. or touchInBox(self, eventData, self.layout.posX, self.layout.posY) then
+                                callback(self, "onRelease", eventData[6])
+                            end
                         end
                     end
                 else
@@ -172,6 +179,7 @@ local createLayout
 do
     local function destroy(self)
         table.removeMatches(self.scene.layouts, self)
+        self.scene.gui.redrawFlag = true
     end
 
     local function draw(self)
@@ -195,7 +203,6 @@ do
 
         local moveLock
         for _, widget in ipairs(self.widgets) do
-            
             if widget:listen(eventData) then
                 moveLock = true
             end
@@ -214,6 +221,30 @@ do
         self.ty = ty
     end
 
+    --------------------------------------------------------------auto creators
+
+    local function createExitButton(self, posX, posY)
+        return self:createWidget{
+            type = "button",
+        
+            posX = posX or self.sizeX,
+            posY = posY or 1,
+            sizeX = 1,
+            sizeY = 1,
+            text = "X",
+        
+            bg = getColor(self, "red"),
+            fg = getColor(self, "white"),
+            pressed_bg = getColor(self, "brown"),
+            pressed_fg = getColor(self, "black"),
+        
+            notAutoReleased = true,
+
+            onRelease = function()
+                self:destroy()
+            end
+        }
+    end
     
     --notSelectable стоит использовать только для background layout`а, иначе вы можете сломать всю сцену
     function createLayout(self, bg, posX, posY, sizeX, sizeY, dragged, doNotMoveToTheUpperLevel)
@@ -235,6 +266,8 @@ do
         layout.listen = listen
 
         layout.createWidget = createWidget
+
+        layout.createExitButton = createExitButton
 
         layout.scene = self
         layout.drawzone = self.drawzone
@@ -274,8 +307,10 @@ do
                 local layout = self.layouts[i]
                 if touchInBox(layout, eventData) then
                     if not layout.doNotMoveToTheUpperLevel then
-                        self.layouts[#self.layouts] = self.layouts[i]
-                        self.layouts[i] = upLayout
+                        table.insert(self.layouts, self.layouts[i])
+                        table.remove(self.layouts, i)
+                        table.insert(self.layouts, 1, upLayout)
+
                         self.gui.redrawFlag = true
                     end
                     layout:listen(eventData)
