@@ -56,4 +56,4 @@ end
 autorun("/autorun")
 autorun("/data/autorun")
 
-require("programs").execute("desktop")
+require("programs").execute("guidemo")

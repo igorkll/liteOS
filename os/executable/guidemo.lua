@@ -35,7 +35,7 @@ local gui = require("gui").create({renderSettings = {
 
 -------------------------------------------
 
-scene1 = gui:createScene(colors.black, 50, 16, drawer.palette_computercraft, true)
+scene1 = gui:createScene(colors.black, 80, 25, drawer.palette_computercraft, true)
 scene1_window3 = scene1:createLayout(colors.cyan, 1, 1, scene1.sizeX, scene1.sizeY, false, true)
 scene1_window3_text = scene1_window3:createWidget({
     type = "text",
@@ -44,26 +44,76 @@ scene1_window3_text = scene1_window3:createWidget({
     posY = 2,
     sizeX = 16,
     sizeY = 1,
-    text = "background",
+    text = "gui demo",
 })
 scene1_window3_button = scene1_window3:createWidget({
     type = "button",
 
     posX = 2,
     posY = 4,
-    sizeX = 16,
+    sizeX = 24,
     sizeY = 1,
-    text = "test button",
+    text = "not auto released",
+
+    notAutoReleased = true,
+
+    onClick = function()
+        computer.beep(500)
+    end,
+    onRelease = function()
+        computer.beep(200)
+    end
 })
 scene1_window3_button2 = scene1_window3:createWidget({
     type = "button",
 
     posX = 2,
     posY = 5,
-    sizeX = 16,
+    sizeX = 24,
     sizeY = 1,
-    text = "test button 2",
+    text = "auto released",
+
+    onClick = function()
+        computer.beep(2000)
+    end,
+    onRelease = function()
+        computer.beep(1500)
+    end
 })
+scene1_window3_button2 = scene1_window3:createWidget({
+    type = "button",
+
+    posX = 2,
+    posY = 6,
+    sizeX = 24,
+    sizeY = 1,
+    text = "togle button",
+
+    togle = true,
+
+    onClick = function()
+        computer.beep(100)
+    end,
+    onRelease = function()
+        computer.beep(50)
+    end
+})
+
+for i = 1, 8 do
+    scene1_window3:createWidget({
+        type = "button",
+    
+        posX = scene1_window3.sizeX - 13,
+        posY = 1 + i,
+        sizeX = 12,
+        sizeY = 1,
+        text = tostring(i) .. ". swipe on us",
+    
+        notAutoReleased = true
+    })
+end
+
+---------------------------------------------------------------------------------------
 
 scene1_window1 = scene1:createLayout(colors.lime, 3, 3, 32, 8, true)
 scene1_window1_text = scene1_window1:createWidget({
@@ -97,7 +147,7 @@ scene1_window2_text = scene1_window2:createWidget({
     posY = 1,
     sizeX = 32,
     sizeY = 1,
-    text = "new window",
+    text = "control",
 })
 scene1_window2_button = scene1_window2:createWidget({
     type = "button",

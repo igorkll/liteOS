@@ -55,14 +55,29 @@ do
                     end
                 end
             else
-                if eventData[1] == "touch" and touchInBox(self, eventData, self.layout.posX, self.layout.posY) then
-                    self.state = true
-                    self.gui:draw()
-                    callback(self, "onClick")
+                if self.settings.notAutoReleased then
+                    --вы можете разом активировать несколько notAutoReleased кнопок просто свайпнув по ним, и разом отпустить отпустив кнопку мыши
+                    if (eventData[1] == "touch" or eventData[1] == "drag") and touchInBox(self, eventData, self.layout.posX, self.layout.posY) then
+                        self.state = true
+                        self.gui:draw()
+                        callback(self, "onClick")
+                    elseif eventData[1] == "drop" then
+                        if self.state then
+                           self.state = false
+                            self.gui:draw()
+                            callback(self, "onRelease")
+                        end
+                    end
+                else
+                    if eventData[1] == "touch" and touchInBox(self, eventData, self.layout.posX, self.layout.posY) then
+                        self.state = true
+                        self.gui:draw()
+                        callback(self, "onClick")
 
-                    self.state = false
-                    self.gui:draw()
-                    callback(self, "onRelease")
+                        self.state = false
+                        self.gui:draw()
+                        callback(self, "onRelease")
+                    end
                 end
             end
         end
