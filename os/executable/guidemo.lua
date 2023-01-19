@@ -33,6 +33,7 @@ local gui = require("gui").create({renderSettings = {
     softwareBufferPriority = false,
 }})
 
+
 -------------------------------------------
 
 scene1 = gui:createScene(colors.black, 80, 25, drawer.palette_computercraft, true)

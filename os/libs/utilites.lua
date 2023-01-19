@@ -57,10 +57,12 @@ end
 
 -------------------------------------------------
 
-function os.sleep(time)
+function os.sleep(time, func)
+    if not func then func = computer.pullSignal end
+
     local inTime = computer.uptime()
     while computer.uptime() - inTime < time do
-        computer.pullSignal(time - (computer.uptime() - inTime))
+        func(time - (computer.uptime() - inTime))
     end
 end
 

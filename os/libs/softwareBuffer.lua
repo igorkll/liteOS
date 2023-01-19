@@ -1,3 +1,5 @@
+local advmath = require("advmath")
+
 return {create = function(gpu_address, usePaletteIndex)
     local invoke, insert, concat, len, sub = component.invoke, table.insert, table.concat, unicode.len, unicode.sub
 
@@ -230,11 +232,11 @@ return {create = function(gpu_address, usePaletteIndex)
         end
         
         for background, foregrounds in pairs(changes) do
-            invoke(gpu_address, "setBackground", background, usePaletteIndex)
+            invoke(gpu_address, "setBackground", advmath.constrain(background, 0, usePaletteIndex and 15 or 0xFFFFFF), usePaletteIndex)
 
             for foreground, pixels in pairs(foregrounds) do
                 if currentForeground ~= foreground then
-                    invoke(gpu_address, "setForeground", foreground, usePaletteIndex)
+                    invoke(gpu_address, "setForeground", advmath.constrain(foreground, 0, usePaletteIndex and 15 or 0xFFFFFF), usePaletteIndex)
                     currentForeground = foreground
                 end
 

@@ -1,5 +1,5 @@
 local drawer = require("drawer")
-local background = require("background")
+local advmath = require("advmath")
 
 ----------------------------------------------FUNCS
 
@@ -72,13 +72,24 @@ do
                     end
                 else
                     if eventData[1] == "touch" and touchInBox(self, eventData, self.layout.posX, self.layout.posY) then
+                        --спит оставшееся время если функция отработала быстрее 0.5 секунд
+                        local function sleep(uptime)
+                            os.sleep(0.1 - advmath.constrain(computer.uptime() - uptime, 0, 0.1), function()end)
+                        end
+
+
+                        
                         self.state = true
                         self.gui:draw()
+                        local uptime = computer.uptime()
                         callback(self, "onClick", eventData[6])
+                        sleep(uptime)
 
                         self.state = false
                         self.gui:draw()
+                        local uptime = computer.uptime()
                         callback(self, "onRelease", eventData[6])
+                        sleep(uptime)
                     end
                 end
             end
@@ -327,9 +338,10 @@ do
         end
     end
 
-    local function run(self, func)
+    local function run(self, func, time)
+        tick(self)
         while self.running do
-            local eventData = {computer.pullSignal(1)}
+            local eventData = {computer.pullSignal(time)}
             self:listen(eventData)
 
             tick(self)
@@ -368,7 +380,6 @@ do
         obj.run = run
         obj.draw = draw
         obj.selectScene = selectScene
-
 
         obj.createScene = createScene
         return obj
