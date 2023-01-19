@@ -49,34 +49,36 @@ do
                     self.gui:draw()
 
                     if self.state then
-                        callback(self, "onClick")
+                        callback(self, "onClick", eventData[6])
                     else
-                        callback(self, "onRelease")
+                        callback(self, "onRelease", eventData[6])
                     end
                 end
             else
                 if self.settings.notAutoReleased then
                     --вы можете разом активировать несколько notAutoReleased кнопок просто свайпнув по ним, и разом отпустить отпустив кнопку мыши
                     if (eventData[1] == "touch" or eventData[1] == "drag") and touchInBox(self, eventData, self.layout.posX, self.layout.posY) then
-                        self.state = true
-                        self.gui:draw()
-                        callback(self, "onClick")
+                        if not self.state then
+                            self.state = true
+                            self.gui:draw()
+                            callback(self, "onClick", eventData[6])
+                        end
                     elseif eventData[1] == "drop" then
                         if self.state then
                            self.state = false
                             self.gui:draw()
-                            callback(self, "onRelease")
+                            callback(self, "onRelease", eventData[6])
                         end
                     end
                 else
                     if eventData[1] == "touch" and touchInBox(self, eventData, self.layout.posX, self.layout.posY) then
                         self.state = true
                         self.gui:draw()
-                        callback(self, "onClick")
+                        callback(self, "onClick", eventData[6])
 
                         self.state = false
                         self.gui:draw()
-                        callback(self, "onRelease")
+                        callback(self, "onRelease", eventData[6])
                     end
                 end
             end
@@ -115,6 +117,15 @@ do
         end
     end
 
+    local function setParam(self, name, value)
+        self.settings[name] = value
+        self[name] = value
+    end
+
+    local function getParam(self, name)
+        return self[name]
+    end
+
     function createWidget(self, settings)
         local widget = {}
         widget.settings = settings
@@ -127,6 +138,8 @@ do
 
         widget.destroy = destroy
         widget.draw = draw
+        widget.setParam = setParam
+        widget.getParam = getParam
 
         widget.listen = listen
 

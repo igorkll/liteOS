@@ -139,7 +139,9 @@ scene1_window1_button = scene1_window1:createWidget({
     end
 })
 
-scene1_window2 = scene1:createLayout(colors.red, 3, 3, 32, 8, true)
+---------------------------------------------------------------------------------------
+
+scene1_window2 = scene1:createLayout(colors.red, 10, 8, 32, 8, true)
 scene1_window2_text = scene1_window2:createWidget({
     type = "text",
 
@@ -180,6 +182,63 @@ scene1_window2_button2 = scene1_window2:createWidget({
         gui:exit()
     end
 })
+
+---------------------------------------------------------------------------------------
+
+scene1_nicknamegetter = scene1:createLayout(colors.red, 10, 8, 32, 8, true)
+scene1_nicknamegetter_text = scene1_nicknamegetter:createWidget({
+    type = "text",
+
+    posX = 1,
+    posY = 1,
+    sizeX = 31,
+    sizeY = 1,
+    text = "nickname recipient",
+})
+scene1_nicknamegetter_closebutton = scene1_window2:createWidget({
+    type = "button",
+
+    posX = 32,
+    posY = 1,
+    sizeX = 1,
+    sizeY = 1,
+    text = "X",
+
+    bg = colors.red,
+    fg = colors.white,
+    pressed_bg = colors.brown,
+    pressed_fg = colors.black,
+
+    onClick = function()
+        scene1_nicknamegetter:destroy()
+    end
+})
+
+scene1_nicknamegetter_button = scene1_nicknamegetter:createWidget({
+    type = "button",
+
+    posX = 2,
+    posY = 3,
+    sizeX = 24,
+    sizeY = 1,
+    text = "get your nickname",
+
+
+    onClick = function(name)
+        scene1_nicknamegetter_nickname:setParam("text", name or "-")
+    end
+})
+scene1_nicknamegetter_nickname = scene1_nicknamegetter:createWidget({
+    type = "text",
+
+    posX = 2,
+    posY = 4,
+    sizeX = 24,
+    sizeY = 1,
+    text = "-",
+})
+
+---------------------------------------------------------------------------------------
 
 scene2 = gui:createScene(colors.green, 80, 10, drawer.palette_defaultTier2, true)
 scene2_window1 = scene2:createLayout(colors.red, 3, 3, 18, 8, true)
