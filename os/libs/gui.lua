@@ -47,8 +47,9 @@ do
 
     local function listen(self, eventData)
         if self.settings.type == "button" then
+            local touchinbox = touchInBox(self, eventData, self.layout.posX, self.layout.posY)
             if self.settings.togle then
-                if eventData[1] == "touch" and touchInBox(self, eventData, self.layout.posX, self.layout.posY) then
+                if eventData[1] == "touch" and touchinbox then
                     self.state = not self.state
 
                     self.gui:draw()
@@ -62,7 +63,7 @@ do
             else
                 if self.settings.notAutoReleased then
                     --вы можете разом активировать несколько notAutoReleased кнопок просто свайпнув по ним, и разом отпустить отпустив кнопку мыши
-                    if (eventData[1] == "touch" or eventData[1] == "drag") and touchInBox(self, eventData, self.layout.posX, self.layout.posY) then
+                    if (eventData[1] == "touch" or eventData[1] == "drag") and touchinbox then
                         if not self.state then
                             self.state = true
                             self.gui:draw()
@@ -72,13 +73,13 @@ do
                         if self.state then
                            self.state = false
                             self.gui.redrawFlag = true
-                            if not self.settings. or touchInBox(self, eventData, self.layout.posX, self.layout.posY) then
+                            if not self.settings.releaseOnlyInABox or touchinbox then
                                 callback(self, "onRelease", eventData[6])
                             end
                         end
                     end
                 else
-                    if eventData[1] == "touch" and touchInBox(self, eventData, self.layout.posX, self.layout.posY) then
+                    if eventData[1] == "touch" and touchinbox then
                         --спит оставшееся время если функция отработала быстрее 0.5 секунд
                         local function sleep(uptime)
                             os.sleep(0.1 - advmath.constrain(computer.uptime() - uptime, 0, 0.1), function()end)
@@ -100,6 +101,7 @@ do
                     end
                 end
             end
+            return touchinbox
         end
     end
 
@@ -196,19 +198,23 @@ do
         end
 
         if eventData[1] == "touch" then
-            self.selected = touchInBox(self, eventData)
+            if not self.selected and not self.moveLock then
+                self.selected = touchInBox(self, eventData)
+            end
         elseif eventData[1] == "drop" then
             self.selected = false
+            self.moveLock = false
         end
 
-        local moveLock
         for _, widget in ipairs(self.widgets) do
             if widget:listen(eventData) then
-                moveLock = true
+                if not self.selected then
+                    self.moveLock = true
+                end
             end
         end
 
-        if not moveLock and eventData[1] == "drag" and tx and self.tx and self.dragged and self.selected then
+        if not self.moveLock and eventData[1] == "drag" and tx and self.tx and self.dragged and self.selected then
             local moveX, moveY = tx - self.tx, ty - self.ty
             if moveX ~= 0 or moveY ~= 0 then
                 self.posX = self.posX + moveX
@@ -239,6 +245,7 @@ do
             pressed_fg = getColor(self, "black"),
         
             notAutoReleased = true,
+            releaseOnlyInABox = true, --чтобы вы смогли отменить выход, если отпустите мыш находясь не в пределах кнопки
 
             onRelease = function()
                 self:destroy()
