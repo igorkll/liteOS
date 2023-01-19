@@ -16,6 +16,11 @@ local scene = gui:createScene(
 
 local standardWindowsSizeX, standardWindowsSizeY = 32, 8
 
+----------------------------------------------background
+
+local background = scene:createLayout(colors.cyan, 1, 1, scene.sizeX, scene.sizeY, false, true)
+background:createLabel(_OSVERSION)
+
 ----------------------------------------------
 
 local function getWindowPos(sizeX, sizeY)

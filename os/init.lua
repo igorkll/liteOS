@@ -1,3 +1,7 @@
+_OSVERSION = "liteOS 1.0"
+
+---------------------------------------------------
+
 bootaddress = computer.getBootAddress()
 bootfs = component.proxy(bootaddress)
 
