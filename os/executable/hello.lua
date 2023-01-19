@@ -10,5 +10,5 @@ local layout = scene:createLayout(
 )
 layout:createExitButton()
 layout:createLabel("hello, world!")
-asd
+
 return layout

@@ -14,7 +14,7 @@ local scene = gui:createScene(
     true
 )
 
-local standardWindowsSizeX, standardWindowsSizeY = 48, 10
+local standardWindowSizeX, standardWindowSizeY = 48, 10
 
 ----------------------------------------------background
 
@@ -24,21 +24,21 @@ background:createLabel(_OSVERSION)
 ----------------------------------------------
 
 local function getWindowPos(sizeX, sizeY)
-    return math.floor((scene.sizeX / 2) - (sizeX / 2)), math.floor((scene.sizeY / 2) - (sizeY / 2))
+    return math.round((scene.sizeX / 2) - (sizeX / 2)), math.round((scene.sizeY / 2) - (sizeY / 2))
 end
 
 local function createMessage(color, label, text)
     color = color or colors.gray
     label = label or "alert message"
     text = text or ""
-    local posX, posY = getWindowPos(16, 16)
+    local posX, posY = getWindowPos(standardWindowSizeX, standardWindowSizeY)
     
     local layout = scene:createLayout(
         color,
         posX,
         posY,
-        standardWindowsSizeX,
-        standardWindowsSizeY,
+        standardWindowSizeX,
+        standardWindowSizeY,
         true
     )
 
@@ -49,28 +49,31 @@ local function createMessage(color, label, text)
 end
 
 local function runProgramm(name)
+    local posX, posY = getWindowPos(standardWindowSizeX, standardWindowSizeY)
+
     local code, err = programs.load(name, env.createProgrammEnv({
         gui = gui,
         scene = scene,
 
-        recommendedPosX = 4,
-        recommendedPosY = 4,
-        recommendedSizeX = standardWindowsSizeX,
-        recommendedSizeY = standardWindowsSizeY,
+        recommendedPosX = posX,
+        recommendedPosY = posY,
+        recommendedSizeX = standardWindowSizeX,
+        recommendedSizeY = standardWindowSizeY,
 
         getWindowPos = getWindowPos,
         createMessage = createMessage,
     }))
     if not code then
-        createMessage(colors.red, err or "unknown", "error")
+        createMessage(colors.red, "error", err or "unknown")
     else
         local ok, err = pcall(code)
         if not ok then
-            createMessage(colors.red, err or "unknown", "error")
+            createMessage(colors.red, "error", err or "unknown")
         end
     end
 end
 
 gui:selectScene(scene)
 runProgramm("hello")
+runProgramm("guidemo")
 gui:run()
