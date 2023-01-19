@@ -254,6 +254,33 @@ do
             end
         }
     end
+
+    local function createLabel(self, text)
+        return self:createWidget({
+            type = "text",
+        
+            posX = 1,
+            posY = 1,
+            sizeX = self.sizeX - 1,
+            sizeY = 1,
+            text = text or "",
+        })
+    end
+
+    local function createFullscreenText(self, text, bg, fg)
+        return self:createWidget({
+            type = "text",
+        
+            posX = 1,
+            posY = 2,
+            sizeX = self.sizeX,
+            sizeY = self.sizeY - 1,
+            text = text or "",
+
+            bg = bg,
+            fg = fg,
+        })
+    end
     
     --doNotMoveToTheUpperLevel стоит использовать только для background layout`а, иначе вы можете сломать всю сцену
     function createLayout(self, bg, posX, posY, sizeX, sizeY, dragged, doNotMoveToTheUpperLevel)
@@ -275,6 +302,7 @@ do
         layout.listen = listen
 
         layout.createWidget = createWidget
+        layout.createLabel = createLabel
 
         layout.createExitButton = createExitButton
 
