@@ -443,11 +443,11 @@ do
         self.drawzone:draw_end()
     end
 
-    local function selectScene(self, scene)
+    local function selectScene(self, scene, force)
         self.scene = scene
         self.drawzone:setPalette(scene.palette)
         self.drawzone:setUsingTheDefaultPalette(scene.usingTheDefaultPalette)
-        self.drawzone:setResolution(scene.sizeX, scene.sizeY)
+        self.drawzone:setResolution(scene.sizeX, scene.sizeY, force)
         self.redrawFlag = true
         self.drawzone.flushed = true
     end

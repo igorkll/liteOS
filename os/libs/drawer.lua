@@ -145,11 +145,11 @@ function drawer:_begin()
     end
 end
 
-function drawer:setResolution(rx, ry)
+function drawer:setResolution(rx, ry, force)
     checkArg(1, rx, "number")
     checkArg(2, ry, "number")
 
-    if self.sizeX == rx and self.sizeY == ry then
+    if self.sizeX == rx and self.sizeY == ry and not force then
         return false
     end
 

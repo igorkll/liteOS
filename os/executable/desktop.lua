@@ -51,7 +51,9 @@ end
 local function runProgramm(name)
     local posX, posY = getWindowPos(standardWindowSizeX, standardWindowSizeY)
 
-    local code, err = programs.load(name, env.createProgrammEnv({
+    local uptime = computer.uptime()
+
+    local localenv = {
         gui = gui,
         scene = scene,
 
@@ -62,7 +64,8 @@ local function runProgramm(name)
 
         getWindowPos = getWindowPos,
         createMessage = createMessage,
-    }))
+    }
+    local code, err = programs.load(name, env.createProgrammEnv(localenv))
     if not code then
         createMessage(colors.red, "error", err or "unknown")
     else
@@ -70,6 +73,11 @@ local function runProgramm(name)
         if not ok then
             createMessage(colors.red, "error", err or "unknown")
         end
+    end
+
+    --если вдруг это полноэкранная программа создающия свой инстанс gui которая сбила настройки
+    if computer.uptime() - uptime > 0.5 or localenv.breaksSettings then
+        gui:selectScene(scene, true)
     end
 end
 
