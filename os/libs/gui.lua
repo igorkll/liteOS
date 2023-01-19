@@ -58,6 +58,7 @@ do
                         callback(self, "onClick", eventData[6])
                     else
                         callback(self, "onRelease", eventData[6])
+                        callback(self, "onReleaseInBox", eventData[6])
                     end
                 end
             else
@@ -73,8 +74,9 @@ do
                         if self.state then
                            self.state = false
                             self.gui.redrawFlag = true
-                            if not self.settings.releaseOnlyInABox or touchinbox then
-                                callback(self, "onRelease", eventData[6])
+                            callback(self, "onRelease", eventData[6])
+                            if touchinbox then
+                                callback(self, "onReleaseInBox", eventData[6])
                             end
                         end
                     end
@@ -97,6 +99,7 @@ do
                         self.gui:draw()
                         local uptime = computer.uptime()
                         callback(self, "onRelease", eventData[6])
+                        callback(self, "onReleaseInBox", eventData[6])
                         sleep(uptime)
                     end
                 end
@@ -245,9 +248,8 @@ do
             pressed_fg = getColor(self, "black"),
         
             notAutoReleased = true,
-            releaseOnlyInABox = true, --чтобы вы смогли отменить выход, если отпустите мыш находясь не в пределах кнопки
 
-            onRelease = function()
+            onReleaseInBox = function()
                 self:destroy()
             end
         }

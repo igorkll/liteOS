@@ -18,7 +18,7 @@ do
     function computer.pullSignal(time)
         local data = {pullSignal(time)}
         for index, value in ipairs(background.listens) do
-            value(table.unpack(data))
+            value(table.unpack(data)) --обратите внимания что функция будет вызвана даже если event не был получен, а pullsignal просто отработал
         end
         return table.unpack(data)
     end

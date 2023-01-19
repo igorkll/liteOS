@@ -1,7 +1,7 @@
 local colors = require("colors")
 local drawer = require("drawer")
 local gui = require("gui").create({renderSettings = {
-    softwareBufferPriority = false,
+    softwareBufferPriority = true,
 }})
 
 
@@ -58,9 +58,8 @@ local function createControl()
         text = "reboot",
 
         notAutoReleased = true,
-        releaseOnlyInABox = true,
 
-        onRelease = function()
+        onReleaseInBox = function()
             computer.shutdown(true)
         end
     })
@@ -74,9 +73,8 @@ local function createControl()
         text = "shutdown",
 
         notAutoReleased = true,
-        releaseOnlyInABox = true,
 
-        onRelease = function()
+        onReleaseInBox = function()
             computer.shutdown()
         end
     })
@@ -89,7 +87,9 @@ local function createControl()
         sizeY = 1,
         text = "exit",
 
-        onClick = function()
+        notAutoReleased = true,
+
+        onReleaseInBox = function()
             gui:exit()
         end
     })
