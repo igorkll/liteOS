@@ -107,14 +107,16 @@ do
 
         if self.settings.type == "text" or self.settings.type == "button" then
             local bg, fg = self.settings.bg, self.settings.fg
-            if not bg then bg = {0, 0, " "} end
-            if not fg then fg = {self.maxFg, 0, " "} end
+            if not bg then bg = 0 end
+            if not fg then fg = self.maxFg end
             if self.state then
                 bg = self.settings.pressed_bg
                 fg = self.settings.pressed_fg
-                if not bg then bg = {self.maxFg, 0, " "} end
-                if not fg then fg = {0, 0, " "} end
+                if not bg then bg = self.maxFg end
+                if not fg then fg = 0 end
             end
+            bg = mathColor(self, bg)
+            fg = mathColor(self, fg)
             
             fillFakeColor(self,
                 posX,
