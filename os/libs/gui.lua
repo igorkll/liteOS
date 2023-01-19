@@ -197,24 +197,24 @@ do
             tx, ty = eventData[3], eventData[4]
         end
 
-        if eventData[1] == "touch" then
-            if not self.selected and not self.moveLock then
-                self.selected = touchInBox(self, eventData)
-            end
-        elseif eventData[1] == "drop" then
-            self.selected = false
-            self.moveLock = false
-        end
-
-        for _, widget in ipairs(self.widgets) do
-            if widget:listen(eventData) then
-                if not self.selected then
-                    self.moveLock = true
+        local moveLock
+        if not self.selected then
+            for _, widget in ipairs(self.widgets) do
+                if widget:listen(eventData) then
+                    moveLock = true
                 end
             end
         end
 
-        if not self.moveLock and eventData[1] == "drag" and tx and self.tx and self.dragged and self.selected then
+        if eventData[1] == "touch" then
+            if not self.selected and not moveLock then
+                self.selected = touchInBox(self, eventData)
+            end
+        elseif eventData[1] == "drop" then
+            self.selected = false
+        end
+
+        if not moveLock and self.selected and eventData[1] == "drag" and tx and self.tx and self.dragged then
             local moveX, moveY = tx - self.tx, ty - self.ty
             if moveX ~= 0 or moveY ~= 0 then
                 self.posX = self.posX + moveX
@@ -300,7 +300,7 @@ do
 
     local function listen(self, eventData)
         local upLayout = self.layouts[#self.layouts]
-        if eventData[1] == "touch" or eventData[1] == "drop" or eventData[1] == "drag" or eventData[1] == "scroll" then
+        if eventData[1] == "touch" or eventData[1] == "drag" or eventData[1] == "scroll" then
             if self.lastLayout then
                 if not self.lastLayout.selected then
                     self.lastLayout = nil
@@ -314,9 +314,13 @@ do
                 local layout = self.layouts[i]
                 if touchInBox(layout, eventData) then
                     if not layout.doNotMoveToTheUpperLevel then
-                        table.insert(self.layouts, self.layouts[i])
+                        --table.remove(self.layouts, #self.layouts)
+
                         table.remove(self.layouts, i)
-                        table.insert(self.layouts, 1, upLayout)
+                        table.insert(self.layouts, layout)
+
+                        
+                        --table.insert(self.layouts, 1, upLayout)
 
                         self.gui.redrawFlag = true
                     end
