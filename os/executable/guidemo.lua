@@ -1,32 +1,3 @@
---[[
-local drawer = require("drawer")
-local colors = require("colors")
-
-----------------------------------------
-
-local drawzone = drawer.create()
-drawzone:setPalette(drawer.palette_computercraft)
-drawzone:setUsingTheDefaultPalette(true)
-
-----------------------------------------
-
-local px, py = 1, 1
-while true do
-    local eventData = {computer.pullSignal(1)}
-    if eventData[1] == "drag" then
-        px, py = eventData[3], eventData[4]
-    end
-
-    drawzone:draw_begin()
-    drawzone:clear()
-    drawzone:fill(px, py, 16, 16, colors.brown)
-    for i = 0, 15 do
-        drawzone:set(px + i, py + i, colors.yellow, colors.red, "@")
-    end
-    drawzone:draw_end()
-end
-]]
-
 local colors = require("colors")
 local drawer = require("drawer")
 local gui = require("gui").create({renderSettings = {
@@ -34,9 +5,139 @@ local gui = require("gui").create({renderSettings = {
 }})
 
 
--------------------------------------------
+--------------------------------------------------------------------------------------
 
 scene1 = gui:createScene(colors.black, 80, 25, drawer.palette_computercraft, true)
+
+local function createSceneselector()
+    local layout = scene1:createLayout(colors.lime, 3, 3, 32, 8, true)
+    local text = layout:createWidget({
+        type = "text",
+
+        posX = 1,
+        posY = 1,
+        sizeX = 31,
+        sizeY = 1,
+        text = "current scene 1",
+    })
+    local button = layout:createWidget({
+        type = "button",
+
+        posX = 2,
+        posY = 4,
+        sizeX = 16,
+        sizeY = 1,
+        text = "to scene 2",
+
+        onClick = function()
+            gui:selectScene(scene2)
+        end
+    })
+
+    layout:createExitButton()
+end
+
+local function createControl()
+    local layout = scene1:createLayout(colors.red, 6, 6, 32, 8, true)
+    local label = layout:createWidget({
+        type = "text",
+
+        posX = 1,
+        posY = 1,
+        sizeX = 31,
+        sizeY = 1,
+        text = "control",
+    })
+    local button = layout:createWidget({
+        type = "button",
+
+        posX = 2,
+        posY = 3,
+        sizeX = 16,
+        sizeY = 1,
+        text = "reboot",
+
+        notAutoReleased = true,
+        releaseOnlyInABox = true,
+
+        onRelease = function()
+            computer.shutdown(true)
+        end
+    })
+    local button = layout:createWidget({
+        type = "button",
+
+        posX = 2,
+        posY = 4,
+        sizeX = 16,
+        sizeY = 1,
+        text = "shutdown",
+
+        notAutoReleased = true,
+        releaseOnlyInABox = true,
+
+        onRelease = function()
+            computer.shutdown()
+        end
+    })
+    local button2 = layout:createWidget({
+        type = "button",
+
+        posX = 2,
+        posY = 5,
+        sizeX = 16,
+        sizeY = 1,
+        text = "exit",
+
+        onClick = function()
+            gui:exit()
+        end
+    })
+
+    layout:createExitButton()
+end
+
+local function createNicknamegetter()
+    local layout = scene1:createLayout(colors.yellow, 9, 9, 32, 8, true)
+    local label = layout:createWidget({
+        type = "text",
+
+        posX = 1,
+        posY = 1,
+        sizeX = 31,
+        sizeY = 1,
+        text = "nickname recipient",
+    })
+    local nickname = layout:createWidget({
+        type = "text",
+
+        posX = 2,
+        posY = 4,
+        sizeX = 24,
+        sizeY = 1,
+        text = "-",
+    })
+    local button = layout:createWidget({
+        type = "button",
+
+        posX = 2,
+        posY = 3,
+        sizeX = 24,
+        sizeY = 1,
+        text = "get your nickname",
+
+
+        onClick = function(name)
+            nickname:setParam("text", name or "-")
+        end
+    })
+
+    layout:createExitButton()
+end
+
+
+
+
 scene1_window3 = scene1:createLayout(colors.cyan, 1, 1, scene1.sizeX, scene1.sizeY, false, true)
 scene1_window3_text = scene1_window3:createWidget({
     type = "text",
@@ -114,119 +215,47 @@ for i = 1, 8 do
     })
 end
 
----------------------------------------------------------------------------------------
+scene1_window3:createWidget({
+    type = "button",
 
-scene1_window1 = scene1:createLayout(colors.lime, 3, 3, 32, 8, true)
-scene1_window1_text = scene1_window1:createWidget({
-    type = "text",
-
-    posX = 1,
-    posY = 1,
+    posX = 2,
+    posY = 8,
     sizeX = 32,
     sizeY = 1,
-    text = "current scene 1",
+    text = "open nickname getter",
+
+    onClick = function()
+        createNicknamegetter()
+    end
 })
-scene1_window1_button = scene1_window1:createWidget({
+scene1_window3:createWidget({
     type = "button",
 
     posX = 2,
-    posY = 4,
-    sizeX = 16,
-    sizeY = 1,
-    text = "to scene 2",
-
-    onClick = function()
-        gui:selectScene(scene2)
-    end
-})
-
----------------------------------------------------------------------------------------
-
-scene1_window2 = scene1:createLayout(colors.red, 6, 6, 32, 8, true)
-scene1_window2_text = scene1_window2:createWidget({
-    type = "text",
-
-    posX = 1,
-    posY = 1,
+    posY = 9,
     sizeX = 32,
     sizeY = 1,
-    text = "control",
+    text = "open control panel",
+
+    onClick = function()
+        createControl()
+    end
 })
-scene1_window2_button = scene1_window2:createWidget({
+scene1_window3:createWidget({
     type = "button",
 
     posX = 2,
-    posY = 4,
-    sizeX = 16,
+    posY = 10,
+    sizeX = 32,
     sizeY = 1,
-    text = "beep",
-
-    togle = true,
+    text = "open scene selector",
 
     onClick = function()
-        computer.beep()
-    end,
-    onRelease = function()
-        computer.beep(800)
-    end
-})
-scene1_window2_button2 = scene1_window2:createWidget({
-    type = "button",
-
-    posX = 2,
-    posY = 5,
-    sizeX = 16,
-    sizeY = 1,
-    text = "exit",
-
-    onClick = function()
-        gui:exit()
+        createSceneselector()
     end
 })
 
----------------------------------------------------------------------------------------
-
-local function createNicknamegetter()
-    local layout = scene1:createLayout(colors.yellow, 9, 9, 32, 8, true)
-    scene1_nicknamegetter_text = layout:createWidget({
-        type = "text",
-
-        posX = 1,
-        posY = 1,
-        sizeX = 31,
-        sizeY = 1,
-        text = "nickname recipient",
-    })
-
-    scene1_nicknamegetter_button = layout:createWidget({
-        type = "button",
-
-        posX = 2,
-        posY = 3,
-        sizeX = 24,
-        sizeY = 1,
-        text = "get your nickname",
-
-
-        onClick = function(name)
-            scene1_nicknamegetter_nickname:setParam("text", name or "-")
-        end
-    })
-    scene1_nicknamegetter_nickname = layout:createWidget({
-        type = "text",
-
-        posX = 2,
-        posY = 4,
-        sizeX = 24,
-        sizeY = 1,
-        text = "-",
-    })
-
-    scene1_nicknamegetter_closebutton = layout:createExitButton()
-end
-
-
----------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------scene2
 
 scene2 = gui:createScene(colors.green, 80, 10, drawer.palette_defaultTier2, true)
 scene2_window1 = scene2:createLayout(colors.red, 3, 3, 18, 8, true)
