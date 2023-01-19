@@ -14,7 +14,7 @@ local scene = gui:createScene(
     true
 )
 
-local standardWindowsSizeX, standardWindowsSizeY = 32, 8
+local standardWindowsSizeX, standardWindowsSizeY = 48, 10
 
 ----------------------------------------------background
 
@@ -41,9 +41,11 @@ local function createMessage(color, label, text)
         standardWindowsSizeY,
         true
     )
+
+    layout:createExitButton()
+
     layout:createLabel(label)
     layout:createFullscreenText(text, color, colors.white)
-    layout:createExitButton()
 end
 
 local function runProgramm(name)
@@ -61,11 +63,11 @@ local function runProgramm(name)
     }))
     if not code then
         createMessage(colors.red, err or "unknown", "error")
-    end
-
-    local ok, err = pcall(code)
-    if not ok then
-        createMessage(colors.red, err or "unknown", "error")
+    else
+        local ok, err = pcall(code)
+        if not ok then
+            createMessage(colors.red, err or "unknown", "error")
+        end
     end
 end
 

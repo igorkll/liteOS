@@ -233,10 +233,10 @@ do
     --------------------------------------------------------------auto creators
 
     local function createExitButton(self, posX, posY)
-        return self:createWidget{
+        local widget = self:createWidget{
             type = "button",
         
-            posX = posX or self.sizeX,
+            posX = posX or (self.sizeX - self.buttonvalue),
             posY = posY or 1,
             sizeX = 1,
             sizeY = 1,
@@ -253,6 +253,8 @@ do
                 self:destroy()
             end
         }
+        self.buttonvalue = self.buttonvalue + 1
+        return widget
     end
 
     local function createLabel(self, text)
@@ -261,7 +263,7 @@ do
         
             posX = 1,
             posY = 1,
-            sizeX = self.sizeX - 1,
+            sizeX = self.sizeX - self.buttonvalue,
             sizeY = 1,
             text = text or "",
         })
@@ -295,6 +297,7 @@ do
         layout.sizeY = sizeY or self.gui.drawzone.maxSizeY
         layout.dragged = dragged
         layout.doNotMoveToTheUpperLevel = doNotMoveToTheUpperLevel
+        layout.buttonvalue = 0
         layout.widgets = {}
 
         layout.destroy = destroy
