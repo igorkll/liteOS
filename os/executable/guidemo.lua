@@ -141,7 +141,7 @@ scene1_window1_button = scene1_window1:createWidget({
 
 ---------------------------------------------------------------------------------------
 
-scene1_window2 = scene1:createLayout(colors.red, 10, 8, 32, 8, true)
+scene1_window2 = scene1:createLayout(colors.red, 6, 6, 32, 8, true)
 scene1_window2_text = scene1_window2:createWidget({
     type = "text",
 
@@ -185,7 +185,7 @@ scene1_window2_button2 = scene1_window2:createWidget({
 
 ---------------------------------------------------------------------------------------
 
-scene1_nicknamegetter = scene1:createLayout(colors.red, 10, 8, 32, 8, true)
+scene1_nicknamegetter = scene1:createLayout(colors.yellow, 9, 9, 32, 8, true)
 scene1_nicknamegetter_text = scene1_nicknamegetter:createWidget({
     type = "text",
 
@@ -195,7 +195,7 @@ scene1_nicknamegetter_text = scene1_nicknamegetter:createWidget({
     sizeY = 1,
     text = "nickname recipient",
 })
-scene1_nicknamegetter_closebutton = scene1_window2:createWidget({
+scene1_nicknamegetter_closebutton = scene1_nicknamegetter:createWidget({
     type = "button",
 
     posX = 32,

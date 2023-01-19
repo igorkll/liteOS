@@ -31,9 +31,31 @@ function saveFile(fs, path, data)
     return true
 end
 
+-------------------------------------------------
+
+local function getPath()
+    local info
+
+    for runLevel = 0, math.huge do
+        info = debug.getinfo(runLevel)
+
+        if info then
+            if info.what == "main" then
+                return info.source:sub(2, -1)
+            end
+        else
+            error("Failed to get debug info for runlevel " .. runLevel)
+        end
+    end
+end
+
+-------------------------------------------------
+
 function math.round(number)
     return math.floor(number + 0.5)
 end
+
+-------------------------------------------------
 
 function os.sleep(time)
     local inTime = computer.uptime()
@@ -42,6 +64,7 @@ function os.sleep(time)
     end
 end
 
+-------------------------------------------------
 
 function table.contains(tbl, element)
     for _, value in pairs(tbl) do

@@ -250,7 +250,7 @@ end
 
 function drawer:_setColor(bg, fg)
     self.gpu.setBackground(bg or 0, self.usingTheDefaultPalette)
-    self.gpu.setForeground(fg or self.maxFg, self.usingTheDefaultPalette)
+    self.gpu.setForeground(fg or 0xFFFFFF, self.usingTheDefaultPalette)
 end
 
 

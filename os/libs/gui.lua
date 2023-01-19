@@ -4,7 +4,7 @@ local background = require("background")
 ----------------------------------------------FUNCS
 
 local function mathColor(self, color)
-    return color and (type(color) == "number" and {color, self.drawzone.maxFg, " "} or color) or {0, self.drawzone.maxFg, " "}
+    return color and (type(color) == "number" and {color, 0xFFFFFF, " "} or color) or {0, 0xFFFFFF, " "}
 end
 
 local function fillFakeColor(self, posX, posY, sizeX, sizeY, text, bg, fg) --фековый цвет позваляет смешивать цвета символами unicode, и отрисовывать серый даже на экранах первого уровня
@@ -324,17 +324,18 @@ do
         if self.running then
             self.running = false
             self.drawzone:destroy()
-            background.removeListen(self.listen)
         end
     end
 
     local function run(self, func)
         while self.running do
+            local eventData = {computer.pullSignal(1)}
+            self:listen(eventData)
+
             tick(self)
             if func then
                 func()
             end
-            computer.pullSignal(0.1)
         end
     end
 
@@ -370,10 +371,6 @@ do
 
 
         obj.createScene = createScene
-        
-        background.addListen(function(...)
-            obj:listen({...})
-        end)
         return obj
     end}
 end
