@@ -1,6 +1,7 @@
 local drawer = require("drawer")
 local advmath = require("advmath")
 local colors = require("colors")
+local parser = require("parser")
 
 ----------------------------------------------FUNCS
 
@@ -14,7 +15,20 @@ end
 local function fillFakeColor(self, posX, posY, sizeX, sizeY, text, bg, fg) --фековый цвет позваляет смешивать цвета символами unicode, и отрисовывать серый даже на экранах первого уровня
     self.drawzone:fill(posX, posY, sizeX, sizeY, table.unpack(bg))
     local centerX, centerY = math.floor(posX + (sizeX / 2)), math.floor(posY + (sizeY / 2))
-    self.drawzone:set(centerX - math.floor(unicode.len(text) / 2), centerY, bg[1], fg[1], text)
+
+    local gstrs = {}
+    for _, str in ipairs(parser.split(unicode, text, "\n")) do
+        for _, str in ipairs(parser.toParts(unicode, str, sizeX)) do
+            table.insert(gstrs, str)
+        end
+    end
+
+    local index = 0
+    for _, str in ipairs(gstrs) do
+        index = index + 1
+        if index > sizeY then break end
+        self.drawzone:set(centerX - math.floor(unicode.len(str) / 2), centerY, bg[1], fg[1], str)
+    end
 end
 
 local function touchInBox(box, eventData, startX, startY)
@@ -290,7 +304,8 @@ do
             if moveX ~= 0 or moveY ~= 0 then
                 self.posX = self.posX + moveX
                 self.posY = self.posY + moveY
-                self.scene.gui.redrawFlag = true
+                --self.scene.gui.redrawFlag = true
+                self.scene.gui:draw()
             end
         end
 

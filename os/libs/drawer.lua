@@ -128,7 +128,7 @@ function drawer.create(settings) --создает графическую сис�
                 end
             end
         end
-        
+
         obj.flushed = true
         return obj
     end
