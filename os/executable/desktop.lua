@@ -2,7 +2,13 @@ local programs = require("programs")
 local colors = require("colors")
 local drawer = require("drawer")
 local env = require("env")
-local gui = require("gui").create()
+local gui = require("gui").create(
+    {
+        renderSettings = {
+            softwareBufferPriority = true,
+        }
+    }
+)
 
 ----------------------------------------------
 
