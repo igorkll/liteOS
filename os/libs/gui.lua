@@ -114,7 +114,7 @@ do
                 local touchinbox, tx, ty = touchInBox(self, eventData, self.layout.posX, self.layout.posY)
 
                 if touchinbox then
-                    self.value = math.round(advmath.mapClip(tx, 1, self.sizeX, 0, 100))
+                    self.value = math.round(advmath.mapClip(tx - 1, 1, self.sizeX, 0, 100))
                     self.gui:draw()
                     callback(self, "onSeek", self.value)
                 end
