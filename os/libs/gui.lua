@@ -325,8 +325,8 @@ do
             sizeY = 1,
             text = text or "",
 
-            bg = mathColor(self. getColor("white")),
-            fg = mathColor(self. getColor("black"))
+            bg = mathColor(self, getColor(self, "white")),
+            fg = mathColor(self, getColor(self, "black"))
         })
     end
 
@@ -340,8 +340,8 @@ do
             sizeY = self.sizeY - 1,
             text = text or "",
 
-            bg = bg or mathColor(self. getColor("white")),
-            fg = fg or mathColor(self. getColor("black"))
+            bg = bg or mathColor(self, getColor(self, "white")),
+            fg = fg or mathColor(self, getColor(self, "black"))
         })
     end
 
