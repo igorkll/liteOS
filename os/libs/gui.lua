@@ -21,7 +21,7 @@ local function touchInBox(box, eventData, startX, startY)
     if not startX then startX = 1 end
     if not startY then startY = 1 end
     local tx, ty = eventData[3] - (startX - 1), eventData[4] - (startY - 1)
-    return tx >= box.posX and ty >= box.posY and tx < (box.posX + box.sizeX) and ty < (box.posY + box.sizeY)
+    return tx >= box.posX and ty >= box.posY and tx < (box.posX + box.sizeX) and ty < (box.posY + box.sizeY), tx, ty
 end
 
 local function getColor(self, name)
@@ -32,6 +32,11 @@ local function getColor(self, name)
     end
 end
 
+local function callback(self, name, ...)
+    local tbl = self.settings or self
+    return (tbl[name] or function() end)(...)
+end
+
 ----------------------------------------------WIDGET
 
 local createWidget
@@ -40,10 +45,6 @@ do
 
     local function mathPos(self)
         return self.posX + (self.layout.posX - 1), self.posY + (self.layout.posY - 1)
-    end
-
-    local function callback(self, name, ...)
-        return (self.settings[name] or function() end)(...)
     end
 
     ----------------------------------------------callbacks
@@ -108,6 +109,16 @@ do
                 end
             end
             return touchinbox
+        elseif self.settings.type == "seek" then
+            local touchinbox, tx, ty = touchInBox(self, eventData, self.layout.posX, self.layout.posY)
+
+            if touchinbox then
+                self.value = advmath.mapClip(tx, 1, self.sizeX, 0, 100)
+                self.gui:draw()
+                callback(self, "onSeek", self.value)
+            end
+
+            return touchinbox
         end
     end
 
@@ -115,6 +126,7 @@ do
 
     local function destroy(self)
         table.removeMatches(self.layout.widgets, self)
+        callback(self, "onDestroy")
     end
 
     local function draw(self)
@@ -163,7 +175,7 @@ do
                 defaultcolor,
                 char_circle
             )
-        elseif self.settings.type == "progress_bar" then
+        elseif self.settings.type == "progress" then
             fillFakeColor(self,
                 posX,
                 posY,
@@ -199,6 +211,8 @@ do
         widget.settings = settings
 
         widget.state = settings.state or false
+        widget.value = settings.value or 0
+
         widget.posX = settings.posX
         widget.posY = settings.posY
         widget.sizeX = settings.sizeX
@@ -228,6 +242,7 @@ do
     local function destroy(self)
         table.removeMatches(self.scene.layouts, self)
         self.scene.gui.redrawFlag = true
+        callback(self, "onDestroy")
     end
 
     local function draw(self)
@@ -371,6 +386,7 @@ local createScene
 do
     local function destroy(self)
         table.removeMatches(self.gui.scenes, self)
+        callback(self, "onDestroy")
     end
 
     local function draw(self)
