@@ -27,7 +27,7 @@ local function fillFakeColor(self, posX, posY, sizeX, sizeY, text, bg, fg) --Ñ„Ð
     for _, str in ipairs(gstrs) do
         index = index + 1
         if index > sizeY then break end
-        self.drawzone:set(centerX - math.floor(unicode.len(str) / 2), centerY, bg[1], fg[1], str)
+        self.drawzone:set(centerX - math.floor(unicode.len(str) / 2), #gstrs > 1 and (posY + (index - 1)) or centerY, bg[1], fg[1], str)
     end
 end
 

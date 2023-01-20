@@ -11,4 +11,6 @@ local layout = scene:createLayout(
 layout:createExitButton()
 layout:createLabel("hello, world!")
 
+error(string.rep("K", 1024), 0)
+
 return layout
