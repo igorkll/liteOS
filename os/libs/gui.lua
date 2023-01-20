@@ -114,9 +114,10 @@ do
                 local touchinbox, tx, ty = touchInBox(self, eventData, self.layout.posX, self.layout.posY)
 
                 if touchinbox then
-                    self.value = math.round(advmath.mapClip(tx - 1, 1, self.sizeX, 0, 100))
-                    self.gui:draw()
+                    self.value = advmath.mapClip(tx - 1, 1, self.sizeX, self.min, self.max)
                     callback(self, "onSeek", self.value)
+
+                    self.gui:draw()
                 end
 
                 return touchinbox
@@ -163,8 +164,19 @@ do
 
             self.drawzone:fill(posX, posY, self.sizeX, self.sizeY, bg[1], fg[1], "|")
             self.drawzone:fill(posX, centerY, self.sizeX, 1, bg[1], getColor(self, "black"), "-")
+
+            local px = posX + math.round(advmath.mapClip(self.value, self.min, self.max, 0, (self.sizeX - 1)))
+            for i = 1, self.sizeY do
+                self.drawzone:set(
+                    px,
+                    posY + (i - 1),
+                    getColor(self, "white"),
+                    getColor(self, "lime"),
+                    "|"
+                )
+            end
             self.drawzone:set(
-                posX + math.round(advmath.mapClip(self.value, 0, 100, 0, (self.sizeX - 1))),
+                px,
                 centerY,
                 getColor(self, "white"),
                 getColor(self, "black"),
@@ -183,7 +195,7 @@ do
             fillFakeColor(self,
                 posX,
                 posY,
-                advmath.mapClip(self.value or 0, 0, 100, 0, self.sizeX),
+                math.round(advmath.mapClip(self.value, self.min, self.max, 0, self.sizeX)),
                 self.sizeY,
                 "",
                 mathColor(self, self.settings.fg, getColor(self, "lime")),
@@ -207,6 +219,8 @@ do
 
         widget.state = settings.state or false
         widget.value = settings.value or 0
+        widget.min = settings.min or 0
+        widget.max = settings.max or 1
 
         widget.posX = settings.posX
         widget.posY = settings.posY

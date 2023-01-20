@@ -11,15 +11,17 @@ local gui = require("gui").create(
 
 ----------------------------------------------
 
+local standardWindowSizeX, standardWindowSizeY = 48, 10
+local palette = drawer.palette_computercraft
+
 local scene = gui:createScene(
     colors.cyan,
     gui.drawzone.maxSizeX,
     gui.drawzone.maxSizeY,
-    drawer.palette_computercraft,
+    palette,
     true
 )
 
-local standardWindowSizeX, standardWindowSizeY = 48, 10
 
 ----------------------------------------------background
 
@@ -66,6 +68,8 @@ local function runProgramm(name)
         recommendedPosY = posY,
         recommendedSizeX = standardWindowSizeX,
         recommendedSizeY = standardWindowSizeY,
+
+        recommendedPalette = palette,
 
         getWindowPos = getWindowPos,
         createMessage = createMessage,
