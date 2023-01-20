@@ -8,9 +8,6 @@ local layout = scene:createLayout(
     recommendedSizeY,
     true
 )
-layout:createWidget({
-    
-})
 layout:createExitButton()
 layout:createLabel("hello, world!")
 

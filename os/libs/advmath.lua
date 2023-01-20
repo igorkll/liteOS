@@ -10,4 +10,8 @@ function advmath.constrain(value, min, max)
     return math.min(math.max(value, min), max)
 end
 
+function advmath.mapClip(value, low, high, low_2, high_2)
+    return advmath.map(advmath.constrain(value, low, high), low, high, low_2, high_2)
+end
+
 return advmath

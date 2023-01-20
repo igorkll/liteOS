@@ -189,8 +189,8 @@ end
 
 function drawer:setPalette(palette)
     if not palette then
-        gpu.setDepth(1) --сброс палитры
-        gpu.setDepth(gpu.maxDepth())
+        self.gpu.setDepth(1) --сброс палитры
+        self.gpu.setDepth(self.gpu.maxDepth())
     end
 
     for i = 0, 15 do
@@ -250,7 +250,7 @@ end
 ------------------------------------------------------------------------draw utiles
 
 function drawer:_setColor(bg, fg)
-    self.gpu.setBackground(advmath.constrain(bg or 0, 0, self.maxFg) or 0, self.usingTheDefaultPalette)
+    self.gpu.setBackground(advmath.constrain(bg or 0, 0, self.maxFg), self.usingTheDefaultPalette)
     self.gpu.setForeground(advmath.constrain(fg or 0xFFFFFF, 0, self.maxFg), self.usingTheDefaultPalette)
 end
 

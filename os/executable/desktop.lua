@@ -5,7 +5,6 @@ local env = require("env")
 local gui = require("gui").create(
     {
         renderSettings = {
-            softwareBufferPriority = true,
         }
     }
 )
@@ -89,5 +88,4 @@ end
 
 gui:selectScene(scene)
 runProgramm("hello")
-runProgramm("guidemo")
 gui:run()

@@ -4,8 +4,11 @@ local colors = require("colors")
 
 ----------------------------------------------FUNCS
 
-local function mathColor(self, color)
-    return color and (type(color) == "number" and {color, 0xFFFFFF, " "} or color) or {0, 0xFFFFFF, " "}
+local char_circle = "●"
+local defaultcolor = {0, 0, " "}
+
+local function mathColor(self, color, default)
+    return color and (type(color) == "number" and {color, 0, " "} or color) or mathColor(self, default) or {0, 0, " "}
 end
 
 local function fillFakeColor(self, posX, posY, sizeX, sizeY, text, bg, fg) --фековый цвет позваляет смешивать цвета символами unicode, и отрисовывать серый даже на экранах первого уровня
@@ -116,7 +119,8 @@ do
 
     local function draw(self)
         local posX, posY = mathPos(self)
-
+        local centerX, centerY = posX + (math.round(self.sizeX / 2) - 1), posY + (math.round(self.sizeY / 2) - 1)
+        
         if self.settings.type == "text" or self.settings.type == "button" then
             local bg, fg = self.settings.bg, self.settings.fg
             if not bg then bg = 0 end
@@ -138,6 +142,45 @@ do
                 self.settings.text,
                 bg,
                 fg
+            )
+        elseif self.settings.type == "seek" then
+            local bg = mathColor(self, self.settings.bg, getColor(self, "white"))
+            local fg = mathColor(self, self.settings.fg, getColor(self, "yellow"))
+            fillFakeColor(self,
+                posX,
+                posY,
+                self.sizeX,
+                self.sizeY,
+                "|",
+                bg,
+                fg
+            )
+            self.drawzone:fill(posX, centerY, self.sizeX, 1, bg, defaultcolor, "-")
+            self.drawzone:set(
+                posX + advmath.mapClip(self.value or 0, 0, 100, 0, (self.sizeX - 1)),
+                centerY,
+                bg,
+                defaultcolor,
+                char_circle
+            )
+        elseif self.settings.type == "progress_bar" then
+            fillFakeColor(self,
+                posX,
+                posY,
+                self.sizeX,
+                self.sizeY,
+                "",
+                mathColor(self, self.settings.bg, getColor(self, "blue")),
+                defaultcolor
+            )
+            fillFakeColor(self,
+                posX,
+                posY,
+                advmath.mapClip(self.value or 0, 0, 100, 0, self.sizeX),
+                self.sizeY,
+                "",
+                mathColor(self, self.settings.fg, getColor(self, "lime")),
+                defaultcolor
             )
         end
     end
@@ -266,6 +309,9 @@ do
             sizeX = self.sizeX - self.buttonvalue,
             sizeY = 1,
             text = text or "",
+
+            bg = mathColor(self. getColor("white")),
+            fg = mathColor(self. getColor("black"))
         })
     end
 
@@ -279,10 +325,12 @@ do
             sizeY = self.sizeY - 1,
             text = text or "",
 
-            bg = bg,
-            fg = fg,
+            bg = bg or mathColor(self. getColor("white")),
+            fg = fg or mathColor(self. getColor("black"))
         })
     end
+
+
     
     --doNotMoveToTheUpperLevel стоит использовать только для background layout`а, иначе вы можете сломать всю сцену
     function createLayout(self, bg, posX, posY, sizeX, sizeY, dragged, doNotMoveToTheUpperLevel)
