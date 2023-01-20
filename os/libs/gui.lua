@@ -159,8 +159,9 @@ do
                 fg
             )
         elseif self.settings.type == "seek" then
-            local bg = mathColor(self, self.settings.bg, getColor(self, "white"))
+            local bg = mathColor(self, self.settings.bg, getColor(self, "gray"))
             local fg = mathColor(self, self.settings.fg, getColor(self, "yellow"))
+            local pressed_fg = mathColor(self, self.settings.pressed_fg, getColor(self, "lime"))
 
             self.drawzone:fill(posX, posY, self.sizeX, self.sizeY, bg[1], fg[1], "|")
             self.drawzone:fill(posX, centerY, self.sizeX, 1, bg[1], getColor(self, "black"), "-")
@@ -170,15 +171,15 @@ do
                 self.drawzone:set(
                     px,
                     posY + (i - 1),
-                    getColor(self, "white"),
-                    getColor(self, "lime"),
+                    bg[1],
+                    pressed_fg[1],
                     "|"
                 )
             end
             self.drawzone:set(
                 px,
                 centerY,
-                getColor(self, "white"),
+                bg[1],
                 getColor(self, "black"),
                 char_circle
             )
