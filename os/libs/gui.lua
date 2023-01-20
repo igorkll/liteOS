@@ -8,7 +8,7 @@ local char_circle = "●"
 local defaultcolor = {0, 0, " "}
 
 local function mathColor(self, color, default)
-    return color and (type(color) == "number" and {color, 0, " "} or color) or mathColor(self, default) or {0, 0, " "}
+    return color and (type(color) == "number" and {color, 0, " "} or color) or mathColor(self, default or {0, 0, " "})
 end
 
 local function fillFakeColor(self, posX, posY, sizeX, sizeY, text, bg, fg) --фековый цвет позваляет смешивать цвета символами unicode, и отрисовывать серый даже на экранах первого уровня
@@ -110,15 +110,17 @@ do
             end
             return touchinbox
         elseif self.settings.type == "seek" then
-            local touchinbox, tx, ty = touchInBox(self, eventData, self.layout.posX, self.layout.posY)
+            if eventData[1] == "touch" or eventData[1] == "drag" then
+                local touchinbox, tx, ty = touchInBox(self, eventData, self.layout.posX, self.layout.posY)
 
-            if touchinbox then
-                self.value = advmath.mapClip(tx, 1, self.sizeX, 0, 100)
-                self.gui:draw()
-                callback(self, "onSeek", self.value)
+                if touchinbox then
+                    self.value = math.round(advmath.mapClip(tx, 1, self.sizeX, 0, 100))
+                    self.gui:draw()
+                    callback(self, "onSeek", self.value)
+                end
+
+                return touchinbox
             end
-
-            return touchinbox
         end
     end
 
@@ -158,21 +160,14 @@ do
         elseif self.settings.type == "seek" then
             local bg = mathColor(self, self.settings.bg, getColor(self, "white"))
             local fg = mathColor(self, self.settings.fg, getColor(self, "yellow"))
-            fillFakeColor(self,
-                posX,
-                posY,
-                self.sizeX,
-                self.sizeY,
-                "|",
-                bg,
-                fg
-            )
-            self.drawzone:fill(posX, centerY, self.sizeX, 1, bg, defaultcolor, "-")
+
+            self.drawzone:fill(posX, posY, self.sizeX, self.sizeY, bg[1], fg[1], "|")
+            self.drawzone:fill(posX, centerY, self.sizeX, 1, bg[1], getColor(self, "black"), "-")
             self.drawzone:set(
-                posX + advmath.mapClip(self.value or 0, 0, 100, 0, (self.sizeX - 1)),
+                posX + math.round(advmath.mapClip(self.value, 0, 100, 0, (self.sizeX - 1))),
                 centerY,
-                bg,
-                defaultcolor,
+                getColor(self, "white"),
+                getColor(self, "black"),
                 char_circle
             )
         elseif self.settings.type == "progress" then

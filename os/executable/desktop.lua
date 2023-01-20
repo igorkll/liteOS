@@ -88,4 +88,5 @@ end
 
 gui:selectScene(scene)
 runProgramm("hello")
+runProgramm("seekbar")
 gui:run()
