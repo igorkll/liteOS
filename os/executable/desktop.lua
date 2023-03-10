@@ -3,6 +3,7 @@ local colors = require("colors")
 local drawer = require("drawer")
 local env = require("env")
 local fs = require("filesystem")
+local webservices = require("webservices")
 local gui = require("gui").create(
     {
         renderSettings = {
@@ -91,7 +92,7 @@ local function runProgramm(name)
     end
 end
 
-----------------------------------------------main
+----------------------------------------------apps
 
 local apps_list
 local function refreshList()
@@ -128,9 +129,16 @@ local function flushApps()
     end
 end
 
-refreshList()
-flushApps()
+local function refreshApps()
+    refreshList()
+    flushApps()
+end
 
+refreshApps()
+
+----------------------------------------------main
+
+webservices.run("desktop.lua")
 
 gui:selectScene(scene)
 gui:run()
