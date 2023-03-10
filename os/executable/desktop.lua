@@ -85,11 +85,6 @@ local function runProgramm(name)
             createMessage(colors.red, "error", err or "unknown")
         end
     end
-
-    --если вдруг это полноэкранная программа создающия свой инстанс gui которая сбила настройки
-    if computer.uptime() - uptime > 0.5 or localenv.breaksSettings then
-        gui:selectScene(scene, true)
-    end
 end
 
 ----------------------------------------------apps

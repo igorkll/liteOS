@@ -264,6 +264,10 @@ end
 local createLayout
 do
     local function destroy(self)
+        for index, widget in ipairs(self.widgets) do
+            widget:destroy()
+        end
+
         table.removeMatches(self.scene.layouts, self)
         self.scene.gui.redrawFlag = true
         callback(self, "onDestroy")
@@ -410,6 +414,10 @@ end
 local createScene
 do
     local function destroy(self)
+        for index, layout in ipairs(self.layouts) do
+            layout:destroy()
+        end
+
         table.removeMatches(self.gui.scenes, self)
         callback(self, "onDestroy")
     end

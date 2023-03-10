@@ -34,17 +34,17 @@ do
         local startTime = computer.uptime()
         while computer.uptime() - startTime <= time do
             local data = {pullSignal(0.5)}
-            if #data > 0 then
-                for index, value in ipairs(background.listens) do
-                    value(table.unpack(data))
-                end
-                return table.unpack(data)
-            end
             for index, value in ipairs(background.timers) do
                 if computer.uptime() - value.lasttime >= value.time then
                     value.lasttime = computer.uptime()
                     value.func()
                 end
+            end
+            if #data > 0 then
+                for index, value in ipairs(background.listens) do
+                    value(table.unpack(data))
+                end
+                return table.unpack(data)
             end
         end
     end

@@ -1,11 +1,9 @@
 local colors = require("colors")
 local drawer = require("drawer")
-local gui = require("gui").create({renderSettings = {
-    softwareBufferPriority = true,
-}})
 
+local old_scene = gui.scene
 
---------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------scene1
 
 scene1 = gui:createScene(colors.black, 80, 25, drawer.palette_computercraft, true)
 
@@ -90,7 +88,9 @@ local function createControl()
         notAutoReleased = true,
 
         onReleaseInBox = function()
-            gui:exit()
+            scene1:destroy()
+            scene2:destroy()
+            gui:selectScene(old_scene)
         end
     })
 
@@ -281,6 +281,20 @@ scene2_window1_button = scene2_window1:createWidget({
         gui:selectScene(scene1)
     end
 })
+scene2_window1_button = scene2_window1:createWidget({
+    type = "button",
+
+    posX = 3,
+    posY = 6,
+    sizeX = 14,
+    sizeY = 1,
+    text = "exit",
+
+    onClick = function()
+        scene1:destroy()
+        scene2:destroy()
+        gui:selectScene(old_scene)
+    end
+})
 
 gui:selectScene(scene1)
-gui:run()

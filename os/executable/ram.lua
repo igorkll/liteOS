@@ -13,6 +13,8 @@ local function update()
     used_ram:setParam("text", "used ram: " .. tostring(math.floor(used + 0.5)) .. "KB")
 
     progress_used_ram:setParam("value", used / total)
+
+    gui:draw()
 end
 
 -------------------------
@@ -45,7 +47,9 @@ progress_used_ram = layout:createWidget({
     posX = 2,
     posY = 3,
     sizeX = recommendedSizeX - 2,
-    sizeY = 1
+    sizeY = 1,
+
+    fg = colors.yellow
 })
 
 -------------------------update

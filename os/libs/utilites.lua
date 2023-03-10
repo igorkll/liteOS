@@ -33,7 +33,7 @@ end
 
 -------------------------------------------------
 
-local function getPath()
+function getPath()
     local info
 
     for runLevel = 0, math.huge do
