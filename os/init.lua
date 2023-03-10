@@ -1,6 +1,6 @@
 _OSVERSION = "liteOS 1.0"
 
----------------------------------------------------
+---------------------------------------------------init
 
 bootaddress = computer.getBootAddress()
 bootfs = component.proxy(bootaddress)
@@ -36,7 +36,25 @@ end
 
 require("utilites")
 
----------------------------------------------------
+---------------------------------------------------functions
+
+function getPath()
+    local info
+
+    for runLevel = 0, math.huge do
+        info = debug.getinfo(runLevel)
+
+        if info then
+            if info.what == "main" then
+                return info.source:sub(2, -1)
+            end
+        else
+            error("Failed to get debug info for runlevel " .. runLevel)
+        end
+    end
+end
+
+---------------------------------------------------run autoruns files
 
 _AUTORUNS_LOG = {}
 local function autorun(folder)
@@ -59,4 +77,7 @@ end
 autorun("/autorun")
 autorun("/data/autorun")
 
+---------------------------------------------------
+
+require("webservices").run("startup.lua")
 assert(require("programs").execute("desktop"))

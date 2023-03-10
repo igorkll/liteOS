@@ -25,8 +25,8 @@ function webservices.raw_run(name, ...)
     return code(...)
 end
 
-function webservices.run(name)
-    webservices.raw_run(name, {})
+function webservices.run(name, ...)
+    return webservices.raw_run(name, {args = {...}})
 end
 
 return webservices
