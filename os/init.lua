@@ -35,10 +35,10 @@ do
 end
 
 require("utilites")
-local logger = require("logger")
 
 ---------------------------------------------------
 
+_AUTORUNS_LOG = {}
 local function autorun(folder)
     local fs = require("filesystem")
     local programs = require("programs")
@@ -47,10 +47,9 @@ local function autorun(folder)
         for _, path in ipairs(fs.list(folder)) do
             local fullpath = fs.concat(folder, path)
             if fs.exists(fullpath) then
-                logger.log("autorun running: " .. fullpath)
                 local ok, err = programs.run(fullpath)
                 if not ok then
-                    logger.log("autorun error: " .. err .. "; folder: " .. fullpath)
+                    table.insert(_AUTORUNS_LOG, {err = err, file = fullpath})
                 end
             end
         end
