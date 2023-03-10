@@ -92,14 +92,6 @@ function filesystem.hideExtension(path)
 	return path:match("(.+)%..+") or path
 end
 
-function filesystem.isHidden(path)
-	return path:sub(1, 1)
-end
-
-function filesystem.removeSlashes(path)
-	return path:gsub("/+", "/")
-end
-
 ------------------------------------------------------------------------------------
 
 filesystem.mountList = {}

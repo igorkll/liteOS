@@ -60,4 +60,4 @@ end
 autorun("/autorun")
 autorun("/data/autorun")
 
-require("programs").execute("desktop")
+assert(require("programs").execute("desktop"))

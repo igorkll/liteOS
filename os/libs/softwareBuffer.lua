@@ -232,11 +232,11 @@ return {create = function(gpu_address, usePaletteIndex)
         end
         
         for background, foregrounds in pairs(changes) do
-            invoke(gpu_address, "setBackground", advmath.constrain(background, 0, usePaletteIndex and 15 or 0xFFFFFF), usePaletteIndex)
+            invoke(gpu_address, "setBackground", advmath.clamp(background, 0, usePaletteIndex and 15 or 0xFFFFFF), usePaletteIndex)
 
             for foreground, pixels in pairs(foregrounds) do
                 if currentForeground ~= foreground then
-                    invoke(gpu_address, "setForeground", advmath.constrain(foreground, 0, usePaletteIndex and 15 or 0xFFFFFF), usePaletteIndex)
+                    invoke(gpu_address, "setForeground", advmath.clamp(foreground, 0, usePaletteIndex and 15 or 0xFFFFFF), usePaletteIndex)
                     currentForeground = foreground
                 end
 
@@ -265,7 +265,7 @@ return {create = function(gpu_address, usePaletteIndex)
         set = set,
         update = update,
 
-        setUsingTheDefaultPalette = function(state)
+        setUsingTheDefaultPalette = function(state) --ипользовать index в палитре вместо цветов
             usePaletteIndex = state
         end
     }

@@ -102,7 +102,7 @@ do
                     if eventData[1] == "touch" and touchinbox then
                         --спит оставшееся время если функция отработала быстрее 0.5 секунд
                         local function sleep(uptime)
-                            os.sleep(0.1 - advmath.constrain(computer.uptime() - uptime, 0, 0.1), function()end)
+                            os.sleep(0.1 - advmath.clamp(computer.uptime() - uptime, 0, 0.1), function()end)
                         end
 
 
@@ -128,7 +128,7 @@ do
                 local touchinbox, tx, ty = touchInBox(self, eventData, self.layout.posX, self.layout.posY)
 
                 if touchinbox then
-                    self.value = advmath.mapClip(tx - 1, 1, self.sizeX, self.min, self.max)
+                    self.value = advmath.clampMap(tx - 1, 1, self.sizeX, self.min, self.max)
                     callback(self, "onSeek", self.value)
 
                     self.gui:draw()
@@ -180,7 +180,7 @@ do
             self.drawzone:fill(posX, posY, self.sizeX, self.sizeY, bg[1], fg[1], "|")
             self.drawzone:fill(posX, centerY, self.sizeX, 1, bg[1], getColor(self, "black"), "-")
 
-            local px = posX + math.round(advmath.mapClip(self.value, self.min, self.max, 0, (self.sizeX - 1)))
+            local px = posX + math.round(advmath.clampMap(self.value, self.min, self.max, 0, (self.sizeX - 1)))
             for i = 1, self.sizeY do
                 self.drawzone:set(
                     px,
@@ -210,7 +210,7 @@ do
             fillFakeColor(self,
                 posX,
                 posY,
-                math.round(advmath.mapClip(self.value, self.min, self.max, 0, self.sizeX)),
+                math.round(advmath.clampMap(self.value, self.min, self.max, 0, self.sizeX)),
                 self.sizeY,
                 "",
                 mathColor(self, self.settings.fg, getColor(self, "lime")),

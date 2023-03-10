@@ -6,12 +6,12 @@ function advmath.map(value, low, high, low_2, high_2)
     return scaled_value
 end
 
-function advmath.constrain(value, min, max)
+function advmath.clamp(value, min, max)
     return math.min(math.max(value, min), max)
 end
 
-function advmath.mapClip(value, low, high, low_2, high_2)
-    return advmath.map(advmath.constrain(value, low, high), low, high, low_2, high_2)
+function advmath.clampMap(value, low, high, low_2, high_2)
+    return advmath.map(advmath.clamp(value, low, high), low, high, low_2, high_2)
 end
 
 return advmath

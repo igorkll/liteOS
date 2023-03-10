@@ -22,13 +22,13 @@ function programs.find(name)
 end
 
 function programs.list()
-    local files = {}
+    local list = {}
     for _, folder in ipairs(programs.paths) do
         for _, path in ipairs(fs.list(folder)) do
-            table.insert(files, fs.hideExtension(path))
+            table.insert(list, {path = fs.concat(folder, path), name = fs.hideExtension(fs.name(path))})
         end
     end
-    return files
+    return list
 end
 
 function programs.load(name, envtbl)
@@ -49,7 +49,7 @@ end
 function programs.execute(name, ...)
     local code, err = programs.load(name)
     if not code then return nil, err or "unknown" end
-    return assert(xpcall(code, debug.traceback, ...))
+    return xpcall(code, debug.traceback, ...)
 end
 
 return programs
