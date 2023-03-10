@@ -4,9 +4,15 @@ local background = require("background")
 -------------------------
 
 local function update()
-    local total_ram = computer.()
+    local total = math.floor((computer.totalMemory() / 1024) + 0.5)
+    local free = math.floor((computer.freeMemory() / 1024) + 0.5)
+    local used = math.floor(((computer.totalMemory() - computer.freeMemory()) / 1024) + 0.5)
 
-    total_ram:setParam("text", "total ram: " .. tostring(math.floor( + 0.5)))
+    total_ram:setParam("text", "total ram: " .. tostring(math.floor(total + 0.5)) .. "KB")
+    free_ram:setParam("text", "free ram: " .. tostring(math.floor(free + 0.5)) .. "KB")
+    used_ram:setParam("text", "used ram: " .. tostring(math.floor(used + 0.5)) .. "KB")
+
+    progress_used_ram:setParam("value", used / total)
 end
 
 -------------------------
@@ -33,7 +39,7 @@ for index, value in ipairs({"total_ram", "free_ram", "used_ram"}) do
     })
 end
 
-used_ram = layout:createWidget({
+progress_used_ram = layout:createWidget({
     type = "progress",
 
     posX = 2,
@@ -47,7 +53,7 @@ used_ram = layout:createWidget({
 layout.onDestroy = function ()
     background.removeTimer(update)
 end
-background.addTimer(update, 0.5)
+background.addTimer(update, 1)
 update()
 
 return layout

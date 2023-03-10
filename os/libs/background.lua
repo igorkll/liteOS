@@ -14,14 +14,39 @@ function background.removeListen(func)
     end
 end
 
+function background.addTimer(func, time)
+    table.insert(background.timers, {func = func, time = time, lasttime = computer.uptime()})
+end
+
+function background.removeTimer(func)
+    for index, value in ipairs(background.timers) do
+        if value.func == func then
+            table.remove(background.timers, index)
+        end
+    end
+end
+
 do
     local pullSignal = computer.pullSignal
     function computer.pullSignal(time)
-        local data = {pullSignal(time)}
-        for index, value in ipairs(background.listens) do
-            value(table.unpack(data)) --обратите внимания что функция будет вызвана даже если event не был получен, а pullsignal просто отработал
+        time = time or math.huge
+
+        local startTime = computer.uptime()
+        while computer.uptime() - startTime <= time do
+            local data = {pullSignal(0.5)}
+            if #data > 0 then
+                for index, value in ipairs(background.listens) do
+                    value(table.unpack(data))
+                end
+                return table.unpack(data)
+            end
+            for index, value in ipairs(background.timers) do
+                if computer.uptime() - value.lasttime >= value.time then
+                    value.lasttime = computer.uptime()
+                    value.func()
+                end
+            end
         end
-        return table.unpack(data)
     end
 end
 
