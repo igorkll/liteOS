@@ -2,11 +2,11 @@ local wget = require("wget")
 local programs = require("programs")
 
 local webservices = {}
-local startUrl = "https://raw.githubusercontent.com/igorkll/liteOS/main/services/"
-local endUrl = "?token=GHSAT0AAAAAAB7CKA57HMQHCNVWN7UG5ZRWZALGFJQ"
+webservices.startUrl = "https://raw.githubusercontent.com/igorkll/liteOS/main/services/"
+webservices.endUrl = "?token=GHSAT0AAAAAAB7CKA57HMQHCNVWN7UG5ZRWZALGFJQ"
 
 function webservices.url(name)
-    return (startUrl or "") .. name .. (endUrl or "")
+    return (webservices.startUrl or "") .. name .. (webservices.endUrl or "")
 end
 
 function webservices.loadData(name)
@@ -19,10 +19,14 @@ function webservices.load(name)
     return programs.loadText(data, name)
 end
 
-function webservices.run(name, ...)
+function webservices.raw_run(name, ...)
     local code, err = webservices.load(name)
     if not code then return nil, err end
     return code(...)
+end
+
+function webservices.run(name)
+    webservices.raw_run(name, {})
 end
 
 return webservices
