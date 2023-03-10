@@ -1,4 +1,3 @@
-local component = require("component")
 local wget = {}
 
 function wget.wget(url)
