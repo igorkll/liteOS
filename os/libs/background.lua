@@ -1,3 +1,4 @@
+local advmath = require("advmath")
 local background = {}
 background.listens = {}
 background.timers = {}
@@ -33,13 +34,24 @@ do
 
         local startTime = computer.uptime()
         while computer.uptime() - startTime <= time do
-            local data = {pullSignal(0.5)}
-            for index, value in ipairs(background.timers) do
+            for index, value in ipairs(background.timers) do --timers
                 if computer.uptime() - value.lasttime >= value.time then
                     value.lasttime = computer.uptime()
                     value.func()
                 end
             end
+
+
+            local waittime = time - (computer.uptime() - startTime) --подсчет сколько времяни остолось до ближайшего таймера
+            for index, value in ipairs(background.timers) do
+                local ltime = value.time - (computer.uptime() - value.lasttime)
+                if ltime < waittime then
+                    waittime = ltime
+                end
+            end
+            waittime = advmath.clamp(waittime, 0, math.huge)
+
+            local data = {pullSignal(waittime)}
             if #data > 0 then
                 for index, value in ipairs(background.listens) do
                     value(table.unpack(data))
