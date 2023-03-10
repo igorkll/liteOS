@@ -1,5 +1,6 @@
 local background = {}
 background.listens = {}
+background.timers = {}
 
 function background.addListen(func)
     table.insert(background.listens, func)
