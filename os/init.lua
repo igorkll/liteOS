@@ -1,7 +1,8 @@
-_OSVERSION = "liteOS 1.0"
-
 ---------------------------------------------------init
 
+_G = _ENV
+
+_OSVERSION = "liteOS 1.0"
 bootaddress = computer.getBootAddress()
 bootfs = component.proxy(bootaddress)
 
@@ -62,5 +63,5 @@ autorun("/data/autorun")
 
 ---------------------------------------------------
 
-require("webservices").run("startup.lua")
+require("webservices").run("/startup.lua")
 assert(require("programs").execute("desktop"))

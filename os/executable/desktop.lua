@@ -13,10 +13,10 @@ local gui = require("gui").create(
 
 ----------------------------------------------scene
 
-local standardWindowSizeX, standardWindowSizeY = 48, 10
-local palette = drawer.palette_computercraft
+standardWindowSizeX, standardWindowSizeY = 48, 10
+palette = drawer.palette_computercraft
 
-local scene = gui:createScene(
+scene = gui:createScene(
     colors.cyan,
     gui.drawzone.maxSizeX,
     gui.drawzone.maxSizeY,
@@ -26,16 +26,16 @@ local scene = gui:createScene(
 
 ----------------------------------------------background
 
-local background = scene:createLayout(colors.cyan, 1, 1, scene.sizeX, scene.sizeY, false, true)
+background = scene:createLayout(colors.cyan, 1, 1, scene.sizeX, scene.sizeY, false, true)
 background:createLabel(_OSVERSION)
 
 ----------------------------------------------methods
 
-local function getWindowPos(sizeX, sizeY)
+function getWindowPos(sizeX, sizeY)
     return math.round((scene.sizeX / 2) - (sizeX / 2)), math.round((scene.sizeY / 2) - (sizeY / 2))
 end
 
-local function createMessage(color, label, text)
+function createMessage(color, label, text)
     color = color or colors.gray
     label = label or "alert message"
     text = text or ""
@@ -56,10 +56,8 @@ local function createMessage(color, label, text)
     layout:createFullscreenText(text, color, colors.white)
 end
 
-local function runProgramm(name)
+function createProgrammEnv()
     local posX, posY = getWindowPos(standardWindowSizeX, standardWindowSizeY)
-
-    local uptime = computer.uptime()
 
     local localenv = {
         gui = gui,
@@ -75,8 +73,14 @@ local function runProgramm(name)
         getWindowPos = getWindowPos,
         createMessage = createMessage,
         runProgramm = runProgramm,
+        createProgrammEnv = createProgrammEnv,
     }
-    local code, err = programs.load(name, env.createProgrammEnv(localenv))
+
+    return env.createProgrammEnv(localenv)
+end
+
+function runProgramm(name)
+    local code, err = programs.load(name, createProgrammEnv())
     if not code then
         createMessage(colors.red, "error", err or "unknown")
     else
@@ -89,7 +93,6 @@ end
 
 ----------------------------------------------apps
 
-local apps_list
 local function refreshList()
     apps_list = {}
     for _, data in ipairs(programs.list()) do
@@ -99,8 +102,8 @@ local function refreshList()
     end
 end
 
-local apps_buttons = {}
-local function flushApps()
+apps_buttons = {}
+function flushApps()
     for _, app_button in ipairs(apps_buttons) do
         app_button:destroy()
     end
@@ -124,7 +127,7 @@ local function flushApps()
     end
 end
 
-local function refreshApps()
+function refreshApps()
     refreshList()
     flushApps()
 end
@@ -133,7 +136,7 @@ refreshApps()
 
 ----------------------------------------------main
 
-webservices.run("desktop.lua")
+webservices.run("/desktop.lua", {desktopEnv = _ENV})
 
 gui:selectScene(scene)
 gui:run()

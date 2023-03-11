@@ -61,7 +61,9 @@ function drawer.create(settings) --создает графическую сис�
     local screen = settings.screen or component.list("screen")()
 
     if gpu and screen then
-        component.invoke(screen, "turnOn")
+        if not settings.doNotAutoOn then
+            component.invoke(screen, "turnOn")
+        end
 
         local obj = setmetatable({
             gpu = gpu,
