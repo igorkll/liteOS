@@ -597,8 +597,6 @@ do
                 local layout = self.layouts[i]
                 if touchInBox(layout, eventData) then
                     if not layout.doNotMoveToTheUpperLevel then
-                        --table.remove(self.layouts, #self.layouts)
-
                         table.remove(self.layouts, i)
                         table.insert(self.layouts, layout)
                         if layout.parentLayout then
@@ -611,6 +609,23 @@ do
                             end
                             table.remove(layout.parentLayout.childsLayouts, index)
                             table.insert(layout.parentLayout.childsLayouts, layout)
+                            
+                            for index, value in ipairs(self.layouts) do
+                                if value == layout.parentLayout then
+                                    table.remove(self.layouts, index)
+                                    break
+                                end
+                            end
+                            table.insert(self.layouts, layout.parentLayout)
+                            for index, childLayout in ipairs(layout.parentLayout.childsLayouts) do
+                                for index2, layout in ipairs(self.layouts) do
+                                    if childLayout == layout then
+                                        table.remove(self.layouts, index2)
+                                        break
+                                    end
+                                end
+                                table.insert(self.layouts, childLayout)
+                            end
                         end
                         for index, childLayout in ipairs(layout.childsLayouts) do
                             for index2, layout in ipairs(self.layouts) do
@@ -621,9 +636,6 @@ do
                             end
                             table.insert(self.layouts, childLayout)
                         end
-
-                        
-                        --table.insert(self.layouts, 1, upLayout)
 
                         self.gui.redrawFlag = true
                     end
