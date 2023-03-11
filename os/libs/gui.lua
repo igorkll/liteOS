@@ -596,28 +596,48 @@ do
             for i = #self.layouts, 1, -1 do
                 local layout = self.layouts[i]
                 if touchInBox(layout, eventData) then
+                    --если окно можно перемешять на верхник план, то перемешяем
                     if not layout.doNotMoveToTheUpperLevel then
                         table.remove(self.layouts, i)
                         table.insert(self.layouts, layout)
-                        if layout.parentLayout then
-                            local index
+
+                        if layout.parentLayout then --если у layout если радитель
+                            --перемешяем себя в его списке на верхний уровень
                             for index2, childLayout in ipairs(layout.parentLayout.childsLayouts) do
                                 if childLayout == layout then
-                                    index = index2
-                                    break
+                                    table.remove(layout.parentLayout.childsLayouts, index2)
                                 end
                             end
-                            table.remove(layout.parentLayout.childsLayouts, index)
                             table.insert(layout.parentLayout.childsLayouts, layout)
-                            
-                            for index, value in ipairs(self.layouts) do
-                                if value == layout.parentLayout then
-                                    table.remove(self.layouts, index)
-                                    break
+    
+                            --перемешяет радителя на верхний уровень(если можно)
+                            if not layout.parentLayout.doNotMoveToTheUpperLevel then
+                                for index, value in ipairs(self.layouts) do
+                                    if value == layout.parentLayout then
+                                        table.remove(self.layouts, index)
+                                        break
+                                    end
+                                end
+                                table.insert(self.layouts, layout.parentLayout)
+                            end
+    
+                            --перемешяю все остальные дачерние окна на верхний план(те что можно)
+                            for index, childLayout in ipairs(layout.parentLayout.childsLayouts) do
+                                if not layout.parentLayout.doNotMoveToTheUpperLevel then
+                                    for index2, layout in ipairs(self.layouts) do
+                                        if childLayout == layout then
+                                            table.remove(self.layouts, index2)
+                                            break
+                                        end
+                                    end
+                                    table.insert(self.layouts, childLayout)
                                 end
                             end
-                            table.insert(self.layouts, layout.parentLayout)
-                            for index, childLayout in ipairs(layout.parentLayout.childsLayouts) do
+                        end
+
+                        --перемешяю потомков на верхник план, если само окно может быть перемешено на верхний план
+                        if not layout.doNotMoveToTheUpperLevel then
+                            for index, childLayout in ipairs(layout.childsLayouts) do
                                 for index2, layout in ipairs(self.layouts) do
                                     if childLayout == layout then
                                         table.remove(self.layouts, index2)
@@ -627,20 +647,11 @@ do
                                 table.insert(self.layouts, childLayout)
                             end
                         end
-                        for index, childLayout in ipairs(layout.childsLayouts) do
-                            for index2, layout in ipairs(self.layouts) do
-                                if childLayout == layout then
-                                    table.remove(self.layouts, index2)
-                                    break
-                                end
-                            end
-                            table.insert(self.layouts, childLayout)
-                        end
-
-                        self.gui.redrawFlag = true
                     end
+                    
                     layout:listen(eventData)
                     self.lastLayout = layout
+                    self.gui.redrawFlag = true
                     break
                 end
             end
