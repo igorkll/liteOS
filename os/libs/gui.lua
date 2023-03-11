@@ -5,6 +5,13 @@
     передайте в него первым аргументом табличку настроек
     так же в этой табличке могут содержаться настройки рендера
     в вложеной табличке renderSettings, она будет передана библиотки drawer при создании инстанца
+
+вызов методов:
+    вызов всех методов осуществяесь через :
+    кроме методы создания инстанца gui из библиотеки
+
+удаления обьектов(scene, layout, widget)
+    если обькт вым больше не нужен, то вы должны вызвать метод destroy
     
 цвета:
     цвета сдесь это таблицы с тремя значениями: bg, fg, char
@@ -41,7 +48,19 @@ layout:
     на layout можно создавать дочернии layout, используя тот же метод createLayout
     при этом дочернии layout не смогут выходить за пределы родительского, и будут удалены в месте с ним
 
-    
+    setHide:
+        передайте true чтобы скрыть layout, или false чтобы вновь его открыть
+
+    так же у layout есть несколько методов для автоматического создания элементов:
+        createFullscreenText(text, bg, fg):widget - создает текст с указаными параметрами на
+        весь layout начиная с ВТОРОЙ строки, чтобы было место для createLabel
+
+        createControlButton(callback, char, bg, fg, pressed_bg, pressed_fg):widget - callback функция которая будет вызвана при нажатии кнопки
+        createExitButton():widget - создает кнопку закрытия layout в верхнем правом углу
+        createLabel(string):widget - создает label сверху layout,
+        вызвать можно только если на первой строке layout нет элементов,
+        кроме автоматически созданых унопок управления, кнопки упровления создать перед
+        вызовом этого метода
 ]]
 
 local drawer = require("drawer")
@@ -401,15 +420,15 @@ do
 
     --------------------------------------------------------------auto creators
 
-    local function createExitButton(self, posX, posY)
+    local function createControlButton(self, callback, char, bg, fg, pressed_bg, pressed_fg)
         local widget = self:createWidget{
             type = "button",
         
-            posX = posX or (self.sizeX - self.buttonvalue),
-            posY = posY or 1,
+            posX = self.sizeX - self.buttonvalue,
+            posY = 1,
             sizeX = 1,
             sizeY = 1,
-            text = "X",
+            text = char or " ",
         
             bg = getColor(self, "red"),
             fg = getColor(self, "white"),
@@ -419,11 +438,19 @@ do
             notAutoReleased = true,
 
             onReleaseInBox = function()
-                self:destroy()
+                callback(self)
             end
         }
         self.buttonvalue = self.buttonvalue + 1
         return widget
+    end
+
+    local function createExitButton(self)
+        return createControlButton(self, function()
+            self:destroy()
+        end, "X", getColor(self, "red"), getColor(self, "white"),
+            getColor(self, "brown"), getColor(self, "black")
+        )
     end
 
     local function createLabel(self, text)
@@ -479,12 +506,13 @@ do
         layout.widgets = {}
         layout.childsLayouts = {}
 
+        layout.createWidget = createWidget
+
         layout.destroy = destroy
         layout.draw = draw
         layout.listen = listen
         layout.setHide = setHide
 
-        layout.createWidget = createWidget
         layout.createLabel = createLabel
         layout.createFullscreenText = createFullscreenText
         layout.createExitButton = createExitButton
