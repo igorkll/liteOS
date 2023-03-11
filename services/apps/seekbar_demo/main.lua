@@ -42,5 +42,3 @@ layout:createWidget({
         text:setParam("text", tostring(value))
     end,
 })
-
-return layout

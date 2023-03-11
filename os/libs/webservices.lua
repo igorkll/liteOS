@@ -6,6 +6,7 @@ webservices.startUrl = "https://raw.githubusercontent.com/igorkll/liteOS/main/se
 webservices.endUrl = "?token=GHSAT0AAAAAAB7CKA57HMQHCNVWN7UG5ZRWZALGFJQ"
 
 function webservices.url(name)
+    if name:sub(1, 1) == "/" then name = name:sub(2, -1) end
     return (webservices.startUrl or "") .. name .. (webservices.endUrl or "")
 end
 

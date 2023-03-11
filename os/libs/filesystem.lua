@@ -311,7 +311,7 @@ function filesystem.readFile(path)
     return buffer
 end
 
-function filesystem.saveFile(path, data)
+function filesystem.writeFile(path, data)
     checkArg(1, path, "string")
     checkArg(2, data, "string")
 

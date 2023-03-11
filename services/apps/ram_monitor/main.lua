@@ -59,5 +59,3 @@ layout.onDestroy = function ()
 end
 background.addTimer(update, 0.2)
 update()
-
-return layout
