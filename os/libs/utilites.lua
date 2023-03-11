@@ -81,6 +81,7 @@ function table.removeMatches(tbl, v)
     for index, value in ipairs(tbl) do
         if value == v then
             table.remove(tbl, index)
+            return true
         end
     end
     return false
@@ -92,5 +93,5 @@ function table.removeAllMatches(tbl, v)
             tbl[key] = nil
         end
     end
-    return false
+    return true
 end

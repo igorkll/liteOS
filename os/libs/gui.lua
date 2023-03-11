@@ -279,15 +279,19 @@ end
 
 local createLayout
 do
-    local function destroy(self)
+    local function destroy(self, autoCall)
         self.destroyed = true
 
+        if self.parentLayout and not autoCall then
+            table.removeMatches(self.parentLayout.childsLayouts, self)
+        end
+
         for index, layout in ipairs(self.childsLayouts) do
-            layout:destroy()
+            layout:destroy(true)
         end
 
         for index, widget in ipairs(self.widgets) do
-            widget:destroy()
+            widget:destroy(true)
         end
 
         table.removeMatches(self.scene.layouts, self)
@@ -335,6 +339,10 @@ do
                     if self.posY < self.parentLayout.posY then self.posY = self.parentLayout.posY end
                     if self.posX > (self.parentLayout.posX + self.parentLayout.sizeX) - self.sizeX then self.posX = (self.parentLayout.posX + self.parentLayout.sizeX) - self.sizeX end
                     if self.posY > (self.parentLayout.posY + self.parentLayout.sizeY) - self.sizeY then self.posY = (self.parentLayout.posY + self.parentLayout.sizeY) - self.sizeY end
+                end
+                for index, childLayout in ipairs(self.childsLayouts) do
+                    childLayout.posX = childLayout.posX + moveX
+                    childLayout.posY = childLayout.posY + moveY
                 end
                 --self.scene.gui.redrawFlag = true
                 self.scene.gui:draw()
@@ -499,8 +507,13 @@ do
                             table.insert(layout.parentLayout.childsLayouts, layout)
                         end
                         for index, childLayout in ipairs(layout.childsLayouts) do
-                            table.remove(layout.childsLayouts, index)
-                            table.insert(layout.childsLayouts, childLayout)
+                            for index2, layout in ipairs(self.layouts) do
+                                if childLayout == layout then
+                                    table.remove(self.layouts, index2)
+                                    break
+                                end
+                            end
+                            table.insert(self.layouts, childLayout)
                         end
 
                         
