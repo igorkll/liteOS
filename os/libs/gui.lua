@@ -282,6 +282,10 @@ do
     local function destroy(self)
         self.destroyed = true
 
+        for index, layout in ipairs(self.childsLayouts) do
+            layout:destroy()
+        end
+
         for index, widget in ipairs(self.widgets) do
             widget:destroy()
         end
@@ -329,8 +333,8 @@ do
                 if self.parentLayout then
                     if self.posX < self.parentLayout.posX then self.posX = self.parentLayout.posX end
                     if self.posY < self.parentLayout.posY then self.posY = self.parentLayout.posY end
-                    if self.posX < (self.parentLayout.posX + self.parentLayout.sizeX) - 1 then self.posX = (self.parentLayout.posX + self.parentLayout.sizeX) - 1 end
-                    if self.posY < (self.parentLayout.posY + self.parentLayout.sizeY) then self.posY = (self.parentLayout.posY + self.parentLayout.sizeY) - 1 end
+                    if self.posX > (self.parentLayout.posX + self.parentLayout.sizeX) - self.sizeX then self.posX = (self.parentLayout.posX + self.parentLayout.sizeX) - self.sizeX end
+                    if self.posY > (self.parentLayout.posY + self.parentLayout.sizeY) - self.sizeY then self.posY = (self.parentLayout.posY + self.parentLayout.sizeY) - self.sizeY end
                 end
                 --self.scene.gui.redrawFlag = true
                 self.scene.gui:draw()
@@ -485,18 +489,18 @@ do
                         table.insert(self.layouts, layout)
                         if layout.parentLayout then
                             local index
-                            for index2, childLayout in ipairs(layout.parentLayout.childLayout) do
+                            for index2, childLayout in ipairs(layout.parentLayout.childsLayouts) do
                                 if childLayout == layout then
                                     index = index2
                                     break
                                 end
                             end
-                            table.remove(layout.parentLayout.childLayout, index)
-                            table.insert(layout.parentLayout.childLayout, layout)
+                            table.remove(layout.parentLayout.childsLayouts, index)
+                            table.insert(layout.parentLayout.childsLayouts, layout)
                         end
-                        for index, childLayout in ipairs(layout.childLayout) do
-                            table.remove(layout.childLayout, index)
-                            table.insert(layout.childLayout, childLayout)
+                        for index, childLayout in ipairs(layout.childsLayouts) do
+                            table.remove(layout.childsLayouts, index)
+                            table.insert(layout.childsLayouts, childLayout)
                         end
 
                         

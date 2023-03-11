@@ -27,8 +27,9 @@ do
             return buffer
         end
 
-        local text = assert(raw_readFile(bootaddress, "/libs/" .. name .. ".lua"))
-        local code = assert(load(text, "=" .. name, "bt", _ENV))
+        local path = "/libs/" .. name .. ".lua"
+        local text = assert(raw_readFile(bootaddress, path))
+        local code = assert(load(text, "=" .. path, "bt", _ENV))
         local lib = assert(code())
         return lib
     end
