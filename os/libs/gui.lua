@@ -8,7 +8,7 @@ local parser = require("parser")
 local char_circle = "●"
 local defaultcolor = {0, 0, " "}
 
-local function mathColor(self, color, default)
+local function mathColor(self, color, default) --получить цвет в види табличи из обычного цвета, при этом с табличкой нечего не сделает
     return color and (type(color) == "number" and {color, 0, " "} or color) or mathColor(self, default or {0, 0, " "})
 end
 
@@ -16,18 +16,20 @@ local function fillFakeColor(self, posX, posY, sizeX, sizeY, text, bg, fg) --ф�
     self.drawzone:fill(posX, posY, sizeX, sizeY, table.unpack(bg))
     local centerX, centerY = math.floor(posX + (sizeX / 2)), math.floor(posY + (sizeY / 2))
 
-    local gstrs = {}
-    for _, str in ipairs(parser.split(unicode, text, "\n")) do
-        for _, str in ipairs(parser.toParts(unicode, str, sizeX)) do
-            table.insert(gstrs, str)
+    if text then
+        local gstrs = {}
+        for _, str in ipairs(parser.split(unicode, text, "\n")) do
+            for _, str in ipairs(parser.toParts(unicode, str, sizeX)) do
+                table.insert(gstrs, str)
+            end
         end
-    end
 
-    local index = 0
-    for _, str in ipairs(gstrs) do
-        index = index + 1
-        if index > sizeY then break end
-        self.drawzone:set(centerX - math.floor(unicode.len(str) / 2), #gstrs > 1 and (posY + (index - 1)) or centerY, bg[1], fg[1], str)
+        local index = 0
+        for _, str in ipairs(gstrs) do
+            index = index + 1
+            if index > sizeY then break end
+            self.drawzone:set(centerX - math.floor(unicode.len(str) / 2), #gstrs > 1 and (posY + (index - 1)) or centerY, bg[1], fg[1], str)
+        end
     end
 end
 
@@ -38,11 +40,11 @@ local function touchInBox(box, eventData, startX, startY)
     return tx >= box.posX and ty >= box.posY and tx < (box.posX + box.sizeX) and ty < (box.posY + box.sizeY), tx, ty
 end
 
-local function getColor(self, name)
-    if self.drawzone.usingTheDefaultPalette then
-        return colors[name]
+local function getColor(self, name) --возврашяет цвет подходяший для вывода
+    if self.drawzone.usingTheDefaultPalette then --если палитра
+        return colors[name] --то вернуть индекс
     else
-        return drawer.palette_defaultTier2[colors[name]]
+        return drawer.palette_defaultTier2[colors[name]] --а если не палитра, то цвета второго тира
     end
 end
 
@@ -64,9 +66,9 @@ do
     ----------------------------------------------callbacks
 
     local function listen(self, eventData)
-        if self.settings.type == "button" then
+        if self.type == "button" then
             local touchinbox = touchInBox(self, eventData, self.layout.posX, self.layout.posY)
-            if self.settings.togle then
+            if self.togle then
                 if eventData[1] == "touch" and touchinbox then
                     self.state = not self.state
 
@@ -80,7 +82,7 @@ do
                     end
                 end
             else
-                if self.settings.notAutoReleased then
+                if self.notAutoReleased then
                     --вы можете разом активировать несколько notAutoReleased кнопок просто свайпнув по ним, и разом отпустить отпустив кнопку мыши
                     if (eventData[1] == "touch" or eventData[1] == "drag") and touchinbox then
                         if not self.state then
@@ -123,7 +125,7 @@ do
                 end
             end
             return touchinbox
-        elseif self.settings.type == "seek" then
+        elseif self.type == "seek" then
             if eventData[1] == "touch" or eventData[1] == "drag" then
                 local touchinbox, tx, ty = touchInBox(self, eventData, self.layout.posX, self.layout.posY)
 
@@ -150,32 +152,25 @@ do
         local posX, posY = mathPos(self)
         local centerX, centerY = posX + (math.round(self.sizeX / 2) - 1), posY + (math.round(self.sizeY / 2) - 1)
         
-        if self.settings.type == "text" or self.settings.type == "button" then
-            local bg, fg = self.settings.bg, self.settings.fg
-            if not bg then bg = 0 end
-            if not fg then fg = self.maxFg end
-            if self.state then
-                bg = self.settings.pressed_bg
-                fg = self.settings.pressed_fg
-                if not bg then bg = self.maxFg end
-                if not fg then fg = 0 end
-            end
-            bg = mathColor(self, bg)
-            fg = mathColor(self, fg)
+        if self.type == "text" or self.type == "button" then
+            local bg = mathColor(self, self.bg, getColor(self, "white"))
+            local fg = mathColor(self, self.fg, getColor(self, "black"))
+            local pressed_bg = mathColor(self, self.pressed_bg, getColor(self, "black"))
+            local pressed_fg = mathColor(self, self.pressed_fg, getColor(self, "white"))
             
             fillFakeColor(self,
                 posX,
                 posY,
                 self.sizeX,
                 self.sizeY,
-                self.settings.text,
-                bg,
-                fg
+                self.text,
+                self.state and pressed_bg or bg,
+                self.state and pressed_fg or fg
             )
-        elseif self.settings.type == "seek" then
-            local bg = mathColor(self, self.settings.bg, getColor(self, "gray"))
-            local fg = mathColor(self, self.settings.fg, getColor(self, "yellow"))
-            local pressed_fg = mathColor(self, self.settings.pressed_fg, getColor(self, "lime"))
+        elseif self.type == "seek" then
+            local bg = mathColor(self, self.bg, getColor(self, "gray"))
+            local fg = mathColor(self, self.fg, getColor(self, "yellow"))
+            local pressed_fg = mathColor(self, self.pressed_fg, getColor(self, "lime"))
 
             self.drawzone:fill(posX, posY, self.sizeX, self.sizeY, bg[1], fg[1], "|")
             self.drawzone:fill(posX, centerY, self.sizeX, 1, bg[1], getColor(self, "black"), "-")
@@ -197,14 +192,14 @@ do
                 getColor(self, "black"),
                 char_circle
             )
-        elseif self.settings.type == "progress" then
+        elseif self.type == "progress" then
             fillFakeColor(self,
                 posX,
                 posY,
                 self.sizeX,
                 self.sizeY,
-                "",
-                mathColor(self, self.settings.bg, getColor(self, "blue")),
+                nil,
+                mathColor(self, self.bg, getColor(self, "blue")),
                 defaultcolor
             )
             fillFakeColor(self,
@@ -212,15 +207,38 @@ do
                 posY,
                 math.round(advmath.clampMap(self.value, self.min, self.max, 0, self.sizeX)),
                 self.sizeY,
-                "",
-                mathColor(self, self.settings.fg, getColor(self, "lime")),
+                nil,
+                mathColor(self, self.fg, getColor(self, "lime")),
                 defaultcolor
+            )
+        elseif self.type == "list" then
+            local bg = mathColor(self, self.bg, getColor(self, "yellow"))
+            local fg = mathColor(self, self.fg, getColor(self, "orange"))
+            local label_bg = mathColor(self, self.bg, getColor(self, "orange"))
+            local label_fg = mathColor(self, self.fg, getColor(self, "yellow"))
+
+            fillFakeColor(self,
+                posX,
+                posY,
+                self.sizeX,
+                self.sizeY,
+                nil,
+                bg,
+                fg
+            )
+            fillFakeColor(self,
+                posX,
+                posY,
+                self.sizeX,
+                1,
+                self.text,
+                label_bg,
+                label_fg
             )
         end
     end
 
     local function setParam(self, name, value)
-        self.settings[name] = value
         self[name] = value
     end
 
@@ -230,17 +248,13 @@ do
 
     function createWidget(self, settings)
         local widget = {}
-        widget.settings = settings
-
+        for key, value in pairs(settings) do
+            widget[key] = value
+        end
         widget.state = settings.state or false
         widget.value = settings.value or 0
         widget.min = settings.min or 0
         widget.max = settings.max or 1
-
-        widget.posX = settings.posX
-        widget.posY = settings.posY
-        widget.sizeX = settings.sizeX
-        widget.sizeY = settings.sizeY
 
         widget.destroy = destroy
         widget.draw = draw
@@ -352,7 +366,7 @@ do
             posY = 1,
             sizeX = self.sizeX - self.buttonvalue,
             sizeY = 1,
-            text = text or "",
+            text = text,
 
             bg = mathColor(self, getColor(self, "white")),
             fg = mathColor(self, getColor(self, "black"))
@@ -367,7 +381,7 @@ do
             posY = 2,
             sizeX = self.sizeX,
             sizeY = self.sizeY - 1,
-            text = text or "",
+            text = text,
 
             bg = bg or mathColor(self, getColor(self, "white")),
             fg = fg or mathColor(self, getColor(self, "black"))
