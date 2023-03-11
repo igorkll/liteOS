@@ -61,6 +61,43 @@ layout:
         вызвать можно только если на первой строке layout нет элементов,
         кроме автоматически созданых унопок управления, кнопки упровления создать перед
         вызовом этого метода
+
+widget:
+    виджеты создаються на сценах методом createWidget
+    который принимает таблицу настроек виджета
+    так же любые параметры виджета можно изменить после создания методом: setParam(name, value)
+
+    основные поля таблицы:
+        type - тип виджета
+        posX
+        posY
+        sizeX
+        sizeY
+
+    так же большенство элементов поддерживают такие поля как bg, fg
+
+    типы виджетов:
+        label:
+            просто лейбел, выводит текст посиредине
+        button:
+            таботает как лейбел но может обрабатывать нажатия
+            имеет дополнительные поля:
+                pressed_bg, pressed_fg
+                а так же togle - если true то это будет переключатель
+                notAutoReleased - кнопка будет считаться отпушеной только если вы ее файтически отпустите
+                onClick - callback, будет вызван при нажатии кнопки,
+                первым аргументом будет передан ник игрона нажавшего на кнопку
+
+                onRelease - callback, будет вызван при отпускании кнопки,
+                первым аргументом будет передан ник игрона нажавшего на кнопку
+                
+                onReleaseInBox - callback, будет вызван при отпускании кнопки внутри самой кнопки,
+                первым аргументом будет передан ник игрона нажавшего на кнопку
+                имеет смысл только с поднятом notAutoReleased, иначе будет просто вызван после onRelease
+
+
+
+
 ]]
 
 local drawer = require("drawer")
@@ -167,25 +204,16 @@ do
                     end
                 else
                     if eventData[1] == "touch" and touchinbox then
-                        --спит оставшееся время если функция отработала быстрее 0.5 секунд
-                        local function sleep(uptime)
-                            os.sleep(0.1 - advmath.clamp(computer.uptime() - uptime, 0, 0.1), function()end)
-                        end
-
-
-                        
                         self.state = true
                         self.gui:draw()
                         local uptime = computer.uptime()
                         callback(self, "onClick", eventData[6])
-                        sleep(uptime)
 
                         self.state = false
                         self.gui:draw()
                         local uptime = computer.uptime()
                         callback(self, "onRelease", eventData[6])
                         callback(self, "onReleaseInBox", eventData[6])
-                        sleep(uptime)
                     end
                 end
             end
