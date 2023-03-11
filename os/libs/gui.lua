@@ -280,6 +280,8 @@ end
 local createLayout
 do
     local function destroy(self)
+        self.destroyed = true
+
         for index, widget in ipairs(self.widgets) do
             widget:destroy()
         end
@@ -324,6 +326,12 @@ do
             if moveX ~= 0 or moveY ~= 0 then
                 self.posX = self.posX + moveX
                 self.posY = self.posY + moveY
+                if self.parentLayout then
+                    if self.posX < self.parentLayout.posX then self.posX = self.parentLayout.posX end
+                    if self.posY < self.parentLayout.posY then self.posY = self.parentLayout.posY end
+                    if self.posX < (self.parentLayout.posX + self.parentLayout.sizeX) - 1 then self.posX = (self.parentLayout.posX + self.parentLayout.sizeX) - 1 end
+                    if self.posY < (self.parentLayout.posY + self.parentLayout.sizeY) then self.posY = (self.parentLayout.posY + self.parentLayout.sizeY) - 1 end
+                end
                 --self.scene.gui.redrawFlag = true
                 self.scene.gui:draw()
             end
@@ -393,7 +401,7 @@ do
 
     
     --doNotMoveToTheUpperLevel стоит использовать только для background layout`а, иначе вы можете сломать всю сцену
-    function createLayout(self, bg, posX, posY, sizeX, sizeY, dragged, doNotMoveToTheUpperLevel)
+    function createLayout(self, bg, posX, posY, sizeX, sizeY, dragged, doNotMoveToTheUpperLevel, scroll)
         local layout = {}
 
         self.drawzone:setUsingTheDefaultPalette(self.usingTheDefaultPalette) --для правильной работы mathColor
@@ -406,7 +414,9 @@ do
         layout.dragged = dragged
         layout.doNotMoveToTheUpperLevel = doNotMoveToTheUpperLevel
         layout.buttonvalue = 0
+        layout.scroll = scroll
         layout.widgets = {}
+        layout.childsLayouts = {}
 
         layout.destroy = destroy
         layout.draw = draw
@@ -415,13 +425,19 @@ do
         layout.createWidget = createWidget
         layout.createLabel = createLabel
         layout.createFullscreenText = createFullscreenText
-
         layout.createExitButton = createExitButton
 
         layout.scene = self
         layout.drawzone = self.drawzone
-        table.insert(self.layouts, layout)
 
+        layout.createLayout = function (oldlayout, ...)
+            local newlayout = oldlayout.scene:createLayout(...)
+            newlayout.parentLayout = oldlayout
+            table.insert(oldlayout.childsLayouts, newlayout)
+            return newlayout
+        end
+        
+        table.insert(self.layouts, layout)
         self.gui.redrawFlag = true
         return layout
     end
@@ -467,6 +483,21 @@ do
 
                         table.remove(self.layouts, i)
                         table.insert(self.layouts, layout)
+                        if layout.parentLayout then
+                            local index
+                            for index2, childLayout in ipairs(layout.parentLayout.childLayout) do
+                                if childLayout == layout then
+                                    index = index2
+                                    break
+                                end
+                            end
+                            table.remove(layout.parentLayout.childLayout, index)
+                            table.insert(layout.parentLayout.childLayout, layout)
+                        end
+                        for index, childLayout in ipairs(layout.childLayout) do
+                            table.remove(layout.childLayout, index)
+                            table.insert(layout.childLayout, childLayout)
+                        end
 
                         
                         --table.insert(self.layouts, 1, upLayout)
