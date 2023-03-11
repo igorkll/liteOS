@@ -269,6 +269,8 @@ do
         widget.maxFg = self.drawzone.maxFg
         widget.gui = self.scene.gui
         table.insert(self.widgets, widget)
+
+        widget.gui.redrawFlag = true
         return widget
     end
 end
@@ -419,6 +421,8 @@ do
         layout.scene = self
         layout.drawzone = self.drawzone
         table.insert(self.layouts, layout)
+
+        self.gui.redrawFlag = true
         return layout
     end
 end

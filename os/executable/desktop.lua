@@ -28,6 +28,43 @@ scene = gui:createScene(
 
 background = scene:createLayout(colors.cyan, 1, 1, scene.sizeX, scene.sizeY, false, true)
 background:createLabel(_OSVERSION)
+background:createWidget({
+    type = "text",
+
+    posX = 1,
+    posY = scene.sizeY,
+    sizeX = scene.sizeX,
+    sizeY = 1,
+
+    bg = colors.green
+})
+
+button_os = background:createWidget({
+    type = "button",
+    togle = true,
+
+    posX = 1,
+    posY = scene.sizeY,
+    sizeX = 4,
+    sizeY = 1,
+
+    text = "OS",
+
+    bg = colors.blue,
+    fg = colors.white,
+
+    onClick = function()
+        if not _MENU then
+            _MENU = scene:createLayout(colors.orange, 1, 1, 32, 20, false, true)
+        end
+    end,
+    onRelease = function()
+        if _MENU then
+            _MENU:destroy()
+            _MENU = nil
+        end
+    end
+})
 
 ----------------------------------------------methods
 
