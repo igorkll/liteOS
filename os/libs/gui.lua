@@ -415,11 +415,9 @@ do
             end
             if self.posX > (self.parentLayout.posX + self.parentLayout.sizeX) - self.sizeX then
                 self.posX = (self.parentLayout.posX + self.parentLayout.sizeX) - self.sizeX
-                flag = true
             end
             if self.posY > (self.parentLayout.posY + self.parentLayout.sizeY) - self.sizeY then
                 self.posY = (self.parentLayout.posY + self.parentLayout.sizeY) - self.sizeY
-                flag = true
             end
         end
         local moveX, moveY = self.posX - oldX, self.posY - oldY
