@@ -41,14 +41,11 @@ function drawer.create(settings) --создает графическую сис�
     if settings.allowHardwareBuffer == nil then --если значения не false не true то оно будет по умалчанию
         settings.allowHardwareBuffer = true
     end
-    if settings.allowSoftwareBuffer == nil then
-        settings.allowSoftwareBuffer = false --НЕЗЯ СОФТ БУФЕР
-    end
     if settings.allowCombineBuffers == nil then
         settings.allowCombineBuffers = false
     end
     if settings.softwareBufferPriority == nil then
-        settings.softwareBufferPriority = true
+        settings.softwareBufferPriority = false
     end
     
     local gpu = component.proxy((settings.gpu or component.list("gpu")()) or "")
@@ -67,7 +64,19 @@ function drawer.create(settings) --создает графическую сис�
         }, {__index = drawer})
 
         gpu.bind(screen)
-        local rx, ry = gpu.maxResolution()
+        local mx, my = gpu.maxResolution()
+        local rx, ry = settings.rx or mx, settings.ry or my
+        if settings.allowSoftwareBuffer == nil then
+            for i = 1, 5 do
+                os.sleep(0.1)
+            end
+            settings.allowSoftwareBuffer = (computer.freeMemory() / 4) > (rx * ry * 32)
+        end
+        if settings.allowSoftwareBuffer then
+            computer.beep(2000)
+        else
+            computer.beep(100)
+        end
 
         gpu.setDepth(1) --сброс палитры
         gpu.setDepth(gpu.maxDepth())
@@ -83,8 +92,8 @@ function drawer.create(settings) --создает графическую сис�
         obj.sizeX = rx
         obj.sizeY = ry
 
-        obj.maxSizeX = rx
-        obj.maxSizeY = ry
+        obj.maxSizeX = mx
+        obj.maxSizeY = my
 
         ------------------------------------
 

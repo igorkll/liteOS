@@ -821,8 +821,5 @@ do
         return obj
     end
 
-    return {
-        create = create,
-        instance = create()
-    }
+    return {create = create}
 end
