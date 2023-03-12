@@ -397,6 +397,9 @@ do
         for _, widget in ipairs(self.widgets) do
             widget:draw()
         end
+        for _, layout in ipairs(self.childsLayouts) do
+            layout:draw()
+        end
     end
 
     local function listen(self, eventData)
@@ -422,7 +425,7 @@ do
             self.selected = false
         end
 
-        if not moveLock and self.selected and eventData[1] == "drag" and tx and self.tx and self.dragged then
+        if not self.lastLayout and not moveLock and self.selected and eventData[1] == "drag" and tx and self.tx and self.dragged then
             local moveX, moveY = tx - self.tx, ty - self.ty
             if moveX ~= 0 or moveY ~= 0 then
                 self.posX = self.posX + moveX
@@ -433,7 +436,7 @@ do
                     if self.posX > (self.parentLayout.posX + self.parentLayout.sizeX) - self.sizeX then self.posX = (self.parentLayout.posX + self.parentLayout.sizeX) - self.sizeX end
                     if self.posY > (self.parentLayout.posY + self.parentLayout.sizeY) - self.sizeY then self.posY = (self.parentLayout.posY + self.parentLayout.sizeY) - self.sizeY end
                 end
-                for index, childLayout in ipairs(self.childsLayouts) do
+                for _, childLayout in ipairs(self.childsLayouts) do
                     childLayout.posX = childLayout.posX + moveX
                     childLayout.posY = childLayout.posY + moveY
                 end
@@ -444,6 +447,38 @@ do
 
         self.tx = tx
         self.ty = ty
+
+        ------------------------------
+
+        if eventData[1] == "touch" or eventData[1] == "drag" or eventData[1] == "scroll" then
+            if self.lastLayout then
+                if not self.lastLayout.selected then
+                    self.lastLayout = nil
+                else
+                    self.lastLayout:listen(eventData)
+                    return
+                end
+            end
+
+            for i = #self.childsLayouts, 1, -1 do
+                local layout = self.childsLayouts[i]
+                if touchInBox(layout, eventData) then
+                    if not layout.doNotMoveToTheUpperLevel then
+                        table.remove(self.childsLayouts, i)
+                        table.insert(self.childsLayouts, layout)
+                    end
+                    
+                    layout:listen(eventData)
+                    self.lastLayout = layout
+                    self.scene.gui.redrawFlag = true
+                    break
+                end
+            end
+        else
+            for _, layout in ipairs(self.childsLayouts) do
+                layout:listen(eventData)
+            end
+        end
     end
 
     --------------------------------------------------------------auto creators
@@ -552,6 +587,7 @@ do
             local newlayout = oldlayout.scene:createLayout(...)
             newlayout.parentLayout = oldlayout
             table.insert(oldlayout.childsLayouts, newlayout)
+            table.removeAllMatches(oldlayout.scene.layouts, newlayout)
             return newlayout
         end
         
@@ -600,53 +636,6 @@ do
                     if not layout.doNotMoveToTheUpperLevel then
                         table.remove(self.layouts, i)
                         table.insert(self.layouts, layout)
-
-                        if layout.parentLayout then --если у layout если радитель
-                            --перемешяем себя в его списке на верхний уровень
-                            for index2, childLayout in ipairs(layout.parentLayout.childsLayouts) do
-                                if childLayout == layout then
-                                    table.remove(layout.parentLayout.childsLayouts, index2)
-                                end
-                            end
-                            table.insert(layout.parentLayout.childsLayouts, layout)
-    
-                            --перемешяет радителя на верхний уровень(если можно)
-                            if not layout.parentLayout.doNotMoveToTheUpperLevel then
-                                for index, value in ipairs(self.layouts) do
-                                    if value == layout.parentLayout then
-                                        table.remove(self.layouts, index)
-                                        break
-                                    end
-                                end
-                                table.insert(self.layouts, layout.parentLayout)
-                            end
-    
-                            --перемешяю все остальные дачерние окна на верхний план(те что можно)
-                            for index, childLayout in ipairs(layout.parentLayout.childsLayouts) do
-                                if not layout.parentLayout.doNotMoveToTheUpperLevel then
-                                    for index2, layout in ipairs(self.layouts) do
-                                        if childLayout == layout then
-                                            table.remove(self.layouts, index2)
-                                            break
-                                        end
-                                    end
-                                    table.insert(self.layouts, childLayout)
-                                end
-                            end
-                        end
-
-                        --перемешяю потомков на верхник план, если само окно может быть перемешено на верхний план
-                        if not layout.doNotMoveToTheUpperLevel then
-                            for index, childLayout in ipairs(layout.childsLayouts) do
-                                for index2, layout in ipairs(self.layouts) do
-                                    if childLayout == layout then
-                                        table.remove(self.layouts, index2)
-                                        break
-                                    end
-                                end
-                                table.insert(self.layouts, childLayout)
-                            end
-                        end
                     end
                     
                     layout:listen(eventData)
