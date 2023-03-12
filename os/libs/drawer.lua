@@ -74,6 +74,9 @@ function drawer.create(settings) --создает графическую сис�
         if not settings.doNotAutoOn then
             component.invoke(screen, "turnOn")
         end
+        if not settings.doNotDisablePrecise then
+            component.invoke(screen, "setPrecise", false)
+        end
 
         local obj = setmetatable({
             gpu = gpu,
@@ -86,11 +89,9 @@ function drawer.create(settings) --создает графическую сис�
         local mx, my = gpu.maxResolution()
         local rx, ry = settings.rx or mx, settings.ry or my
         if settings.allowSoftwareBuffer == nil then
-            for i = 1, 5 do
-                os.sleep(0.1)
-            end
-            settings.allowSoftwareBuffer = (computer.freeMemory() / 4) > (rx * ry * 32)
+            settings.allowSoftwareBuffer = (computer.freeMemory() / 3) > (rx * ry * 32)
         end
+
         --[[
         if settings.allowSoftwareBuffer then
             computer.beep(2000)
@@ -109,28 +110,31 @@ function drawer.create(settings) --создает графическую сис�
 
         gpu.fill(1, 1, rx, ry, " ") --очистка экрана
 
-        obj.depth = gpu.getDepth()
+        obj.depth = settings.depth or gpu.getDepth()
         obj.sizeX = rx
         obj.sizeY = ry
 
         obj.maxSizeX = mx
         obj.maxSizeY = my
 
+        gpu.setDepth(obj.depth)
+
         ------------------------------------
-
-        obj:setUsingTheDefaultPalette(settings.usingTheDefaultPalette) --если включить, то методы будует принимать цвета сразу в индексах палирт
-
+        
         if obj.depth > 1 then
             obj.palette = {}
             for i = 0, 15 do
                 obj.palette[i] = (settings.palette and settings.palette[i]) or gpu.getPaletteColor(i)
             end
+        else
+            settings.usingTheDefaultPalette = nil
         end
+
+        obj:setUsingTheDefaultPalette(settings.usingTheDefaultPalette) --если включить, то методы будует принимать цвета сразу в индексах палирт
 
         if gpu.setActiveBuffer then
             obj.bufferSupport = true
         end
-
         
         if settings.allowCombineBuffers then
             if obj.bufferSupport and settings.allowHardwareBuffer then
@@ -219,12 +223,15 @@ function drawer:setPalette(palette)
         self.gpu.setDepth(self.gpu.maxDepth())
     end
 
-    for i = 0, 15 do
-        self.palette[i] = palette and palette[i] or self.gpu.getPaletteColor(i)
+    if self.palette then
+        for i = 0, 15 do
+            self.palette[i] = palette and palette[i] or self.gpu.getPaletteColor(i)
+        end
     end
 end
 
 function drawer:setUsingTheDefaultPalette(flag)
+    if not self.palette then flag = false end
     self.usingTheDefaultPalette = flag
     self.maxFg = self.usingTheDefaultPalette and 15 or 0xFFFFFF
     if self.softwareBuffer then

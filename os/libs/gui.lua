@@ -133,7 +133,7 @@ local char_circle = "●"
 local defaultcolor = {0, 0, " "}
 
 local function mathColor(self, color, default) --получить цвет в види табличи из обычного цвета, при этом с табличкой нечего не сделает
-    return color and (type(color) == "number" and {color, 0, " "} or color) or mathColor(self, default or {0, 0, " "})
+    return color and (type(color) == "number" and {color, 0, " "} or color) or mathColor(self, default or defaultcolor)
 end
 
 local function fillFakeColor(self, posX, posY, sizeX, sizeY, text, bg, fg) --фековый цвет позваляет смешивать цвета символами unicode, и отрисовывать серый даже на экранах первого уровня
@@ -164,11 +164,28 @@ local function touchInBox(box, eventData, startX, startY)
     return tx >= box.posX and ty >= box.posY and tx < (box.posX + box.sizeX) and ty < (box.posY + box.sizeY), tx, ty
 end
 
-local function getColor(self, name) --возврашяет цвет подходяший для вывода
+local function getColor(self, name, disableTable) --возврашяет цвет подходяший для вывода
     if self.drawzone.usingTheDefaultPalette then --если палитра
         return colors[name] --то вернуть индекс
     else
-        return drawer.palette_defaultTier2[colors[name]] --а если не палитра, то цвета второго тира
+        if self.drawzone.depth > 1 then
+            disableTable = true
+        end
+        if not disableTable then
+            if name == "gray" then
+                return {0, 0xFFFFFF, "▒"}
+            elseif name == "lightGray" then
+                return {0, 0xFFFFFF, "▓"}
+            elseif name == "white" then
+                return 0xFFFFFF
+            elseif name == "black" then
+                return 0
+            else
+                return {0, 0xFFFFFF, "░"}
+            end
+        else
+            return drawer.palette_defaultTier2[colors[name]] --а если не палитра, то цвета второго тира
+        end
     end
 end
 
