@@ -1,12 +1,4 @@
-local colors = require("colors")
+local dialogWindows = require("dialogWindows")
+local system = require("system")
 
-local layout = scene:createLayout(
-    colors.pink,
-    recommendedPosX,
-    recommendedPosY,
-    recommendedSizeX,
-    recommendedSizeY,
-    true
-)
-layout:createExitButton()
-layout:createLabel("hello, world!")
+dialogWindows.message(system.gui.scene, "hello, world!", nil, system.gui:getColor("pink"))

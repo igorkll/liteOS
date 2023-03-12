@@ -8,7 +8,13 @@ dialogWindows.windowSizeX = 25
 dialogWindows.windowSizeY = 6
 
 function dialogWindows.getWindowPos(scene, sizeX, sizeY)
+    sizeX = sizeX or dialogWindows.windowSizeX
+    sizeY = sizeY or dialogWindows.windowSizeY
     return math.round((scene.sizeX / 2) - (sizeX / 2)), math.round((scene.sizeY / 2) - (sizeY / 2))
+end
+
+function dialogWindows.getWindowSize(scene, minX, minY)
+    return math.max(dialogWindows.windowSizeX, minX or -1), math.max(dialogWindows.windowSizeY, minY or -1)
 end
 
 function dialogWindows.message(scene, label, text, color, textColor)

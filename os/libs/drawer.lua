@@ -72,11 +72,13 @@ function drawer.create(settings) --создает графическую сис�
             end
             settings.allowSoftwareBuffer = (computer.freeMemory() / 4) > (rx * ry * 32)
         end
+        --[[
         if settings.allowSoftwareBuffer then
             computer.beep(2000)
         else
             computer.beep(100)
         end
+        ]]
 
         gpu.setDepth(1) --сброс палитры
         gpu.setDepth(gpu.maxDepth())

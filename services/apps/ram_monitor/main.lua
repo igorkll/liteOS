@@ -1,5 +1,9 @@
-local colors = require("colors")
+local dialogWindows = require("dialogWindows")
 local background = require("background")
+local system = require("system")
+
+local gui = system.gui
+local scene = gui.scene
 
 -------------------------
 
@@ -19,12 +23,15 @@ end
 
 -------------------------
 
+local sizeX, sizeY = dialogWindows.getWindowSize(scene, 25, 8)
+local posX, posY = dialogWindows.getWindowPos(scene, sizeX, sizeY)
+
 layout = scene:createLayout(
-    colors.lime,
-    recommendedPosX,
-    recommendedPosY,
-    recommendedSizeX,
-    recommendedSizeY,
+    gui:getColor("lime"),
+    posX,
+    posY,
+    sizeX,
+    sizeY,
     true
 )
 layout:createExitButton()
@@ -36,7 +43,7 @@ for index, value in ipairs({"total_ram", "free_ram", "used_ram"}) do
     
         posX = 2,
         posY = 4 + index,
-        sizeX = recommendedSizeX - 2,
+        sizeX = sizeX - 2,
         sizeY = 1
     })
 end
@@ -46,10 +53,10 @@ progress_used_ram = layout:createWidget({
 
     posX = 2,
     posY = 3,
-    sizeX = recommendedSizeX - 2,
+    sizeX = sizeX - 2,
     sizeY = 1,
 
-    fg = colors.yellow
+    fg = gui:getColor("yellow")
 })
 
 -------------------------update

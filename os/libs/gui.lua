@@ -611,6 +611,26 @@ do
         return self[name]
     end
 
+    local function toUpper(self)
+        if self.parentLayout then
+            table.removeAllMatches(self.parentLayout.childsLayouts, self)
+            table.insert(self.parentLayout.childsLayouts, self)
+        else
+            table.removeAllMatches(self.scene.layouts, self)
+            table.insert(self.scene.layouts, self)
+        end
+    end
+
+    local function toDown(self)
+        if self.parentLayout then
+            table.removeAllMatches(self.childsLayouts, self)
+            table.insert(self.childsLayouts, 1, self)
+        else
+            table.removeAllMatches(self.scene.layouts, self)
+            table.insert(self.scene.layouts, 1, self)
+        end
+    end
+
     
     --doNotMoveToTheUpperLevel стоит использовать только для background layout`а, иначе вы можете сломать всю сцену
     function createLayout(self, bg, posX, posY, sizeX, sizeY, dragged, doNotMoveToTheUpperLevel, scroll)
@@ -637,6 +657,9 @@ do
         layout.listen = listen
         layout.setParam = setParam
         layout.getParam = getParam
+
+        layout.toUpper = toUpper
+        layout.toDown = toDown
 
         layout.createLabel = createLabel
         layout.createFullscreenText = createFullscreenText

@@ -1,17 +1,25 @@
-local colors = require("colors")
+local dialogWindows = require("dialogWindows")
+local system = require("system")
+
+local gui = system.gui
+local scene = gui.scene
+
+-------------------------
+
+local sizeX, sizeY = dialogWindows.getWindowSize(scene, 25, 9)
+local posX, posY = dialogWindows.getWindowPos(scene, sizeX, sizeY)
 
 local layout = scene:createLayout(
-    colors.purple,
-    recommendedPosX,
-    recommendedPosY,
-    recommendedSizeX,
-    recommendedSizeY,
+    gui:getColor("purple"),
+    posX,
+    posY,
+    sizeX,
+    sizeY,
     true
 )
 layout:createExitButton()
 layout:createLabel("seek")
-
-local text = layout:createWidget({
+text = layout:createWidget({
     type = "text",
 
     posX = 2,
@@ -21,12 +29,12 @@ local text = layout:createWidget({
 
     text = "-"
 })
-local progress = layout:createWidget({
+progress = layout:createWidget({
     type = "progress",
 
     posX = 2,
     posY = 4,
-    sizeX = recommendedSizeX - 2,
+    sizeX = sizeX - 2,
     sizeY = 1
 })
 layout:createWidget({
@@ -34,7 +42,7 @@ layout:createWidget({
 
     posX = 2,
     posY = 6,
-    sizeX = recommendedSizeX - 2,
+    sizeX = sizeX - 2,
     sizeY = 3,
 
     onSeek = function(value)

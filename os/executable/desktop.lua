@@ -27,6 +27,7 @@ osButton = bgLayout:createWidget({
 
     togle = true,
     onTogle = function (_, state)
+        osMenu:toUpper()
         osMenu:setParam("disable", not state)
         osMenu:setParam("hide", not state)
     end,
@@ -92,6 +93,57 @@ powerMenu:createWidget({
         computer.shutdown()
     end
 })
+
+-------------------------------------------------------apps menu
+
+local function refreshList()
+    apps_list = {}
+    for _, data in ipairs(programs.list()) do
+        if data.name ~= "desktop" then
+            table.insert(apps_list, data)
+        end
+    end
+end
+
+apps_buttons = {}
+function flushApps()
+    for _, app_button in ipairs(apps_buttons) do
+        app_button:destroy()
+    end
+    apps_buttons = {}
+
+    for i, app in ipairs(apps_list) do
+        table.insert(apps_buttons, bgLayout:createWidget({
+            type = "button",
+
+            text = app.name,
+
+            posX = 2,
+            posY = 1 + i,
+            sizeX = 16,
+            sizeY = 1,
+
+            onClick = function ()
+                local code, err = programs.load(app.name)
+                if not code then
+                    dialogWindows.message(scene, "error", err or "unknown", gui:getColor("red"))
+                else
+                    local ok, err = pcall(code)
+                    if not ok then
+                        dialogWindows.message(scene, "error", err or "unknown", gui:getColor("red"))
+                    end
+                end
+            end
+        }))
+    end
+end
+
+function refreshApps()
+    refreshList()
+    flushApps()
+end
+
+refreshApps()
 
 -------------------------------------------------------
 
