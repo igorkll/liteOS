@@ -88,10 +88,12 @@ function table.removeMatches(tbl, v)
 end
 
 function table.removeAllMatches(tbl, v)
+    local finded = false
     for key, value in pairs(tbl) do
         if value == v then
             tbl[key] = nil
+            finded = true
         end
     end
-    return true
+    return finded
 end

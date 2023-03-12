@@ -613,20 +613,20 @@ do
 
     local function toUpper(self)
         if self.parentLayout then
-            table.removeAllMatches(self.parentLayout.childsLayouts, self)
+            assert(table.removeMatches(self.parentLayout.childsLayouts, self))
             table.insert(self.parentLayout.childsLayouts, self)
         else
-            table.removeAllMatches(self.scene.layouts, self)
+            assert(table.removeMatches(self.scene.layouts, self))
             table.insert(self.scene.layouts, self)
         end
     end
 
     local function toDown(self)
         if self.parentLayout then
-            table.removeAllMatches(self.childsLayouts, self)
+            assert(table.removeMatches(self.childsLayouts, self))
             table.insert(self.childsLayouts, 1, self)
         else
-            table.removeAllMatches(self.scene.layouts, self)
+            assert(table.removeMatches(self.scene.layouts, self))
             table.insert(self.scene.layouts, 1, self)
         end
     end
