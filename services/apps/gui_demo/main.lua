@@ -1,6 +1,9 @@
 local colors = require("colors")
 local drawer = require("drawer")
+local system = require("system")
 
+local gui = system.gui
+local scene = gui.scene
 local old_scene = gui.scene
 
 --------------------------------------------------------------------------------------scene1

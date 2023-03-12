@@ -1,4 +1,6 @@
---init
+--------init
+
+computer.setArchitecture("Lua 5.3")
 
 _G = _ENV
 
