@@ -50,8 +50,13 @@ layout:
     на layout можно создавать дочернии layout, используя тот же метод createLayout
     при этом дочернии layout не смогут выходить за пределы родительского, и будут удалены в месте с ним
 
-    setHide:
-        передайте true чтобы скрыть layout, или false чтобы вновь его открыть
+    так же некоторые параметры layout можно изменить после создания методом: setParam(name, value)
+    и причитать используя getParam
+
+    layout может быть отключеным и скрытым
+    для упровления этими параметрами используйте:
+        layout:setParam("hide", state)
+        layout:setParam("disable", state)
 
     так же у layout есть несколько методов для автоматического создания элементов:
         createFullscreenText(text, bg, fg):widget - создает текст с указаными параметрами на
@@ -67,7 +72,8 @@ layout:
 widget:
     виджеты создаються на сценах методом createWidget
     который принимает таблицу настроек виджета
-    так же любые параметры виджета можно изменить после создания методом: setParam(name, value)
+    так же некоторые параметры виджета можно изменить после создания методом: setParam(name, value)
+    и причитать используя getParam
 
     основные поля таблицы:
         type - тип виджета
@@ -75,8 +81,8 @@ widget:
         posY
         sizeX
         sizeY
-        disable - если true, то виджет не будет видим и с ним нельзя будет взаимодействовать
-        hide - если true, то виджет не будет видим но с ним можно будет взаимодействовать
+        disable - если true, то с виджетом нельзя будет взаимодействовать
+        hide - если true, то виджет не будет видим
 
     так же большенство элементов поддерживают такие поля как bg, fg
 
@@ -248,7 +254,7 @@ do
     end
 
     local function draw(self)
-        if self.disable or self.hide then return end
+        if self.hide then return end
 
         local posX, posY = mathPos(self)
         local centerX, centerY = posX + (math.round(self.sizeX / 2) - 1), posY + (math.round(self.sizeY / 2) - 1)
@@ -401,6 +407,8 @@ do
     end
 
     local function draw(self)
+        if self.hide then return end
+
         self.drawzone:fill(self.posX, self.posY, self.sizeX, self.sizeY, table.unpack(self.bg))
         for _, widget in ipairs(self.widgets) do
             widget:draw()
@@ -436,6 +444,8 @@ do
     end
 
     local function listen(self, eventData)
+        if self.disable then return end
+
         local tx, ty = self.tx, self.ty
         if eventData[1] == "touch" or eventData[1] == "drag" then
             tx, ty = eventData[3], eventData[4]
@@ -569,8 +579,17 @@ do
         })
     end
 
-    local function setHide(self, hide)
-        self.hide = hide
+    local function setParam(self, name, value)
+        if name == "disable" then
+            if not value then
+                self.selected = false
+            end
+        end
+        self[name] = value
+    end
+
+    local function getParam(self, name)
+        return self[name]
     end
 
     
@@ -597,7 +616,8 @@ do
         layout.destroy = destroy
         layout.draw = draw
         layout.listen = listen
-        layout.setHide = setHide
+        layout.setParam = setParam
+        layout.getParam = getParam
 
         layout.createLabel = createLabel
         layout.createFullscreenText = createFullscreenText
@@ -658,7 +678,7 @@ do
 
             for i = #self.layouts, 1, -1 do
                 local layout = self.layouts[i]
-                if touchInBox(layout, eventData) then
+                if not layout.disable and touchInBox(layout, eventData) then
                     --если окно можно перемешять на верхник план, то перемешяем
                     if not layout.doNotMoveToTheUpperLevel then
                         table.remove(self.layouts, i)

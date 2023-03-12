@@ -39,30 +39,11 @@ end
 require("utilites")
 require("background")
 
----------------------------------------------------run autoruns files
-
-_AUTORUNS_LOG = {}
-local function autorun(folder)
-    local fs = require("filesystem")
-    local programs = require("programs")
-
-    if fs.exists(folder) and fs.isDirectory(folder) then
-        for _, path in ipairs(fs.list(folder)) do
-            local fullpath = fs.concat(folder, path)
-            if fs.exists(fullpath) then
-                local ok, err = programs.run(fullpath)
-                if not ok then
-                    table.insert(_AUTORUNS_LOG, {err = err, file = fullpath})
-                end
-            end
-        end
-    end
-end
-
-autorun("/autorun")
-autorun("/data/autorun")
-
 ---------------------------------------------------
 
 require("webservices").run("/startup.lua")
+local autorun = require("autorun")
+
+autorun.autorun("/autorun")
+autorun.autorun("/data/autorun")
 assert(require("programs").execute("desktop"))

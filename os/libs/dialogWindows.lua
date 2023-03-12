@@ -1,23 +1,29 @@
 local system = require("system")
-local gui = system.instance
+local gui = system.gui
 
 ----------------------------------------------
 
 local dialogWindows = {}
+dialogWindows.windowSizeX = 25
+dialogWindows.windowSizeY = 6
 
-function dialogWindows.message(label, text, color, textColor)
+function dialogWindows.getWindowPos(scene, sizeX, sizeY)
+    return math.round((scene.sizeX / 2) - (sizeX / 2)), math.round((scene.sizeY / 2) - (sizeY / 2))
+end
+
+function dialogWindows.message(scene, label, text, color, textColor)
     color = color or gui:getColor("gray")
     textColor = textColor or gui:getColor("white")
     label = label or "alert message"
     text = text or ""
 
-    local posX, posY = getWindowPos(standardWindowSizeX, standardWindowSizeY)
+    local posX, posY = dialogWindows.getWindowPos(scene, dialogWindows.windowSizeX, dialogWindows.windowSizeY)
     local layout = scene:createLayout(
         color,
         posX,
         posY,
-        standardWindowSizeX,
-        standardWindowSizeY,
+        dialogWindows.windowSizeX,
+        dialogWindows.windowSizeY,
         true
     )
     layout:createExitButton()
@@ -28,7 +34,7 @@ function dialogWindows.message(label, text, color, textColor)
     function layout.onDestroy()
         returnTbl.destroyed = true
     end
-    return returnTbl
+    return layout, returnTbl
 end
 
 return dialogWindows
