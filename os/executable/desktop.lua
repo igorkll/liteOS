@@ -57,11 +57,11 @@ button_os = background:createWidget({
 
     onClick = function()
         if not _MENU then
-            _MENU = scene:createLayout(colors.orange, 2, 2, 32, 20, false, true)
+            _MENU = scene:createLayout(colors.orange, 5, 5, 32, 20, true)
             _MENU:createLayout(colors.blue, 2, 2, 8, 4, false, true)
             _MENU:createLayout(colors.green, 3, 3, 8, 4, true, true)
             _MENU:createLayout(colors.pink, 4, 4, 8, 4, true, false)
-            _MENU:createLayout(colors.red, 5, 5, 8, 4, true, false)
+            _MENU:createLayout(colors.red, 5, 5, 16, 8, true, false):createLayout(colors.lime, 2, 2, 4, 2, true):createLayout(colors.lime, 2, 2, 2, 1, true)
         end
     end,
     onRelease = function()

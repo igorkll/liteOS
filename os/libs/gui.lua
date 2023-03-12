@@ -402,6 +402,33 @@ do
         end
     end
 
+    local function _move(self, x, y)
+        local oldX, oldY = self.posX, self.posY
+        self.posX = self.posX + x
+        self.posY = self.posY + y
+        if self.parentLayout then
+            if self.posX < self.parentLayout.posX then
+                self.posX = self.parentLayout.posX
+            end
+            if self.posY < self.parentLayout.posY then
+                self.posY = self.parentLayout.posY
+            end
+            if self.posX > (self.parentLayout.posX + self.parentLayout.sizeX) - self.sizeX then
+                self.posX = (self.parentLayout.posX + self.parentLayout.sizeX) - self.sizeX
+                flag = true
+            end
+            if self.posY > (self.parentLayout.posY + self.parentLayout.sizeY) - self.sizeY then
+                self.posY = (self.parentLayout.posY + self.parentLayout.sizeY) - self.sizeY
+                flag = true
+            end
+        end
+        local moveX, moveY = self.posX - oldX, self.posY - oldY
+
+        for _, childLayout in ipairs(self.childsLayouts) do
+            childLayout:_move(moveX, moveY)
+        end
+    end
+
     local function listen(self, eventData)
         local tx, ty = self.tx, self.ty
         if eventData[1] == "touch" or eventData[1] == "drag" then
@@ -428,18 +455,8 @@ do
         if not self.lastLayout and not moveLock and self.selected and eventData[1] == "drag" and tx and self.tx and self.dragged then
             local moveX, moveY = tx - self.tx, ty - self.ty
             if moveX ~= 0 or moveY ~= 0 then
-                self.posX = self.posX + moveX
-                self.posY = self.posY + moveY
-                if self.parentLayout then
-                    if self.posX < self.parentLayout.posX then self.posX = self.parentLayout.posX end
-                    if self.posY < self.parentLayout.posY then self.posY = self.parentLayout.posY end
-                    if self.posX > (self.parentLayout.posX + self.parentLayout.sizeX) - self.sizeX then self.posX = (self.parentLayout.posX + self.parentLayout.sizeX) - self.sizeX end
-                    if self.posY > (self.parentLayout.posY + self.parentLayout.sizeY) - self.sizeY then self.posY = (self.parentLayout.posY + self.parentLayout.sizeY) - self.sizeY end
-                end
-                for _, childLayout in ipairs(self.childsLayouts) do
-                    childLayout.posX = childLayout.posX + moveX
-                    childLayout.posY = childLayout.posY + moveY
-                end
+                self:_move(moveX, moveY)
+                
                 --self.scene.gui.redrawFlag = true
                 self.scene.gui:draw()
             end
@@ -583,8 +600,12 @@ do
         layout.scene = self
         layout.drawzone = self.drawzone
 
-        layout.createLayout = function (oldlayout, ...)
-            local newlayout = oldlayout.scene:createLayout(...)
+        layout._move = _move
+
+        layout.createLayout = function (oldlayout, bg, posX, posY, ...)
+            posX = (posX + oldlayout.posX) - 1
+            posY = (posY + oldlayout.posY) - 1
+            local newlayout = oldlayout.scene:createLayout(bg, posX, posY, ...)
             newlayout.parentLayout = oldlayout
             table.insert(oldlayout.childsLayouts, newlayout)
             table.removeAllMatches(oldlayout.scene.layouts, newlayout)
