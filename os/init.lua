@@ -1,4 +1,4 @@
----------------------------------------------------init
+--init
 
 _G = _ENV
 
@@ -29,15 +29,17 @@ do
 
         local path = "/libs/" .. name .. ".lua"
         local text = assert(raw_readFile(bootaddress, path))
-        local code = assert(load(text, "=" .. path, "bt", _ENV))
+        local code = assert(load(text, "raw=" .. path, "bt", _ENV))
         local lib = assert(code())
         return lib
     end
     require("package")
 end
 
-require("utilites")
-require("background")
+local package = require("package")
+
+package._require("utilites")
+package._require("background")
 
 ---------------------------------------------------
 

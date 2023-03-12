@@ -9,12 +9,6 @@ local softwareBuffer = require("softwareBuffer")
 local advmath = require("advmath")
 local drawer = {}
 
-drawer.default_render_settings = {}
-drawer.default_render_settings.allowHardwareBuffer = true
-drawer.default_render_settings.allowSoftwareBuffer = true
-drawer.default_render_settings.allowCombineBuffers = false
-drawer.default_render_settings.softwareBufferPriority = true
-
  --красивый список цветов, рекомендую использовать даже не третим тире, чтобы программа везде выглядела одинакого
 drawer.palette_defaultTier2 = {[0] = 16777215.0,16763955.0,13395660.0,6724095.0,16777011.0,3394611.0,16737945.0,3355443.0,13421772.0,3368601.0,10040268.0,3355545.0,6697728.0,3368448.0,16724787.0,0.0}
  --от белого к черному
@@ -45,16 +39,16 @@ function drawer.create(settings) --создает графическую сис�
     settings = settings or {}
 
     if settings.allowHardwareBuffer == nil then --если значения не false не true то оно будет по умалчанию
-        settings.allowHardwareBuffer = drawer.default_render_settings.allowHardwareBuffer
+        settings.allowHardwareBuffer = true
     end
     if settings.allowSoftwareBuffer == nil then
-        settings.allowSoftwareBuffer = drawer.default_render_settings.allowSoftwareBuffer
+        settings.allowSoftwareBuffer = false --НЕЗЯ СОФТ БУФЕР
     end
     if settings.allowCombineBuffers == nil then
-        settings.allowCombineBuffers = drawer.default_render_settings.allowCombineBuffers
+        settings.allowCombineBuffers = false
     end
     if settings.softwareBufferPriority == nil then
-        settings.softwareBufferPriority = drawer.default_render_settings.softwareBufferPriority
+        settings.softwareBufferPriority = true
     end
     
     local gpu = component.proxy((settings.gpu or component.list("gpu")()) or "")
@@ -252,8 +246,8 @@ end
 ------------------------------------------------------------------------draw utiles
 
 function drawer:_setColor(bg, fg)
-    self.gpu.setBackground(advmath.constrain(bg or 0, 0, self.maxFg), self.usingTheDefaultPalette)
-    self.gpu.setForeground(advmath.constrain(fg or 0xFFFFFF, 0, self.maxFg), self.usingTheDefaultPalette)
+    self.gpu.setBackground(advmath.clamp(bg or 0, 0, self.maxFg), self.usingTheDefaultPalette)
+    self.gpu.setForeground(advmath.clamp(fg or 0xFFFFFF, 0, self.maxFg), self.usingTheDefaultPalette)
 end
 
 

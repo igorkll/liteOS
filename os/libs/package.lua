@@ -11,7 +11,7 @@ package.loaded = {
 }
 package.paths = {"/libs", "/data/libs"}
 
-function package.require(name)
+function package._require(name)
     checkArg(1, name, "string")
     if package.loaded[name] then return package.loaded[name] end
 
@@ -36,8 +36,24 @@ function package.require(name)
     end
 
     package.loaded[name] = lib or true
+
+    -----------------------------------
+
     return lib or true
 end
-require = package.require
 
+function package.require(name)
+    return setmetatable({}, {
+        __index = function (self, key)
+            local lib = package._require(name)
+            return lib[key]
+        end,
+        __newindex = function (self, key, value)
+            local lib = package._require(name)
+            lib[key] = value
+        end,
+    })
+end
+
+require = package.require
 return package

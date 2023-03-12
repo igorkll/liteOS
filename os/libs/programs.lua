@@ -42,14 +42,14 @@ function programs.find(name)
 end
 
 function programs.loadText(text, name, envtbl)
-    return load(text, name and ("=" .. name), "bt", envtbl or env.createProgrammEnv())
+    return load(text, name, "bt", envtbl or env.createProgrammEnv())
 end
 
 function programs.load(name, envtbl)
     local path = programs.find(name)
     local text, err = fs.readFile(path)
     if not text then return nil, err end
-    return programs.loadText(text, path, envtbl)
+    return programs.loadText(text, "=" .. path, envtbl)
 end
 
 function programs.run(name, ...)

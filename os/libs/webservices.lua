@@ -17,7 +17,7 @@ end
 function webservices.load(name)
     local data, err = webservices.loadData(name)
     if not data then return nil, err end
-    return programs.loadText(data, name)
+    return programs.loadText(data, "web_service=" .. name)
 end
 
 function webservices.raw_run(name, ...)
