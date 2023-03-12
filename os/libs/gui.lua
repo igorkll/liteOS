@@ -5,6 +5,8 @@
     передайте в него первым аргументом табличку настроек
     так же в этой табличке могут содержаться настройки рендера
     в вложеной табличке renderSettings, она будет передана библиотки drawer при создании инстанца
+    ВНИМАНИЯ:
+    интанц создавать НЕ НУЖНО, так как библиотека system делает это(system.gui)
 
 вызов методов:
     вызов всех методов осуществяесь через :
@@ -73,6 +75,8 @@ widget:
         posY
         sizeX
         sizeY
+        disable - если true, то виджет не будет видим и с ним нельзя будет взаимодействовать
+        hide - если true, то виджет не будет видим но с ним можно будет взаимодействовать
 
     так же большенство элементов поддерживают такие поля как bg, fg
 
@@ -151,7 +155,7 @@ local function getColor(self, name) --возврашяет цвет подход
 end
 
 local function callback(self, name, ...)
-    local tbl = self.settings or self
+    local tbl = self
     return (tbl[name] or function() end)(...)
 end
 
@@ -168,6 +172,8 @@ do
     ----------------------------------------------callbacks
 
     local function listen(self, eventData)
+        if self.disable then return end
+        
         if self.type == "button" then
             local touchinbox = touchInBox(self, eventData, self.layout.posX, self.layout.posY)
             if self.togle then
@@ -242,6 +248,8 @@ do
     end
 
     local function draw(self)
+        if self.disable or self.hide then return end
+
         local posX, posY = mathPos(self)
         local centerX, centerY = posX + (math.round(self.sizeX / 2) - 1), posY + (math.round(self.sizeY / 2) - 1)
         
@@ -344,10 +352,10 @@ do
         for key, value in pairs(settings) do
             widget[key] = value
         end
-        widget.state = settings.state or false
-        widget.value = settings.value or 0
-        widget.min = settings.min or 0
-        widget.max = settings.max or 1
+        widget.state = widget.state or false
+        widget.value = widget.value or 0
+        widget.min = widget.min or 0
+        widget.max = widget.max or 1
 
         widget.destroy = destroy
         widget.draw = draw
@@ -752,7 +760,7 @@ do
         self.drawzone.flushed = true
     end
 
-    return {create = function(settings)
+    local function create(settings)
         local obj = {redrawFlag = true}
         obj.running = true
         obj.settings = settings or {}
@@ -768,6 +776,14 @@ do
         obj.selectScene = selectScene
 
         obj.createScene = createScene
+
+        obj.mathColor = mathColor
+        obj.getColor = getColor
         return obj
-    end}
+    end
+
+    return {
+        create = create,
+        instance = create()
+    }
 end
