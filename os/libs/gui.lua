@@ -81,6 +81,8 @@ widget:
         posY
         sizeX
         sizeY
+        bg - цвет фона
+        fg - цвет текста
         disable - если true, то с виджетом нельзя будет взаимодействовать
         hide - если true, то виджет не будет видим
 
@@ -88,23 +90,33 @@ widget:
 
     типы виджетов:
         label:
-            просто лейбел, выводит текст посиредине
+            просто лейбел, выводит текст из параметра text посиредине
         button:
             таботает как лейбел но может обрабатывать нажатия
             имеет дополнительные поля:
                 pressed_bg, pressed_fg
                 а так же togle - если true то это будет переключатель
                 notAutoReleased - кнопка будет считаться отпушеной только если вы ее файтически отпустите
+                
+                onTogle - callback, будет вызван при нажатии и отпускании кнопки,
+                первым аргументом будет передан ник игрона нажавшего на кнопку
+                вторым текущее состояния кнопки
+                работает во всех режимах кнопки
+
                 onClick - callback, будет вызван при нажатии кнопки,
                 первым аргументом будет передан ник игрона нажавшего на кнопку
+                вторым текущее состояния кнопки
 
                 onRelease - callback, будет вызван при отпускании кнопки,
                 первым аргументом будет передан ник игрона нажавшего на кнопку
-                
+                вторым текущее состояния кнопки
+
                 onReleaseInBox - callback, будет вызван при отпускании кнопки внутри самой кнопки,
                 первым аргументом будет передан ник игрона нажавшего на кнопку
+                вторым текущее состояния кнопки
                 имеет смысл только с поднятом notAutoReleased, иначе будет просто вызван после onRelease
-
+        plane:
+            работает как label но не умеет выводить текст и поддерживает только bg цвет
 
 
 
@@ -188,11 +200,12 @@ do
 
                     self.gui:draw()
 
+                    callback(self, "onTogle", eventData[6], self.state)
                     if self.state then
-                        callback(self, "onClick", eventData[6])
+                        callback(self, "onClick", eventData[6], self.state)
                     else
-                        callback(self, "onRelease", eventData[6])
-                        callback(self, "onReleaseInBox", eventData[6])
+                        callback(self, "onRelease", eventData[6], self.state)
+                        callback(self, "onReleaseInBox", eventData[6], self.state)
                     end
                 end
             else
@@ -202,15 +215,17 @@ do
                         if not self.state then
                             self.state = true
                             self.gui:draw()
-                            callback(self, "onClick", eventData[6])
+                            callback(self, "onTogle", eventData[6], self.state)
+                            callback(self, "onClick", eventData[6], self.state)
                         end
                     elseif eventData[1] == "drop" then
                         if self.state then
                            self.state = false
                             self.gui.redrawFlag = true
-                            callback(self, "onRelease", eventData[6])
+                            callback(self, "onTogle", eventData[6], self.state)
+                            callback(self, "onRelease", eventData[6], self.state)
                             if touchinbox then
-                                callback(self, "onReleaseInBox", eventData[6])
+                                callback(self, "onReleaseInBox", eventData[6], self.state)
                             end
                         end
                     end
@@ -219,13 +234,15 @@ do
                         self.state = true
                         self.gui:draw()
                         local uptime = computer.uptime()
-                        callback(self, "onClick", eventData[6])
+                        callback(self, "onTogle", eventData[6], self.state)
+                        callback(self, "onClick", eventData[6], self.state)
 
                         self.state = false
                         self.gui:draw()
                         local uptime = computer.uptime()
-                        callback(self, "onRelease", eventData[6])
-                        callback(self, "onReleaseInBox", eventData[6])
+                        callback(self, "onTogle", eventData[6], self.state)
+                        callback(self, "onRelease", eventData[6], self.state)
+                        callback(self, "onReleaseInBox", eventData[6], self.state)
                     end
                 end
             end
@@ -259,7 +276,7 @@ do
         local posX, posY = mathPos(self)
         local centerX, centerY = posX + (math.round(self.sizeX / 2) - 1), posY + (math.round(self.sizeY / 2) - 1)
         
-        if self.type == "text" or self.type == "button" then
+        if self.type == "text" or self.type == "button" or self.type == "plane" then
             local bg = mathColor(self, self.bg, getColor(self, "white"))
             local fg = mathColor(self, self.fg, getColor(self, "black"))
             local pressed_bg = mathColor(self, self.pressed_bg, getColor(self, "black"))
@@ -270,7 +287,7 @@ do
                 posY,
                 self.sizeX,
                 self.sizeY,
-                self.text,
+                self.type ~= "plane" and self.text,
                 self.state and pressed_bg or bg,
                 self.state and pressed_fg or fg
             )
