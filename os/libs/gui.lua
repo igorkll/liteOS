@@ -408,6 +408,7 @@ do
 
     local function draw(self)
         if self.hide then return end
+        
 
         self.drawzone:fill(self.posX, self.posY, self.sizeX, self.sizeY, table.unpack(self.bg))
         for _, widget in ipairs(self.widgets) do
@@ -445,6 +446,7 @@ do
 
     local function listen(self, eventData)
         if self.disable then return end
+
 
         local tx, ty = self.tx, self.ty
         if eventData[1] == "touch" or eventData[1] == "drag" then
@@ -668,7 +670,7 @@ do
         local upLayout = self.layouts[#self.layouts]
         if eventData[1] == "touch" or eventData[1] == "drag" or eventData[1] == "scroll" then
             if self.lastLayout then
-                if not self.lastLayout.selected then
+                if not self.lastLayout.selected or self.lastLayout.disable then
                     self.lastLayout = nil
                 else
                     self.lastLayout:listen(eventData)

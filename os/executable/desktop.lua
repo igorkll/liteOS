@@ -20,10 +20,14 @@ end
 gui:selectScene(scene)
 autorun.autorun("/desktopAutorun")
 autorun.autorun("/data/desktopAutorun")
-gui:run(function()
-    local state = math.random(0, 1) == 0
-    local index = math.random(0, 15)
 
-    windows[index]:setParam("hide", state)
-    windows[index]:setParam("disable", state)
-end)
+local olduptime = computer.uptime()
+gui:run(function()
+    if computer.uptime() - olduptime > 1 then
+        local state = math.random(0, 1) == 0
+        local index = math.random(0, 15)
+        windows[index]:setParam("hide", state)
+        windows[index]:setParam("disable", state)
+        olduptime = computer.uptime()
+    end
+end, 0.5)
