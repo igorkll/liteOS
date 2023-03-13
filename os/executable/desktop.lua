@@ -6,7 +6,7 @@ local gui = system.gui
 
 -------------------------------------------------------
 
-scene = gui:createScene(nil, system.rx, system.ry, system.palette, true)
+scene = gui:createScene(nil, system.rx, system.ry, system.palette, system.usingTheDefaultPalette)
 bgLayout = scene:createLayout(gui:getColor("cyan"), 1, 1, system.rx, system.ry, false, true)
 bgLayout:createWidget({
     type = "plane",

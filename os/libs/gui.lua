@@ -184,7 +184,10 @@ local function getColor(self, name, disableTable) --возврашяет цве�
                 return {0, 0xFFFFFF, "░"}
             end
         else
-            return drawer.palette_defaultTier2[colors[name]] --а если не палитра, то цвета второго тира
+            if self.drawzone.depth == 4 then --на мониторе второго тира, вернуть текущею палитру палитру
+                return self.drawzone.palette[colors[name]]
+            end
+            return drawer.palette_computercraft2[colors[name]] --а если не палитра, то цвета второго тира
         end
     end
 end
@@ -442,8 +445,7 @@ do
 
     local function draw(self)
         if self.hide then return end
-        
-
+    
         self.drawzone:fill(self.posX, self.posY, self.sizeX, self.sizeY, table.unpack(self.bg))
         for _, widget in ipairs(self.widgets) do
             widget:draw()

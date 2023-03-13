@@ -2,6 +2,7 @@ local advmath = require("advmath")
 local background = {}
 background.listens = {}
 background.timers = {}
+background.log = {}
 
 function background.addListen(func)
     table.insert(background.listens, func)
@@ -27,6 +28,15 @@ function background.removeTimer(func)
     end
 end
 
+function background.call(func, ...)
+    local data = {pcall(func, ...)}
+    if not data[1] then
+        table.insert(background.log, {err = data[2]})
+        return table.unpack(data)
+    end
+    return table.unpack(data, 2)
+end
+
 do
     local pullSignal = computer.pullSignal
     function computer.pullSignal(time)
@@ -37,7 +47,7 @@ do
             for index, value in ipairs(background.timers) do --timers
                 if computer.uptime() - value.lasttime >= value.time then
                     value.lasttime = computer.uptime()
-                    value.func()
+                    background.call(value.func)
                 end
             end
 
@@ -54,7 +64,7 @@ do
             local data = {pullSignal(waittime)}
             if #data > 0 then
                 for index, value in ipairs(background.listens) do
-                    value(table.unpack(data))
+                    background.call(value, table.unpack(data))
                 end
                 return table.unpack(data)
             end

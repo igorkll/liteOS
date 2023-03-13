@@ -1,5 +1,5 @@
 local autorun = {}
-autorun._AUTORUNS_LOG = {}
+autorun.log = {}
 
 function autorun.autorun(folder)
     local fs = require("filesystem")
@@ -11,7 +11,7 @@ function autorun.autorun(folder)
             if fs.exists(fullpath) then
                 local ok, err = programs.run(fullpath)
                 if not ok then
-                    table.insert(autorun._AUTORUNS_LOG, {err = err, file = fullpath})
+                    table.insert(autorun.log, {err = err, file = fullpath})
                 end
             end
         end

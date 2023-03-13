@@ -8,7 +8,7 @@ local old_scene = gui.scene
 
 --------------------------------------------------------------------------------------scene1
 
-scene1 = gui:createScene(colors.black, 80, 25, drawer.palette_computercraft, true)
+scene1 = gui:createScene(colors.black, 80, 25, drawer.palette_computercraft, system.usingTheDefaultPalette)
 
 local function createSceneselector()
     local layout = scene1:createLayout(colors.lime, 3, 3, 32, 8, true)

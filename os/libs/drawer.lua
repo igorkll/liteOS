@@ -33,7 +33,8 @@ drawer.palette_computercraft = { --цвета computercraft
     0x191919  --16) black
 }
 
-drawer.palette_computercraft2 = { --модифицированые цвета computercraft
+--модифицированые цвета computercraft отпимизированые под вывод на мониторе третиго уровня без изменения штатной палитры
+drawer.palette_computercraft2 = {
     [0] = 0xFFFFFF, --1)  white
     0xF2B233, --2)  orange
     0xE57FD8, --3)  magenta
