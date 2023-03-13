@@ -42,21 +42,17 @@ function package._require(name)
     return lib or true
 end
 
-if computer.totalMemory() < (512 * 1024) then
-    function package.require(name)
-        return setmetatable({}, {
-            __index = function (self, key)
-                local lib = package._require(name)
-                return lib[key]
-            end,
-            __newindex = function (self, key, value)
-                local lib = package._require(name)
-                lib[key] = value
-            end,
-        })
-    end
-else
-    package.require = package._require
+function package.require(name)
+    return setmetatable({}, {
+        __index = function (self, key)
+            local lib = package._require(name)
+            return lib[key]
+        end,
+        __newindex = function (self, key, value)
+            local lib = package._require(name)
+            lib[key] = value
+        end,
+    })
 end
 
 require = package.require

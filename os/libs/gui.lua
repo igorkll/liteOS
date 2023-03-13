@@ -126,6 +126,7 @@ local drawer = require("drawer")
 local advmath = require("advmath")
 local colors = require("colors")
 local parser = require("parser")
+local system = require("system")
 
 ----------------------------------------------FUNCS
 
@@ -185,7 +186,15 @@ local function getColor(self, name, disableTable) --возврашяет цве�
             end
         else
             if self.drawzone.depth == 4 then --на мониторе второго тира, вернуть текущею палитру палитру
-                return self.drawzone.palette[colors[name]]
+                if self.scene then
+                    return self.scene.palette[colors[name]]
+                else
+                    if system.palette then
+                        return system.palette[colors[name]]
+                    else
+                        return self.drawzone.palette[colors[name]]
+                    end
+                end
             end
             return drawer.palette_computercraft2[colors[name]] --а если не палитра, то цвета второго тира
         end
