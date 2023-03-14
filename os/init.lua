@@ -13,16 +13,14 @@ local function readFile(path)
     return buffer
 end
 
-local firmware = "local address = \"" .. fs.address .. "\"\n" .. readFile("/firmware.lua")
-
 ----------------eeprom
 
 local eeprom = component.proxy(component.list("eeprom")())
 
-eeprom.set(firmware)
-eeprom.makeReadonly(eeprom.getChecksum())
+eeprom.set("local address = \"" .. fs.address .. "\"\n" .. readFile("/firmware.lua"))
 eeprom.setData("")
 eeprom.setLabel("liteOS firmware")
+eeprom.makeReadonly(eeprom.getChecksum())
 
 ----------------reboot
 
