@@ -1,3 +1,4 @@
+local webservices = require("webservices")
 local dialogWindows = require("dialogWindows")
 local autorun = require("autorun")
 local programs = require("programs")
@@ -152,6 +153,7 @@ dialogWindows.message(scene, "hello!", "a new os!", gui:getColor("lightGray"))
 -------------------------------------------------------
 
 gui:selectScene(scene)
+webservices.run("/desktop.lua")
 autorun.autorun("/desktopAutorun")
 autorun.autorun("/data/desktopAutorun")
 gui:run()

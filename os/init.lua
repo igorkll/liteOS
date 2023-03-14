@@ -1,53 +1,30 @@
---------init
+----------------generate firmware
 
-computer.setArchitecture("Lua 5.3")
-
-_G = _ENV
-
-_OSVERSION = "liteOS 1.0"
-bootaddress = computer.getBootAddress()
-bootfs = component.proxy(bootaddress)
-
-do
-    function require(name)
-        local function raw_readFile(fs, path)
-            checkArg(1, fs, "table", "string")
-            checkArg(2, path, "string")
-        
-            if type(fs) == "string" then fs = component.proxy(fs) end
-            if not fs.exists(path) then return nil, "file not found" end
-            if fs.isDirectory(path) then return nil, "is directory" end
-            local file, err = fs.open(path, "rb")
-            if not file then return nil, err or "unknown" end
-        
-            local buffer = ""
-            repeat
-                local data = fs.read(file, math.huge)
-                buffer = buffer .. (data or "")
-            until not data
-            fs.close(file)
-            return buffer
-        end
-
-        local path = "/libs/" .. name .. ".lua"
-        local text = assert(raw_readFile(bootaddress, path))
-        local code = assert(load(text, "raw=" .. path, "bt", _ENV))
-        local lib = assert(code())
-        return lib
-    end
-    require("package")
+local fs = component.proxy(computer.getBootAddress())
+local function readFile(path)
+    local file, err = fs.open(path, "rb")
+    if not file then return nil, err end
+    local buffer = ""
+    repeat
+        local data = fs.read(file, math.huge)
+        buffer = buffer .. (data or "")
+    until not data
+    fs.close(file)
+    return buffer
 end
 
-local package = require("package")
+local firmware = "local address = \"" .. fs.address .. "\"\n" .. readFile("/firmware.lua")
 
-package._require("utilites")
-package._require("background")
+----------------eeprom
 
----------------------------------------------------
+local eeprom = component.proxy(component.list("eeprom")())
 
-require("webservices").run("/startup.lua")
-local autorun = require("autorun")
+eeprom.set(firmware)
+eeprom.makeReadonly(eeprom.getChecksum())
+eeprom.setData("")
+eeprom.setLabel("liteOS firmware")
 
-autorun.autorun("/autorun")
-autorun.autorun("/data/autorun")
-assert(require("programs").execute("desktop"))
+----------------reboot
+
+computer.setArchitecture("Lua 5.3")
+computer.shutdown(true)

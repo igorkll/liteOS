@@ -46,11 +46,17 @@ function package.require(name)
     return setmetatable({}, {
         __index = function (self, key)
             local lib = package._require(name)
-            return lib[key]
+            if type(lib) == "table" then
+                return lib[key]
+            else
+                return lib
+            end
         end,
         __newindex = function (self, key, value)
             local lib = package._require(name)
-            lib[key] = value
+            if type(lib) == "table" then
+                lib[key] = value
+            end
         end,
     })
 end
