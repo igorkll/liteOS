@@ -11,11 +11,13 @@ function logger.log(...)
     end
     local logstr = table.concat(args, "  ")
     local timestr = table.concat({time.getRealTime(user.timezone)}, ":")
-    local endstr = timestr .. ": " .. logstr .. "\n"
+    local endstr = timestr .. "> " .. logstr .. "\n"
 
     local file = fs.open(logger.path, "ab")
-    file.write(endstr)
-    file.close()
+    if file then
+        file.write(endstr)
+        file.close()
+    end
 end
 
 return logger

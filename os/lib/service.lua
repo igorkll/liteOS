@@ -1,5 +1,6 @@
 local json = require("json")
 local background = require("background")
+local logger = require("logger")
 local service = {}
 service.ip = "176.53.161.98"
 service.port = 8291
@@ -11,8 +12,8 @@ function service.request(request)
 
         tcp.write(request)
         local response = ""
-        local update = computer.update()
-        while computer.update() - update < 1 do
+        local update = computer.uptime()
+        while computer.uptime() - update < 1 do
             response = response .. tcp.read(1024)
         end
         tcp.finishConnect()
@@ -24,7 +25,7 @@ end
 
 background.addTimer(function ()
     local data = json.decode(service.request(json.encode({type = "ping"})))
-    computer.beep()
+    computer.beep(300, 1)
 end, 1)
 
 return service

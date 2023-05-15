@@ -1,19 +1,18 @@
 local fs = require("filesystem")
-
+local logger = require("logger")
 local autorun = {}
-autorun.log = {}
 
 function autorun._autorun(folder)
     local fs = require("filesystem")
     local programs = require("programs")
-
     if fs.exists(folder) and fs.isDirectory(folder) then
         for _, path in ipairs(fs.list(folder) or {}) do
             local fullpath = fs.concat(folder, path)
+            logger.log("autorun", fullpath)
             if fs.exists(fullpath) then
-                local ok, err = programs.run(fullpath)
+                local ok, err = programs.execute(fullpath)
                 if not ok then
-                    table.insert(autorun.log, {err = err, file = fullpath})
+                    logger.log("autorun-error", fullpath, err)
                 end
             end
         end

@@ -1,1 +1,1 @@
-require("service")
+require("package")._require("service")

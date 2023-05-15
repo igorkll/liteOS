@@ -8,6 +8,7 @@ package.loaded = {
     unicode = unicode,
     utf8 = utf8,
     filesystem = require("filesystem"),
+    env = require("env"),
 }
 package.paths = {"/lib", "/data/lib"}
 
@@ -16,6 +17,7 @@ function package._require(name)
     if package.loaded[name] then return package.loaded[name] end
 
     local filesystem = require("filesystem")
+    local env = require("env")
 
     local lib, finded
     for index, value in ipairs(package.paths) do

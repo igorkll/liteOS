@@ -59,8 +59,6 @@ end
 ---------------------------------------------------
 
 require("webservices").run("/startup.lua")
-
-local autorun = require("autorun")
-autorun.autorun("autorun")
+require("autorun").autorun("autorun")
 
 assert(require("programs").execute("desktop"))

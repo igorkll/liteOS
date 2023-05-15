@@ -230,6 +230,13 @@ function filesystem.rename(fromPath, toPath)
 end
 
 function filesystem.open(path, mode)
+	if mode then
+		mode = mode:sub(1, 1):lower()
+		if mode == "w" or mode == "a" then
+			filesystem.makeDirectory(filesystem.path(path))
+		end
+	end
+
 	local proxy, proxyPath = filesystem.get(path)
 	local result, reason = proxy.open(proxyPath, mode)
 	if result then
@@ -247,6 +254,7 @@ function filesystem.open(path, mode)
 				return buffer
 			end,
             handle = result,
+			proxy = proxy,
 		}
 
         return handle

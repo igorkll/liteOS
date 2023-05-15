@@ -1,8 +1,8 @@
 local advmath = require("advmath")
+local logger = require("logger")
 local background = {}
 background.listens = {}
 background.timers = {}
-background.log = {}
 
 function background.addListen(func)
     table.insert(background.listens, func)
@@ -29,12 +29,10 @@ function background.removeTimer(func)
 end
 
 function background.call(func, ...)
-    local data = {pcall(func, ...)}
+    local data = {xpcall(func, debug.traceback, ...)}
     if not data[1] then
-        table.insert(background.log, {err = data[2]})
-        return table.unpack(data)
+        logger.log("background-error", data[2])
     end
-    return table.unpack(data, 2)
 end
 
 do
