@@ -169,9 +169,8 @@ local function getColor(self, name, disableTable) --возврашяет цве�
     if self.drawzone.usingTheDefaultPalette then --если палитра
         return colors[name] --то вернуть индекс
     else
-        if self.drawzone.depth > 1 then
-            disableTable = true
-        end
+        if disableTable == nil and self.drawzone.depth > 1 then disableTable = true end
+        
         if not disableTable then
             if name == "gray" then
                 return {0, 0xFFFFFF, "▒"}

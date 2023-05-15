@@ -20,7 +20,7 @@ bgLayout:createWidget({
     sizeY = 1
 })
 
--------------------------------------------------------plane ponel
+-------------------------------------------------------plane
 
 osButton = bgLayout:createWidget({
     type = "button",
