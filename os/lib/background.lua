@@ -37,34 +37,40 @@ end
 
 do
     local pullSignal = computer.pullSignal
-    function computer.pullSignal(time)
-        time = time or math.huge
+    local uptime = computer.uptime
+    local ipairs = ipairs
+    local unpack = table.unpack
+    local clamp = advmath.clamp
+    local huge = math.huge
+    local call = background.call
 
-        local startTime = computer.uptime()
-        while computer.uptime() - startTime <= time do
+    function computer.pullSignal(time)
+        time = time or huge
+
+        local startTime = uptime()
+        while uptime() - startTime <= time do
             for index, value in ipairs(background.timers) do --timers
-                if computer.uptime() - value.lasttime >= value.time then
-                    value.lasttime = computer.uptime()
-                    background.call(value.func)
+                if uptime() - value.lasttime >= value.time then
+                    value.lasttime = uptime()
+                    call(value.func)
                 end
             end
 
-
-            local waittime = time - (computer.uptime() - startTime) --подсчет сколько времяни остолось до ближайшего таймера
+            local waittime = time - (uptime() - startTime) --подсчет сколько времяни остолось до ближайшего таймера
             for index, value in ipairs(background.timers) do
-                local ltime = value.time - (computer.uptime() - value.lasttime)
+                local ltime = value.time - (uptime() - value.lasttime)
                 if ltime < waittime then
                     waittime = ltime
                 end
             end
-            waittime = advmath.clamp(waittime, 0, math.huge)
+            waittime = clamp(waittime, 0, huge)
 
             local data = {pullSignal(waittime)}
             if #data > 0 then
                 for index, value in ipairs(background.listens) do
-                    background.call(value, table.unpack(data))
+                    call(value, unpack(data))
                 end
-                return table.unpack(data)
+                return unpack(data)
             end
         end
     end

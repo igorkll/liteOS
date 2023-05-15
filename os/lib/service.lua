@@ -58,6 +58,6 @@ background.addTimer(function ()
         end
         service.old_server_connect = service.server_connect
     end
-end, 5)
+end, 10)
 
 return service
