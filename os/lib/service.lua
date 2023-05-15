@@ -12,12 +12,15 @@ function service.request(request)
 
         tcp.finishConnect()
         tcp.write(request)
-        local response = ""
+        local response = "{}"
         local update = computer.uptime()
         while computer.uptime() - update < 1 do
-            response = response .. (tcp.read(1024) or "")
+            local str = tcp.read(1024)
+            if str and str ~= "" then
+                response = str
+                break
+            end
         end
-        if response == "" then response = "{}" end
         tcp.close()
 
         return response
@@ -35,6 +38,6 @@ background.addTimer(function ()
     else
         computer.beep(50)
     end
-end, 1)
+end, 5)
 
 return service
