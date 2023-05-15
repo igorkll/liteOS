@@ -4,15 +4,18 @@ import json
 
 def callback(data):
     # здесь можно определить свой функционал и обработать полученный пакет
+    print("request", data)
     data = json.loads(data)
     
     ret = {}
-    if data.type == "ping":
+    if data["type"] == "ping":
         ret = {
             "type": "pong"
         }
 
-    return json.dumps(ret)
+    
+    print("response", ret)
+    return json.dumps(ret).encode()
 
 def run_server():
     # создаем TCP сокет и связываем его с портом 8291
@@ -33,7 +36,7 @@ def run_server():
                     data = conn.recv(1024)
 
                     # вызываем функцию обратного вызова и отправляем ее результат обратно клиенту
-                    response = callback(data)
+                    response = callback(data.decode("utf-8"))
                     conn.send(response)
 
                     # закрываем соединение

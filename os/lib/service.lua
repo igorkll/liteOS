@@ -10,13 +10,14 @@ function service.request(request)
     if internet then
         local tcp = internet.connect(service.ip, service.port)
 
+        tcp.finishConnect()
         tcp.write(request)
         local response = ""
         local update = computer.uptime()
         while computer.uptime() - update < 1 do
-            response = response .. tcp.read(1024)
+            response = response .. (tcp.read(1024) or "")
         end
-        tcp.finishConnect()
+        if response == "" then response = "{}" end
         tcp.close()
 
         return response
@@ -25,7 +26,15 @@ end
 
 background.addTimer(function ()
     local data = json.decode(service.request(json.encode({type = "ping"})))
-    computer.beep(300, 1)
+    if data then
+        if data.type == "pong" then
+            computer.beep(2000)
+        else
+            computer.beep(1000)
+        end
+    else
+        computer.beep(50)
+    end
 end, 1)
 
 return service
