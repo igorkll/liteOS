@@ -7,6 +7,8 @@ local gui = system.gui
 -------------------------------------------------------
 
 scene = system.createScene()
+system.scene = scene
+
 bgLayout = scene:createLayout(gui:getColor("cyan"), 1, 1, system.rx, system.ry, false, true)
 bgLayout:createWidget({
     type = "plane",

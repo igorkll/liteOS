@@ -18,6 +18,7 @@ function dialogWindows.getWindowSize(scene, minX, minY)
 end
 
 function dialogWindows.message(scene, label, text, color, textColor)
+    scene = scene or system.scene
     color = color or gui:getColor("gray")
     textColor = textColor or gui:getColor("white")
     label = label or "alert message"
