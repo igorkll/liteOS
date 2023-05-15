@@ -79,7 +79,7 @@ function drawer.create(settings) --создает графическую сис�
         local mx, my = gpu.maxResolution()
         local rx, ry = settings.rx or mx, settings.ry or my
 
-        
+
         if settings.allowHardwareBuffer == nil then --если значения не false не true то оно будет по умалчанию
             settings.allowHardwareBuffer = true
         end
@@ -219,12 +219,12 @@ function drawer:setPaletteColor(index, color)
 end
 
 function drawer:setPalette(palette)
-    if not palette then
-        self.gpu.setDepth(1) --сброс палитры
-        self.gpu.setDepth(self.gpu.maxDepth())
-    end
-
     if self.palette then
+        if not palette then
+            self.gpu.setDepth(1) --сброс палитры
+            self.gpu.setDepth(self.gpu.maxDepth())
+        end
+
         for i = 0, 15 do
             self.palette[i] = palette and palette[i] or self.gpu.getPaletteColor(i)
         end
