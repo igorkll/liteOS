@@ -1,14 +1,21 @@
+import traceback
 import socket
+import json
 
 def callback(data):
     # здесь можно определить свой функционал и обработать полученный пакет
+    data = json.loads(data)
     
-    return data
+    ret = {}
+    if data.type == "ping":
+        ret = {type: "pong"}
+
+    return json.dumps(ret)
 
 def run_server():
     # создаем TCP сокет и связываем его с портом 8291
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-        sock.bind(('127.0.0.1', 8291))
+        sock.bind(('0.0.0.0', 8291))
         sock.listen()
 
         print('Сервер запущен на порту 8291...')
@@ -16,7 +23,6 @@ def run_server():
         while True:
             try:
                 while True:
-                    a = 0 / 0
                     # принимаем новое соединение
                     conn, addr = sock.accept()
                     print(f'Установлено соединение с {addr[0]}:{addr[1]}')
@@ -33,7 +39,7 @@ def run_server():
                     print(f'Соединение с {addr[0]}:{addr[1]} закрыто')
             except Exception as str:
                 print("СЕРВАК ПОЛЁГ: ")
-                print(str)
+                traceback.print_exc()
 
             print("ПЕРЕЗАПУСК.")
         

@@ -23,7 +23,7 @@ function package._require(name)
 
         if filesystem.exists(path) then
             local text = assert(filesystem.readFile(path))
-            local code = assert(load(text, "=" .. path, "bt", _G))
+            local code = assert(load(text, "=" .. path, "bt", env.createProgrammEnv()))
             lib = code()
             
             finded = true
