@@ -15,7 +15,7 @@ function service._request(request)
         tcp.write(request)
         local response
         local update = computer.uptime()
-        while computer.uptime() - update < 0.2 do
+        while computer.uptime() - update < 0.1 do
             local str = tcp.read(1024)
             if str and str ~= "" then
                 response = str
@@ -29,7 +29,7 @@ function service._request(request)
 end
 
 function service.request(request)
-    for i = 1, 3 do
+    for i = 1, 2 do
         local response = service._request(request)
         if response then
             return response
