@@ -4,7 +4,7 @@ local env = require("env")
 ----------------------------------------
 
 local programs = {}
-programs.paths = {"/executable", "/data/executable"}
+programs.paths = {"/bin", "/data/bin"}
 
 function programs.list()
     local list = {}
