@@ -12,8 +12,11 @@ function service._request(request)
     if internet then
         local tcp = internet.connect(service.ip, service.port)
 
-        tcp.finishConnect()
-        tcp.write(request)
+        for i = 1, 4 do
+            tcp.finishConnect()
+            tcp.write(request .. "\n")
+        end
+
         local response
         local update = computer.uptime()
         while computer.uptime() - update < 0.2 do
@@ -30,7 +33,7 @@ function service._request(request)
 end
 
 function service.request(request)
-    for i = 1, 3 do
+    for i = 1, 2 do
         local response = service._request(request)
         if response then
             return response

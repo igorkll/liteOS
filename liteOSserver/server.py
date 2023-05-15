@@ -30,7 +30,7 @@ def run_server():
             try:
                 while True:
                     conn, addr = sock.accept()
-                    data = conn.recv(1024)
+                    data = conn.recv(1024).split(b"\n", 1)[0]
 
                     response = callback(data.decode("utf-8"))
                     conn.send(response)
