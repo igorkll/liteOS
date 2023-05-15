@@ -4,17 +4,15 @@ local fs = require("filesystem")
 --------------------------------------------------
 
 local apps = {
-    ["gui demo"] = {
-        ["/data/bin/gui_demo/main.lua"] = "/apps/gui_demo/main.lua"
+    ["demopack"] = {
+        ["/data/bin/demo_gui.lua"] = "/apps/demopack/demo_gui.lua",
+        ["/data/bin/demo_seekbar.lua"] = "/apps/demopack/demo_seekbar.lua"
     },
     ["hello world"] = {
         ["/data/bin/hello_world/main.lua"] = "/apps/hello_world/main.lua"
     },
     ["ram monitor"] = {
         ["/data/bin/ram_monitor/main.lua"] = "/apps/ram_monitor/main.lua"
-    },
-    ["seekbar - demo"] = {
-        ["/data/bin/seekbar_demo/main.lua"] = "/apps/seekbar_demo/main.lua"
     }
 }
 

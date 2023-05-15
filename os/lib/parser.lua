@@ -1,8 +1,11 @@
 local parser = {}
 
 function parser.split(tool, str, seps)
-    local parts = {""}
+    if type(seps) ~= "table" then
+        seps = {tostring(seps)}
+    end
 
+    local parts = {""}
     local index = 1
     local strlen = tool.len(str)
     while index <= strlen do
