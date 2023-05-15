@@ -1,5 +1,6 @@
 local gui = require("gui")
 local drawer = require("drawer")
+local parser = require("parser")
 
 ---------------------------
 
@@ -19,7 +20,7 @@ if system.gui.drawzone.depth ~= 4 then
 end
 ]]
 
-function system.getSelfPath()
+function system.getSelfInfo()
     local info
 
     for runLevel = 0, math.huge do
@@ -27,12 +28,20 @@ function system.getSelfPath()
 
         if info then
             if info.what == "main" then
-                return info.source:sub(2, -1)
+                return parser.split(string, info.source, "=")
             end
         else
             error("Failed to get debug info for runlevel " .. runLevel)
         end
     end
+end
+
+function system.getSelfPath()
+    return system.getSelfInfo()[2]
+end
+
+function system.getSelfType()
+    return system.getSelfInfo()[1]
 end
 
 function system.createScene(bg, sizeX, sizeY, palette)
