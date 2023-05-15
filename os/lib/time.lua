@@ -38,8 +38,14 @@ function time.getGameTime()
     return math.floor(hours), math.floor(minutes), math.floor(seconds)
 end
 
-function time.formatTime(hours, minutes, seconds)
-
+function time.formatTime(...)
+    local args = {...}
+    for index, value in ipairs(args) do
+        value = tostring(value)
+        if #value == 1 then value = "0" .. value end
+        args[index] = value
+    end
+    return table.concat(args, ":")
 end
 
 return time

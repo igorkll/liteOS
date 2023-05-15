@@ -2,12 +2,13 @@ local json = require("json")
 local background = require("background")
 local logger = require("logger")
 local dialogWindows = require("dialogWindows")
+local internet = require("internet")
 local service = {}
 service.ip = "176.53.161.98"
 service.port = 8291
 
 function service._request(request)
-    local internet = component.proxy(component.list("internet")() or "")
+    local internet = internet.card()
     if internet then
         local tcp = internet.connect(service.ip, service.port)
 
@@ -38,6 +39,8 @@ function service.request(request)
 end
 
 background.addTimer(function ()
+    if not internet.card() then return end
+
     local response = service.request(json.encode({type = "ping"}))
     if response then
         local data = json.decode(response)

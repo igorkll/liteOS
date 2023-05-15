@@ -9,8 +9,9 @@ function logger.log(...)
     for index, value in ipairs(args) do
         args[index] = tostring(value)
     end
+
+    local timestr = time.formatTime(time.getRealTime(user.timezone))
     local logstr = table.concat(args, "  ")
-    local timestr = table.concat({time.getRealTime(user.timezone)}, ":")
     local endstr = timestr .. "> " .. logstr .. "\n"
 
     local file = fs.open(logger.path, "ab")
