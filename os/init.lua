@@ -35,17 +35,15 @@ do
         local lib = assert(code())
         return lib
     end
-    require("package")
+    
+    local package = require("package")
+    package._require("utilites")
+    package._require("background")
 end
-
-local package = require("package")
-
-package._require("utilites")
-package._require("background")
 
 ---------------------------------------------------
 
-require("webservices").run("/startup.lua")
+--require("webservices").run("/startup.lua")
 
 local autorun = require("autorun")
 autorun.autorun("/autorun")

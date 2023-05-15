@@ -67,10 +67,13 @@ function drawer.create(settings) --создает графическую сис�
     if settings.softwareBufferPriority == nil then
         settings.softwareBufferPriority = true
     end
+    if settings.allowSoftwareBuffer == nil then
+        settings.allowSoftwareBuffer = (computer.freeMemory() / 3) > (rx * ry * 32)
+    end
     
+
     local gpu = component.proxy((settings.gpu or component.list("gpu")()) or "")
     local screen = settings.screen or component.list("screen")()
-
     if gpu and screen then
         if not settings.doNotAutoOn then
             component.invoke(screen, "turnOn")
@@ -89,9 +92,6 @@ function drawer.create(settings) --создает графическую сис�
         gpu.bind(screen)
         local mx, my = gpu.maxResolution()
         local rx, ry = settings.rx or mx, settings.ry or my
-        if settings.allowSoftwareBuffer == nil then
-            settings.allowSoftwareBuffer = (computer.freeMemory() / 3) > (rx * ry * 32)
-        end
 
         --[[
         if settings.allowSoftwareBuffer then
