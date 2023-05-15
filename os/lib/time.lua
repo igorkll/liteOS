@@ -38,4 +38,8 @@ function time.getGameTime()
     return math.floor(hours), math.floor(minutes), math.floor(seconds)
 end
 
+function time.formatTime(hours, minutes, seconds)
+
+end
+
 return time

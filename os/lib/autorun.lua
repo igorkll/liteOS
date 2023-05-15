@@ -8,7 +8,6 @@ function autorun._autorun(folder)
     if fs.exists(folder) and fs.isDirectory(folder) then
         for _, path in ipairs(fs.list(folder) or {}) do
             local fullpath = fs.concat(folder, path)
-            logger.log("autorun", fullpath)
             if fs.exists(fullpath) then
                 local ok, err = programs.execute(fullpath)
                 if not ok then

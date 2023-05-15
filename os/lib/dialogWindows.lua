@@ -44,4 +44,12 @@ function dialogWindows.message(scene, label, text, color, textColor)
     return layout, returnTbl
 end
 
+function dialogWindows.error(scene, text)
+    return dialogWindows.message(scene, "error", text, gui:getColor("red"))
+end
+
+function dialogWindows.warning(scene, text)
+    return dialogWindows.message(scene, "warning", text, gui:getColor("yellow"))
+end
+
 return dialogWindows
