@@ -133,8 +133,17 @@ local system = require("system")
 local char_circle = "●"
 local defaultcolor = {0, 0, " "}
 
-local function mathColor(self, color, default) --получить цвет в види табличи из обычного цвета, при этом с табличкой нечего не сделает
-    return color and (type(color) == "number" and {color, 0, " "} or color) or mathColor(self, default or defaultcolor)
+--получить цвет в види табличи из обычного цвета, при этом с табличкой нечего не сделает
+local function mathColor(self, color, default)
+    if color then
+        if type(color) == "number" then
+            return {color, 0, " "}
+        else
+            return color
+        end
+    else
+        return mathColor(self, default or defaultcolor)
+    end
 end
 
 local function fillFakeColor(self, posX, posY, sizeX, sizeY, text, bg, fg) --фековый цвет позваляет смешивать цвета символами unicode, и отрисовывать серый даже на экранах первого уровня
@@ -307,8 +316,8 @@ do
         if self.type == "text" or self.type == "button" or self.type == "plane" then
             local bg = mathColor(self, self.bg, getColor(self, "white"))
             local fg = mathColor(self, self.fg, getColor(self, "black"))
-            local pressed_bg = mathColor(self, self.pressed_bg, getColor(self, "black"))
-            local pressed_fg = mathColor(self, self.pressed_fg, getColor(self, "white"))
+            local pressed_bg = mathColor(self, self.pressed_bg or self.fg, getColor(self, "black"))
+            local pressed_fg = mathColor(self, self.pressed_fg or self.bg, getColor(self, "white"))
             
             fillFakeColor(self,
                 posX,
@@ -423,6 +432,7 @@ do
         table.insert(self.widgets, widget)
 
         widget.gui.redrawFlag = true
+
         return widget
     end
 end

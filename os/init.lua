@@ -1,3 +1,18 @@
+--[[
+paths:
+    system:
+        /bin - programs
+        /lib - libs
+        /autorun - autorun
+        /desktopAutorun - autorun, where you can create windows
+
+    user:
+        /data/bin - programs
+        /data/lib - libs
+        /data/autorun - autorun
+        /data/desktopAutorun - autorun, where you can create windows
+]]
+
 --------------------------------------------------- init
 
 _G = _ENV
@@ -43,10 +58,9 @@ end
 
 ---------------------------------------------------
 
---require("webservices").run("/startup.lua")
+require("webservices").run("/startup.lua")
 
 local autorun = require("autorun")
-autorun.autorun("/autorun")
-autorun.autorun("/data/autorun")
+autorun.autorun("autorun")
 
 assert(require("programs").execute("desktop"))

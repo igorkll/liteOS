@@ -1,5 +1,4 @@
 local webservices = require("webservices")
-local dialogWindows = require("dialogWindows")
 local autorun = require("autorun")
 local programs = require("programs")
 local system = require("system")
@@ -7,7 +6,7 @@ local gui = system.gui
 
 -------------------------------------------------------
 
-scene = gui:createScene(nil, system.rx, system.ry, system.palette, system.usingTheDefaultPalette)
+scene = system.createScene()
 bgLayout = scene:createLayout(gui:getColor("cyan"), 1, 1, system.rx, system.ry, false, true)
 bgLayout:createWidget({
     type = "plane",
@@ -32,6 +31,9 @@ osButton = bgLayout:createWidget({
         osMenu:setParam("disable", not state)
         osMenu:setParam("hide", not state)
     end,
+
+    bg = gui:getColor("blue"),
+    fg = gui:getColor("lightBlue"),
 
     posX = 1,
     posY = bgLayout.sizeY,
@@ -148,12 +150,7 @@ refreshApps()
 
 -------------------------------------------------------
 
-dialogWindows.message(scene, "hello!", "a new os!", gui:getColor("lightGray"))
-
--------------------------------------------------------
-
 gui:selectScene(scene)
 webservices.run("/desktop.lua")
-autorun.autorun("/desktopAutorun")
-autorun.autorun("/data/desktopAutorun")
+autorun.autorun("desktopAutorun")
 gui:run()

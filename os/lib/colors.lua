@@ -34,6 +34,10 @@ colors.lightblue = colors.lightBlue
 colors.lightgray = colors.lightGray
 colors.lightgreen = colors.lightGreen
 
+colors.grey = colors.gray
+colors.lightgrey = colors.lightGray
+colors.lightGrey = colors.lightGray
+
 function colors.hsvToRgb(h, s, v)
     h = h / 255
     s = s / 255
