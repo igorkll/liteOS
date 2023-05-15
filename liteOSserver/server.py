@@ -8,7 +8,9 @@ def callback(data):
     
     ret = {}
     if data.type == "ping":
-        ret = {type: "pong"}
+        ret = {
+            "type": "pong"
+        }
 
     return json.dumps(ret)
 

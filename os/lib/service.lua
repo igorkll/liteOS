@@ -1,14 +1,13 @@
 local json = require("json")
 local background = require("background")
-local ip = "176.53.161.98"
-local port = 8291
-
 local service = {}
+service.ip = "176.53.161.98"
+service.port = 8291
 
 function service.request(request)
     local internet = component.proxy(component.list("internet")() or "")
     if internet then
-        local tcp = internet.connect(ip, port)
+        local tcp = internet.connect(service.ip, service.port)
 
         tcp.write(request)
         local response = ""
@@ -24,7 +23,8 @@ function service.request(request)
 end
 
 background.addTimer(function ()
-    service.request(json.encode({type = "ping"}))
+    local data = json.decode(service.request(json.encode({type = "ping"})))
+    computer.beep()
 end, 1)
 
 return service

@@ -317,10 +317,10 @@ function filesystem.writeFile(path, data)
 
 	local file, err = filesystem.open(path, "wb")
 	if not file then return nil, err end
-	file.write(data)
+	local ok = file.write(data)
     file.close()
 
-    return true
+    return ok
 end
 
 return filesystem
