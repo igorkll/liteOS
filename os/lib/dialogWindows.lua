@@ -4,8 +4,8 @@ local gui = system.gui
 ----------------------------------------------
 
 local dialogWindows = {}
-dialogWindows.windowSizeX = 25
-dialogWindows.windowSizeY = 6
+dialogWindows.windowSizeX = 35
+dialogWindows.windowSizeY = 10
 
 function dialogWindows.getWindowPos(scene, sizeX, sizeY)
     sizeX = sizeX or dialogWindows.windowSizeX

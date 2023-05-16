@@ -1,7 +1,9 @@
 local fs = require("filesystem")
 local env = require("env")
 local dialogWindows = require("dialogWindows")
-local gui = require("gui")
+local system = require("system")
+local gui = system.gui
+local scene = system.scene
 
 ----------------------------------------
 
@@ -71,7 +73,7 @@ function programs.guiout_execute(name, ...)
     if not code then
         dialogWindows.message(scene, "error", err or "unknown", gui:getColor("red"))
     else
-        local tbl = xpcall(code, debug.traceback, ...)
+        local tbl = {xpcall(code, debug.traceback, ...)}
         if not tbl[1] then
             dialogWindows.message(scene, "error", tbl[2] or "unknown", gui:getColor("red"))
         else

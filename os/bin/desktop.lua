@@ -41,23 +41,6 @@ osButton = bgLayout:createWidget({
     sizeY = 1
 })
 
-cloneButton = bgLayout:createWidget({
-    type = "button",
-    text = "clone the OS",
-
-    onClick = function ()
-        
-    end,
-
-    bg = gui:getColor("white"),
-    fg = gui:getColor("black"),
-
-    posX = bgLayout.sizeX - 20,
-    posY = bgLayout.sizeY - 2,
-    sizeX = 16,
-    sizeY = 1
-})
-
 osMenu = scene:createLayout(gui:getColor("gray"), 1, scene.sizeY - 20, 30, 20)
 osMenu:setParam("disable", true)
 osMenu:setParam("hide", true)
