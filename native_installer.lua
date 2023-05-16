@@ -192,7 +192,7 @@ end
 
 function tryBoot(laddr, lpath) --is local
     local str2 = " (" .. laddr:sub(1, 4) .. ", " .. lpath .. ") "
-    splash("booting" .. err)
+    splash("booting" .. str2)
     
 
     str = boot(laddr, lpath)
