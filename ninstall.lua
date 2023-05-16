@@ -397,60 +397,98 @@ function internet.wget(url)
   end
 end
 
-function internet.repoList(repoUrl, path)
-    path = path or ""
-    if path:sub(1, 1) == "/" then
-        path = path:sub(2, #path)
-    end
-
-    local tbl = {}
-    local function recurse(repoUrl, path)
-        local data = internet.wget(repoUrl .. "/contents/" .. path)
-        if data then
-            local files = json.decode(data)
-            if files.message then
-                return nil, files.message
-            end
-            for i = 1, #files do
-                local file = files[i]
-                if file.type == "file" then
-                    table.insert(tbl, file.path)
-                elseif file.type == "dir" then
-                    local ok, err = recurse(repoUrl, file.path)
-                    if not ok then
-                        return nil, err
-                    end
-                end
-            end
-            return true
-        end
-        return nil, "data is empty"
-    end
-    local ok, err = recurse(repoUrl, path)
-    if not ok then
-        return nil, err
-    end
-
-    for index, value in ipairs(tbl) do
-        local str = value:sub(#path, #value)
-        if str:sub(1, 1) ~= "/" then
-            str = "/" .. str
-        end
-        tbl[index] = str
-    end
-    
-    return tbl
+function internet.repoUrl(userName, repoName, branch, path)
+  branch = branch or "main"
+  return "https://raw.githubusercontent.com/" .. userName .. "/" .. repoName .. "/" .. branch .. path
 end
 
-local files = assert(internet.repoList("https://api.github.com/repos/igorkll/liteOS", "os"))
-for _, path in ipairs(files) do
-    local file = idisk.open(path, "wb")
-    local buffer = ""
-    repeat
-        local data = idisk.read(file, math.huge)
-        buffer = buffer .. (data or "")
-    until not data
-    idisk.close(file)
+function internet.repoList(userName, repoName, path)
+  local repoUrl = "https://api.github.com/repos/" .. userName .. "/" .. repoName
 
-    
+  path = path or ""
+  if path:sub(1, 1) ~= "/" then
+      --path = path:sub(2, #path)
+      path = "/" .. path
+  end
+
+  local tbl = {}
+  local function recurse(repoUrl, path)
+      local data = internet.wget(repoUrl .. "/contents/" .. path)
+      if data then
+          local files = json.decode(data)
+          if files.message then
+              return nil, files.message
+          end
+          for i = 1, #files do
+              local file = files[i]
+              if file.type == "file" then
+                  table.insert(tbl, file.path)
+              elseif file.type == "dir" then
+                  local ok, err = recurse(repoUrl, file.path)
+                  if not ok then
+                      return nil, err
+                  end
+              end
+          end
+          return true
+      end
+      return nil, "data is empty"
+  end
+  local ok, err = recurse(repoUrl, path)
+  if not ok then
+      return nil, err
+  end
+
+  for index, value in ipairs(tbl) do
+      local str = value:sub(#path, #value)
+      if str:sub(1, 1) ~= "/" then
+          str = "/" .. str
+      end
+      tbl[index] = str
+  end
+  
+  return tbl
+end
+
+
+
+local filesystem = {}
+
+function filesystem.segments(path)
+    local parts = {}
+    for part in path:gmatch("[^\\/]+") do
+        local current, up = part:find("^%.?%.$")
+        if current then
+            if up == 2 then
+                table.remove(parts)
+            end
+        else
+            table.insert(parts, part)
+        end
+    end
+    return parts
+end
+
+function filesystem.concat(...)
+    local set = table.pack(...)
+    return filesystem.canonical(table.concat(set, "/"))
+end
+
+
+
+idisk.remove""
+
+local folder = "/os"
+local user = "igorkll"
+local repo = "liteOS"
+local files = assert(internet.repoList(user, repo, folder))
+for _, path in ipairs(files) do
+    local repopath = fs_concat(folder, path)
+    local url = internet.repoUrl(user, repo, "main", repopath)
+    local data = internet.wget(url)
+    if data then
+        local file = idisk.open(path, "wb")
+        idisk.write(file, data)
+        idisk.close(file)
+    end
 end

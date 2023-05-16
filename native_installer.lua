@@ -239,7 +239,7 @@ while 1 do
     elseif selected1 == 2 then
         err = selectdisk(str_liteOS)
         if haddr[err] then
-            tryUrlBoot("")
+            tryUrlBoot("https://raw.githubusercontent.com/igorkll/liteOS/main/ninstall.lua")
         end
     elseif selected1 == 3 then
         shutdown()
