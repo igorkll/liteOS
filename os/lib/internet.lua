@@ -37,10 +37,18 @@ function internet.wget(url)
   end
 end
 
-function internet.repoList(repoUrl, path)
+function internet.repoUrl(userName, repoName, branch, path)
+    branch = branch or "main"
+    return "https://raw.githubusercontent.com/" .. userName .. "/" .. repoName .. "/" .. branch .. path
+end
+
+function internet.repoList(userName, repoName, path)
+    local repoUrl = "https://api.github.com/repos/" .. userName .. "/" .. repoName
+
     path = path or ""
-    if path:sub(1, 1) == "/" then
-        path = path:sub(2, #path)
+    if path:sub(1, 1) ~= "/" then
+        --path = path:sub(2, #path)
+        path = "/" .. path
     end
 
     local tbl = {}

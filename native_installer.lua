@@ -239,7 +239,7 @@ while 1 do
     elseif selected1 == 2 then
         err = selectdisk(str_liteOS)
         if haddr[err] then
-            tryBoot(haddr[err], str_initlua)
+            tryUrlBoot("")
         end
     elseif selected1 == 3 then
         shutdown()
