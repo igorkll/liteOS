@@ -834,6 +834,8 @@ do
     end
 
     local function run(self, func, time)
+        time = time or 0.2
+
         tick(self)
         while self.running do
             local eventData = {computer.pullSignal(time)}

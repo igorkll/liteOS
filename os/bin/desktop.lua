@@ -2,6 +2,8 @@ local webservices = require("webservices")
 local autorun = require("autorun")
 local programs = require("programs")
 local system = require("system")
+local fs = require("filesystem")
+
 local gui = system.gui
 
 -------------------------------------------------------
@@ -100,7 +102,7 @@ powerMenu:createWidget({
 local function refreshList()
     apps_list = {}
     for _, data in ipairs(programs.list()) do
-        if data.name ~= "desktop" then
+        if fs.isDirectory(data.path) then
             table.insert(apps_list, data)
         end
     end
@@ -125,7 +127,7 @@ function flushApps()
             sizeY = 1,
 
             onClick = function ()
-                programs.guiout_execute(app.name)
+                programs.guiout_execute(app.path)
             end
         }))
     end

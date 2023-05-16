@@ -4,15 +4,20 @@ local fs = require("filesystem")
 --------------------------------------------------
 
 local apps = {
-    ["demopack"] = {
-        ["/data/bin/demo_gui.lua"] = "/apps/demopack/demo_gui.lua",
-        ["/data/bin/demo_seekbar.lua"] = "/apps/demopack/demo_seekbar.lua"
+    ["demo pack"] = {
+        ["/data/bin/demo gui/main.lua"] = "/apps/demopack/demo_gui.lua",
+        ["/data/bin/demo gui/uninstall.lua"] = "/default_uninstall.lua",
+
+        ["/data/bin/demo seekbar/main.lua"] = "/apps/demopack/demo_seekbar.lua",
+        ["/data/bin/demo seekbar/uninstall.lua"] = "/default_uninstall.lua"
     },
     ["hello world"] = {
-        ["/data/bin/hello_world/main.lua"] = "/apps/hello_world/main.lua"
+        ["/data/bin/hello world/main.lua"] = "/apps/hello_world/main.lua",
+        ["/data/bin/hello world/uninstall.lua"] = "/default_uninstall.lua"
     },
     ["ram monitor"] = {
-        ["/data/bin/ram_monitor/main.lua"] = "/apps/ram_monitor/main.lua"
+        ["/data/bin/ram monitor/main.lua"] = "/apps/ram_monitor/main.lua",
+        ["/data/bin/ram monitor/uninstall.lua"] = "/default_uninstall.lua"
     }
 }
 

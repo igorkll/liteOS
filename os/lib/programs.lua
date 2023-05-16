@@ -31,9 +31,10 @@ function programs.find(name)
             end
         end        
     end
+
     for _, path in ipairs(programs.paths) do
         local fullpath = fs.concat(path, name)
-        if fs.exists(fullpath .. ".lua") then
+        if fs.exists(fullpath .. ".lua") and not fs.isDirectory(fullpath) then
             return fullpath .. ".lua"
         end
 
