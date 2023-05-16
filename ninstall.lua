@@ -497,6 +497,7 @@ end
 
 
 idisk.remove""
+idisk.setLabel"liteOS"
 
 local folder = "/os"
 local user = "igorkll"
