@@ -4,6 +4,7 @@ local parser = require("parser")
 local internet = require("internet")
 local json = require("json")
 local logger = require("logger")
+local fs = require("filesystem")
 
 ---------------------------
 
@@ -63,11 +64,11 @@ function system.update()
     local repo = "liteOS"
 
     local files = assert(internet.repoList(user, repo, folder))
-    for index, value in ipairs(files) do
-        local path = fs.concat(folder, value)
-        logger.log("repofile", value, internet.repoUrl(user, repo, "main", path))
+    for _, path in ipairs(files) do
+        local repopath = fs.concat(folder, value)
+        local url = internet.repoUrl(user, repo, "main", path)
+        fs.writeFile(path, internet.wget(url))
     end
 end
-system.update()
 
 return system
