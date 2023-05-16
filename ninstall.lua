@@ -483,7 +483,7 @@ local user = "igorkll"
 local repo = "liteOS"
 local files = assert(internet.repoList(user, repo, folder))
 for _, path in ipairs(files) do
-    local repopath = fs_concat(folder, path)
+    local repopath = filesystem.concat(folder, path)
     local url = internet.repoUrl(user, repo, "main", repopath)
     local data = internet.wget(url)
     if data then

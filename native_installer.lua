@@ -48,9 +48,6 @@ end, function(str, posY, invert)
     if invert then reverseColor() end
 end, function(wait)
     event, empty, char, code = _computer.pullSignal(wait)
-    if event == "component_added" or event == "component_removed" then
-        refresh()
-    end
 end, function ()
     gpu.setDepth(1) --reset pallete
     gpu.setDepth(gpu.maxDepth())
@@ -239,7 +236,8 @@ while 1 do
     elseif selected1 == 2 then
         err = selectdisk(str_liteOS)
         if haddr[err] then
-            tryUrlBoot("https://raw.githubusercontent.com/igorkll/liteOS/main/ninstall.lua")
+            idisk = proxy(haddr[err])
+            tryUrlBoot("https://raw.githubusercontent.com/igorkll/liteOS/main/ninstall_compress.lua")
         end
     elseif selected1 == 3 then
         shutdown()
