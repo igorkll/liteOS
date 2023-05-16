@@ -483,6 +483,16 @@ function filesystem.canonical(path)
     end
 end
 
+function filesystem.path(path)
+    local parts = filesystem.segments(path)
+    local result = table.concat(parts, "/", 1, #parts - 1) .. "/"
+    if unicode.sub(path, 1, 1) == "/" and unicode.sub(result, 1, 1) ~= "/" then
+        return filesystem.canonical("/" .. result)
+    else
+        return filesystem.canonical(result)
+    end
+end
+
 
 
 
@@ -497,6 +507,8 @@ for _, path in ipairs(files) do
     local url = internet.repoUrl(user, repo, "main", repopath)
     local data = internet.wget(url)
     if data then
+        idisk.makeDirectory(filesystem.path(path))
+
         local file = idisk.open(path, "wb")
         idisk.write(file, data)
         idisk.close(file)

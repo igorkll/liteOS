@@ -203,7 +203,7 @@ end
 
 function tryUrlBoot(url) --is local
     if not internet then splash(str_nointernetcard, 1) return end
-    splash("url booting")
+    splash("please wait")
 
     str = urlboot(url)
     if str then
@@ -211,11 +211,13 @@ function tryUrlBoot(url) --is local
     end
 end
 
-function selectdisk(label)
+function selectdisk(label, writable)
     hpath, haddr = {}, {}
     for address in list"file" do
-        table.insert(hpath, address:sub(1, 5) .. ":" .. (invoke(address, "getLabel") or "unknown"))
-        table.insert(haddr, address)
+        if not writable or not invoke(address, "isReadOnly") then
+            table.insert(hpath, address:sub(1, 5) .. ":" .. (invoke(address, "getLabel") or "unknown"))
+            table.insert(haddr, address)
+        end
     end
     table.insert(hpath, "cancel")
 
@@ -234,7 +236,7 @@ while 1 do
             tryBoot(haddr[err], str_initlua)
         end
     elseif selected1 == 2 then
-        err = selectdisk(str_liteOS)
+        err = selectdisk(str_liteOS, 1)
         if haddr[err] then
             idisk = proxy(haddr[err])
             tryUrlBoot("https://raw.githubusercontent.com/igorkll/liteOS/main/ninstall_compress.lua")
