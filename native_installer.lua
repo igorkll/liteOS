@@ -185,7 +185,7 @@ end, function (url)
     beforeBoot()
     err = debug.traceback
     assert(xpcall(code, err))
-    shutdown()
+    shutdown(1)
 end
 
 --------------------- main funcs

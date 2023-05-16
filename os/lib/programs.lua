@@ -1,5 +1,7 @@
 local fs = require("filesystem")
 local env = require("env")
+local dialogWindows = require("dialogWindows")
+local gui = require("gui")
 
 ----------------------------------------
 
@@ -62,6 +64,20 @@ function programs.execute(name, ...)
     local code, err = programs.load(name)
     if not code then return nil, err or "unknown" end
     return xpcall(code, debug.traceback, ...)
+end
+
+function programs.guiout_execute(name, ...)
+    local code, err = programs.load(name)
+    if not code then
+        dialogWindows.message(scene, "error", err or "unknown", gui:getColor("red"))
+    else
+        local tbl = xpcall(code, debug.traceback, ...)
+        if not tbl[1] then
+            dialogWindows.message(scene, "error", tbl[2] or "unknown", gui:getColor("red"))
+        else
+            return table.unpack(tbl, 2)
+        end
+    end
 end
 
 return programs

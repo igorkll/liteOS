@@ -162,7 +162,12 @@ local function fillFakeColor(self, posX, posY, sizeX, sizeY, text, bg, fg) --Ñ„Ð
         for _, str in ipairs(gstrs) do
             index = index + 1
             if index > sizeY then break end
-            self.drawzone:set(centerX - math.floor(unicode.len(str) / 2), #gstrs > 1 and (posY + (index - 1)) or centerY, bg[1], fg[1], str)
+            local lbg = bg[1]
+            local lfg = fg[1]
+            if self.drawzone.depth == 1 and lbg == lfg then
+                lfg = self.drawzone.maxFg
+            end
+            self.drawzone:set(centerX - math.floor(unicode.len(str) / 2), #gstrs > 1 and (posY + (index - 1)) or centerY, lbg, lfg, str)
         end
     end
 end
@@ -814,6 +819,7 @@ do
     end
 
     local function tick(self)
+        self.allowDraw = true
         if self.redrawFlag then
             self:draw()
             self.redrawFlag = nil
@@ -841,6 +847,9 @@ do
     end
 
     local function draw(self)
+        if not self.allowDraw then return end
+        self.allowDraw = false
+
         self.drawzone:draw_begin()
         if self.scene then
             self.scene:draw()

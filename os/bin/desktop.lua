@@ -21,8 +21,6 @@ bgLayout:createWidget({
     sizeY = 1
 })
 
--------------------------------------------------------plane
-
 osButton = bgLayout:createWidget({
     type = "button",
     text = "OS",
@@ -43,7 +41,22 @@ osButton = bgLayout:createWidget({
     sizeY = 1
 })
 
--------------------------------------------------------menu
+cloneButton = bgLayout:createWidget({
+    type = "button",
+    text = "clone the OS",
+
+    onClick = function ()
+        
+    end,
+
+    bg = gui:getColor("white"),
+    fg = gui:getColor("black"),
+
+    posX = bgLayout.sizeX - 20,
+    posY = bgLayout.sizeY - 2,
+    sizeX = 16,
+    sizeY = 1
+})
 
 osMenu = scene:createLayout(gui:getColor("gray"), 1, scene.sizeY - 20, 30, 20)
 osMenu:setParam("disable", true)
@@ -129,15 +142,7 @@ function flushApps()
             sizeY = 1,
 
             onClick = function ()
-                local code, err = programs.load(app.name)
-                if not code then
-                    dialogWindows.message(scene, "error", err or "unknown", gui:getColor("red"))
-                else
-                    local ok, err = pcall(code)
-                    if not ok then
-                        dialogWindows.message(scene, "error", err or "unknown", gui:getColor("red"))
-                    end
-                end
+                programs.guiout_execute(app.name)
             end
         }))
     end
