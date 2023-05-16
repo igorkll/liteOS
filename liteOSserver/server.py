@@ -24,16 +24,25 @@ def run_server():
         sock.bind(('0.0.0.0', 8291))
         sock.listen()
 
-        print('Сервер запущен на порту 8291...')
+        print('Сервер запущен...')
 
         while True:
             try:
                 while True:
                     conn, addr = sock.accept()
-                    data = conn.recv(1024).split(b"\n", 1)[0]
+                    print(f'УРА ЮЗЕР! {addr[0]}:{addr[1]}')
 
-                    response = callback(data.decode("utf-8"))
-                    conn.send(response)
+                    data = False
+                    for i in range(8):
+                        data = conn.recv(1024).split(b"\n", 1)[0]
+                        if data and data != b"":
+                            break
+
+                    if data and data != b"":
+                        response = callback(data.decode("utf-8"))
+                        conn.send(response)
+                    else:
+                        print("юзер мудак, нехера не отправил")
 
                     conn.close()
             except Exception as str:
