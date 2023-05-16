@@ -474,6 +474,16 @@ function filesystem.concat(...)
     return filesystem.canonical(table.concat(set, "/"))
 end
 
+function filesystem.canonical(path)
+    local result = table.concat(filesystem.segments(path), "/")
+    if unicode.sub(path, 1, 1) == "/" then
+        return "/" .. result
+    else
+        return result
+    end
+end
+
+
 
 
 idisk.remove""
