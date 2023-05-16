@@ -58,7 +58,7 @@ function system.createScene(bg, sizeX, sizeY, palette)
 end
 
 function system.update()
-    local files = internet.repoList("https://api.github.com/repos/igorkll/liteOS", "os")
+    local files = assert(internet.repoList("https://api.github.com/repos/igorkll/liteOS", ""))
     for index, value in ipairs(files) do
         logger.log("repo file", value)
     end

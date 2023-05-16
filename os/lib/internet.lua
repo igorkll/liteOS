@@ -1,6 +1,7 @@
 local buffer = require("buffer")
 local json = require("json")
 local fs = require("filesystem")
+local logger = require("logger")
 local internet = {}
 
 -------------------------------------------------------------------------------
@@ -37,21 +38,38 @@ function internet.wget(url)
 end
 
 function internet.repoList(repoUrl, path)
+    path = path or ""
+    if path:sub(1, 1) == "/" then
+        path = path:sub(2, #path)
+    end
+
     local tbl = {}
     local function recurse(repoUrl, path)
-        path = table.concat(fs.segments(path), "/")
-        
-        local files = json.decode(internet.wget(repoUrl .. "/contents/" .. path))
-        for i = 1, #files do
-            local file = files[i]
-            if file.type == "file" then
-                table.insert(tbl, file.path)
-            elseif file.type == "dir" then
-                recurse(repoUrl, file.path)
+        local data = internet.wget(repoUrl .. "/contents/" .. path)
+        if data then
+            local files = json.decode(data)
+            if files.message then
+                return nil, files.message
             end
+            for i = 1, #files do
+                local file = files[i]
+                if file.type == "file" then
+                    table.insert(tbl, file.path)
+                elseif file.type == "dir" then
+                    local ok, err = recurse(repoUrl, file.path)
+                    if not ok then
+                        return nil, err
+                    end
+                end
+            end
+            return true
         end
+        return nil, "data is empty"
     end
-    recurse(repoUrl, path)
+    local ok, err = recurse(repoUrl, path)
+    if not ok then
+        return nil, err
+    end
 
     for index, value in ipairs(tbl) do
         local str = value:sub(#path, #value)
