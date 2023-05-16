@@ -37,7 +37,7 @@ function internet.wget(url)
 end
 
 function internet.repoList(repoUrl, path)
-    local files = {}
+    local tbl = {}
     local function recurse(repoUrl, path)
         path = table.concat(fs.segments(path), "/")
         
@@ -45,7 +45,7 @@ function internet.repoList(repoUrl, path)
         for i = 1, #files do
             local file = files[i]
             if file.type == "file" then
-                table.insert(files, file.path)
+                table.insert(tbl, file.path)
             elseif file.type == "dir" then
                 recurse(repoUrl, file.path)
             end
@@ -53,11 +53,15 @@ function internet.repoList(repoUrl, path)
     end
     recurse(repoUrl, path)
 
-    for index, value in ipairs(files) do
-        files[index] = value:sub(#path + 1, #value)
+    for index, value in ipairs(tbl) do
+        local str = value:sub(#path, #value)
+        if str:sub(1, 1) ~= "/" then
+            str = "/" .. str
+        end
+        tbl[index] = str
     end
     
-    return files
+    return tbl
 end
 
 function internet.request(url, data, headers, method)
