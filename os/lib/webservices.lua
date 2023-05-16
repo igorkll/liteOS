@@ -1,4 +1,4 @@
-local wget = require("wget")
+local internet = require("internet")
 local programs = require("programs")
 
 local webservices = {}
@@ -11,7 +11,7 @@ function webservices.url(name)
 end
 
 function webservices.loadData(name)
-    return wget.wget(webservices.url(name))
+    return internet.wget(webservices.url(name))
 end
 
 function webservices.load(name)

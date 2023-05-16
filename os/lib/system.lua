@@ -1,6 +1,9 @@
 local gui = require("gui")
 local drawer = require("drawer")
 local parser = require("parser")
+local internet = require("internet")
+local json = require("json")
+local logger = require("logger")
 
 ---------------------------
 
@@ -52,6 +55,13 @@ function system.createScene(bg, sizeX, sizeY, palette)
         palette or system.palette,
         system.usingTheDefaultPalette
     )
+end
+
+function system.update()
+    local files = internet.repoList("https://api.github.com/repos/igorkll/liteOS", "/os")
+    for index, value in ipairs(files) do
+        logger.log("repo file", value)
+    end
 end
 
 return system
