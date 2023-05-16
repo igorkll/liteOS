@@ -1,8 +1,8 @@
-local _checkArg, str_string, str_nil, str_initlua, str_kernel, str_lua, str_seturlboot, str_lifeurlboot, str_sbp, str_sbf, str_empty, str_lifeboot, str_openOSonline, str_updateUrl, str_defaultSettings, str_settings, str_biosname, str_exit, str_nointernetcard, proxy, list, invoke, TRUE =
-       checkArg, "string", "nil", "init.lua", "boot/kernel/", "Lua Shell", "Set Url Boot", "Life Url Boot", "Select Boot Priority", "Select Boot Fs", "", "Classic Boot", "", "", "{u='',e=true,k=true,j=true,f=false}", "Settings", "liteOS installer", "exit", "no internet-card, urlboot is not available", component.proxy, component.list, component.invoke, true
+local _checkArg, str_string, str_nil, str_initlua, str_kernel, str_liteOS, str_seturlboot, str_lifeurlboot, str_sbp, str_sbf, str_empty, str_lifeboot, str_openOSonline, str_updateUrl, str_defaultSettings, str_settings, str_biosname, str_exit, str_nointernetcard, proxy, list, invoke, TRUE =
+       checkArg, "string", "nil", "init.lua", "boot/kernel/", "Install LiteOS", "Set Url Boot", "Life Url Boot", "Select Boot Priority", "Select Boot Fs", "", "Classic Boot", "", "", "{u='',e=true,k=true,j=true,f=false}", "Settings", "liteOS installer", "exit", "no internet-card, urlboot is not available", component.proxy, component.list, component.invoke, true
 
 local _computer, _pcall, resX, resY, --не забуть запитую
-screen, eeprom_data, selected1, empty, event, code, str, char, err,
+screen, selected1, empty, event, code, str, char, err,
 tryUrlBoot, saveWithSplash, reverseColor, setBackground, setForeground, hpath, haddr, old_laddr, old_lpath,
 tryBoot, gIsPal, col, isPal, tmp1, setPaletteColor, internet, gpu, boot_gpu, refresh
 = computer, pcall, 50, 16
@@ -21,8 +21,8 @@ function refresh()
 
         if gpu.getDepth() > 3 then
             --4 depth
-            setPaletteColor(0, eeprom_data.w and 0xffffff or 0)
-            setPaletteColor(1, eeprom_data.w and 0 or 0xffffff)
+            setPaletteColor(0, 0)
+            setPaletteColor(1, 0xffffff)
             setPaletteColor(2, 0x888888)
             gIsPal = 1
         end
@@ -31,16 +31,6 @@ function refresh()
     
         invoke(screen, "turnOn")
     end
-
-    boot_gpu = gpu and gpu.address
-end
-
-::retry2::
-if not pcall(function()
-    eeprom_data = load("return " .. eeprom.getData())()
-end) then
-    eeprom.setData(str_defaultSettings)
-    goto retry2
 end
 
 function reverseColor()
@@ -50,7 +40,7 @@ function reverseColor()
     gpu.setForeground(col, isPal)
 end
 
-local clear, drawStr, pullSignal, beforeBoot, setColor, rebootmode, bm_fast, bm_bios, shutdown = function()
+local clear, drawStr, pullSignal, beforeBoot, setColor, bm_fast, bm_bios, shutdown = function()
     gpu.fill(1, 1, resX, resY, " ")
 end, function(str, posY, invert)
     if invert then reverseColor() end
@@ -77,13 +67,11 @@ end, function(num)
             setForeground(2, TRUE)
         end
     else
-        setBackground(eeprom_data.w and 0 or -1)
-        setForeground(eeprom_data.w and -1 or 0)
+        setBackground(-1)
+        setForeground(0)
     end
-end,
-eeprom.getLabel(), "__fast", "__bios", _computer.shutdown
+end, "__fast", "__bios", _computer.shutdown
 
-eeprom.setLabel(str_biosname)
 refresh()
 
 ---------------- boot standart "LGC 2023-A"
@@ -97,7 +85,7 @@ end
 
 ---------------- ----------------
 
-local menu, splash, input, boot, urlboot = function(title, strs, current)
+local menu, splash, input, boot, urlboot, selectdisk = function(title, strs, current)
     setColor(0)
     clear()
     drawStr(title, 2, not gIsPal)
@@ -206,13 +194,13 @@ end
 --------------------- main funcs
 
 function tryBoot(laddr, lpath) --is local
-    err = " (" .. laddr:sub(1, 4) .. ", " .. lpath .. ") "
+    local str2 = " (" .. laddr:sub(1, 4) .. ", " .. lpath .. ") "
     splash("booting" .. err)
     
 
     str = boot(laddr, lpath)
     if str then
-        splash("boot-error" .. err .. str, 1)
+        splash("boot-error" .. str2 .. str, 1)
     end
 end
 
@@ -226,24 +214,33 @@ function tryUrlBoot(url) --is local
     end
 end
 
+function selectdisk(label)
+    hpath, haddr = {}, {}
+    for address in list"file" do
+        table.insert(hpath, address:sub(1, 5) .. ":" .. (invoke(address, "getLabel") or "unknown"))
+        table.insert(haddr, address)
+    end
+    table.insert(hpath, "cancel")
+
+    return menu(label, hpath, 1)
+end
+
 --------------------- main
 
+selected1 = 1
 while 1 do
-    selected1 = menu(str_biosname, {str_lifeboot, "Install LiteOS", "Shutdown"}, selected1)
+    selected1 = menu(str_biosname, {str_lifeboot, str_liteOS, "Shutdown"}, selected1)
 
     if selected1 == 1 then
-        hpath, haddr = {"cancel"}, {F}
-        for address in list"file" do
-            table.insert(hpath, address:sub(1, 5) .. ":" .. (invoke(address, "getLabel") or "unknown"))
-            table.insert(haddr, address)
-        end
-
-        err = menu(str_lifeboot, hpath, 1)
+        err = selectdisk(str_lifeboot)
         if haddr[err] then
             tryBoot(haddr[err], str_initlua)
         end
     elseif selected1 == 2 then
-
+        err = selectdisk(str_liteOS)
+        if haddr[err] then
+            tryBoot(haddr[err], str_initlua)
+        end
     elseif selected1 == 3 then
         shutdown()
     end
