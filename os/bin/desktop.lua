@@ -13,13 +13,30 @@ local gui = system.gui
 scene = system.createScene()
 system.scene = scene
 
-bgLayout = scene:createLayout(gui:getColor(user.color_background or "cyan"), 1, 1, system.rx, system.ry, false, true)
-bgLayout:createWidget({
+bgLayout = scene:createLayout(user.color_background, 1, 1, system.rx, system.ry, false, true)
+
+menuPlane = bgLayout:createWidget({
     type = "plane",
 
-    bg = gui:getColor("green"),
+    bg = user.color_plane,
 
     posX = 1,
+    posY = bgLayout.sizeY,
+    sizeX = bgLayout.sizeX,
+    sizeY = 1
+})
+
+realTime = bgLayout:createWidget({
+    type = "button",
+    text = "00:00:00",
+
+    bg = user.color_plane,
+    pressed_bg = user.color_plane,
+    fg = "white",
+    pressed_fg = "white",
+
+
+    posX = bgLayout.sizeX - 16,
     posY = bgLayout.sizeY,
     sizeX = bgLayout.sizeX,
     sizeY = 1
@@ -38,8 +55,8 @@ osButton = bgLayout:createWidget({
         powerMenu:setParam("hide", true)
     end,
 
-    bg = gui:getColor("blue"),
-    fg = gui:getColor("lightBlue"),
+    bg = "blue",
+    fg = "lightBlue",
 
     posX = 1,
     posY = bgLayout.sizeY,
@@ -47,7 +64,7 @@ osButton = bgLayout:createWidget({
     sizeY = 1
 })
 
-osMenu = scene:createLayout(gui:getColor("gray"), 1, scene.sizeY - 10, 30, 10)
+osMenu = scene:createLayout("gray", 1, scene.sizeY - 10, 30, 10)
 osMenu:setParam("disable", true)
 osMenu:setParam("hide", true)
 osMenu:createWidget({
@@ -67,7 +84,7 @@ osMenu:createWidget({
     end
 })
 
-powerMenu = osMenu:createLayout(gui:getColor("lightGray"), 2, osMenu.sizeY - 5, 10, 5)
+powerMenu = osMenu:createLayout("lightGray", 2, osMenu.sizeY - 5, 10, 5)
 powerMenu:setParam("disable", true)
 powerMenu:setParam("hide", true)
 powerMenu:createWidget({
@@ -148,7 +165,7 @@ refreshApps()
 
 background.addListen(function (name)
     if name == "refresh_desktop" then
-        bgLayout.bg = gui:getColor(user.color_background or "cyan")
+        bgLayout.bg = gui:mathColor(user.color_background)
         refreshApps()
         gui:draw(true)
     end

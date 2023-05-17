@@ -27,7 +27,7 @@ local sizeX, sizeY = dialogWindows.getWindowSize(scene, 25, 8)
 local posX, posY = dialogWindows.getWindowPos(scene, sizeX, sizeY)
 
 layout = scene:createLayout(
-    gui:getColor("lime"),
+    "lime",
     posX,
     posY,
     sizeX,
@@ -56,7 +56,7 @@ progress_used_ram = layout:createWidget({
     sizeX = sizeX - 2,
     sizeY = 1,
 
-    fg = gui:getColor("yellow")
+    fg = "yellow"
 })
 
 -------------------------update

@@ -47,7 +47,9 @@ function service._request(request)
             return nil, err
         end
 
-        tcp.write(request .. "\n")
+        for i = 1, 2 do
+            tcp.write(request .. "\n")
+        end
 
         local response
         local update = computer.uptime()

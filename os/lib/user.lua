@@ -1,9 +1,13 @@
 local fs = require("filesystem")
 local serialization = require("serialization")
+local colors = require("colors")
 local user = {}
+
 user.configPath = "/data/config.tbl"
 user.defaultConfig = {
-    timezone = 0
+    timezone = 0,
+    color_background = colors.cyan,
+    color_plane = colors.green,
 }
 user.currentConfig = table.clone(user.defaultConfig)
 
@@ -19,6 +23,11 @@ else
         data = serialization.unserialize(data)
         if data then
             user.currentConfig = data
+            for key, value in pairs(user.defaultConfig) do --чтобы добавлять новые параметры автоматом
+                if not user.currentConfig[key] then
+                    user.currentConfig[key] = value
+                end
+            end
         end
     end
 end

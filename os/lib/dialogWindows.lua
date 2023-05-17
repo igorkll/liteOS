@@ -23,8 +23,8 @@ end
 
 function dialogWindows.message(scene, label, text, color, textColor)
     scene = scene or system.scene
-    color = color or gui:getColor("gray")
-    textColor = textColor or gui:getColor("white")
+    color = color or "gray"
+    textColor = textColor or "white"
     label = label or "alert message"
     text = text or ""
 
@@ -58,7 +58,7 @@ function dialogWindows.selectColor(scene, label)
 
     local posX, posY = dialogWindows.getWindowPos(scene, sizeX, sizeY)
     local layout = scene:createLayout(
-        gui:getColor("gray"),
+        "gray",
         posX,
         posY,
         sizeX,
@@ -92,8 +92,8 @@ function dialogWindows.selectColor(scene, label)
                     gui.callback(returnTbl, "onUpdate", currentI)
                 end,
 
-                bg = gui:getColor(i),
-                pressed_bg = gui:getColor("white"),
+                bg = i,
+                pressed_bg = "white",
             })
             i = i + 1
         end
@@ -105,11 +105,11 @@ end
 ----------------------------------------------
 
 function dialogWindows.error(scene, text)
-    return dialogWindows.message(scene, "error", text, gui:getColor("red"))
+    return dialogWindows.message(scene, "error", text, "red")
 end
 
 function dialogWindows.warning(scene, text)
-    return dialogWindows.message(scene, "warning", text, gui:getColor("yellow"))
+    return dialogWindows.message(scene, "warning", text, "yellow")
 end
 
 return dialogWindows

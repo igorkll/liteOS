@@ -66,20 +66,29 @@ end
 
 -------------------------------------------------
 
-function system.update()
-    local folder = "/os"
-    local user = "igorkll"
-    local repo = "liteOS"
+local folder = "/os"
+local user = "igorkll"
+local repo = "liteOS"
+local branch = "main"
 
+function system.update()
     local files = assert(internet.repoList(user, repo, folder))
     for _, path in ipairs(files) do
         local repopath = fs.concat(folder, path)
-        local url = internet.repoUrl(user, repo, "main", repopath)
+        local url = internet.repoUrl(user, repo, branch, repopath)
         local data = internet.wget(url)
         if data then
             fs.writeFile(path, data)
         end
     end
+end
+
+function system.actualVersion()
+    return internet.wget(internet.repoUrl(user, repo, branch, fs.concat(folder, "version")))
+end
+
+function system.needUpdate()
+    return _OSVERSION ~= system.actualVersion()
 end
 
 return system

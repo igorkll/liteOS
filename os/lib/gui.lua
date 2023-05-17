@@ -133,19 +133,6 @@ local system = require("system")
 local char_circle = "●"
 local defaultcolor = {0, 0, " "}
 
---получить цвет в види табличи из обычного цвета, при этом с табличкой нечего не сделает
-local function mathColor(self, color, default)
-    if color then
-        if type(color) == "number" then
-            return {color, 0, " "}
-        else
-            return color
-        end
-    else
-        return mathColor(self, default or defaultcolor)
-    end
-end
-
 local function fillFakeColor(self, posX, posY, sizeX, sizeY, text, bg, fg) --фековый цвет позваляет смешивать цвета символами unicode, и отрисовывать серый даже на экранах первого уровня
     self.drawzone:fill(posX, posY, sizeX, sizeY, table.unpack(bg))
     local centerX, centerY = math.floor(posX + (sizeX / 2)), math.floor(posY + (sizeY / 2))
@@ -218,8 +205,21 @@ local function getColor(self, name, disableTable) --возврашяет цве�
     end
 end
 
-local function getAColor(self, name)
-    return mathColor(self, getColor(self, name))
+--получить цвет в види табличи из обычного цвета, при этом с табличкой нечего не сделает
+local function raw_mathColor(self, color, default)
+    if color then
+        if type(color) == "number" then
+            return {color, 0, " "}
+        else
+            return color
+        end
+    else
+        return raw_mathColor(self, default or defaultcolor)
+    end
+end
+
+local function mathColor(self, color, default)
+    return raw_mathColor(self, getColor(self, color), default)
 end
 
 local function callback(self, name, ...)
@@ -897,7 +897,7 @@ do
 
         obj.callback = callback
         obj.mathColor = mathColor
-        obj.getColor = getAColor
+        obj.getColor = getColor
         return obj
     end
 
