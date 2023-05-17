@@ -6,7 +6,7 @@ local user = {}
 user.configPath = "/data/config.tbl"
 user.defaultConfig = {
     timezone = 0,
-    color_background = colors.cyan,
+    color_background = colors.lightBlue,
     color_plane = colors.green,
 }
 user.currentConfig = table.clone(user.defaultConfig)

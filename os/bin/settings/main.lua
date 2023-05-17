@@ -9,7 +9,7 @@ local sizeX, sizeY = dialogWindows.getWindowSize(scene, 40, 10)
 local posX, posY = dialogWindows.getWindowPos(scene, sizeX, sizeY)
 
 local layout = scene:createLayout(
-    gui:getColor("black"),
+    "black",
     posX,
     posY,
     sizeX,

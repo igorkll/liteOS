@@ -61,8 +61,5 @@ progress_used_ram = layout:createWidget({
 
 -------------------------update
 
-layout.onDestroy = function ()
-    background.removeTimer(update)
-end
-background.addTimer(update, 0.2)
+layout:addTimer(update, 0.2)
 update()

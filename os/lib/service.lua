@@ -28,9 +28,11 @@ function service.raw_connect(timeout)
         end
         
         if computer.uptime() >= start + timeout then
+            break
+            --[[
             handle.close()
-    
             return nil, "request failed: connection timed out"
+            ]]
         end
         
         os.sleep(0.05)
@@ -47,7 +49,7 @@ function service._request(request)
             return nil, err
         end
 
-        for i = 1, 2 do
+        for i = 1, 4 do
             tcp.write(request .. "\n")
         end
 

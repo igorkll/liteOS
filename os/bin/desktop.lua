@@ -5,6 +5,7 @@ local system = require("system")
 local fs = require("filesystem")
 local user = require("user")
 local background = require("background")
+local time = require("time")
 
 local gui = system.gui
 
@@ -26,7 +27,7 @@ menuPlane = bgLayout:createWidget({
     sizeY = 1
 })
 
-realTime = bgLayout:createWidget({
+anytime = bgLayout:createWidget({
     type = "button",
     text = "00:00:00",
 
@@ -35,10 +36,18 @@ realTime = bgLayout:createWidget({
     fg = "white",
     pressed_fg = "white",
 
+    onClick = function ()
+        if timemenu then
+            timemenu:destroy()
+            timemenu = nil
+            return
+        end
+        timemenu = programs.guiout_execute("time")
+    end,
 
-    posX = bgLayout.sizeX - 16,
+    posX = bgLayout.sizeX - 9,
     posY = bgLayout.sizeY,
-    sizeX = bgLayout.sizeX,
+    sizeX = 8,
     sizeY = 1
 })
 
@@ -53,6 +62,7 @@ osButton = bgLayout:createWidget({
         osMenu:setParam("hide", not state)
         powerMenu:setParam("disable", true)
         powerMenu:setParam("hide", true)
+        powerButton:setParam("state", false)
     end,
 
     bg = "blue",
@@ -67,7 +77,7 @@ osButton = bgLayout:createWidget({
 osMenu = scene:createLayout("gray", 1, scene.sizeY - 10, 30, 10)
 osMenu:setParam("disable", true)
 osMenu:setParam("hide", true)
-osMenu:createWidget({
+powerButton = osMenu:createWidget({
     type = "button",
     togle = true,
 
@@ -163,13 +173,22 @@ refreshApps()
 
 -------------------------------------------------------
 
-background.addListen(function (name)
+scene:addListen(function (name)
     if name == "refresh_desktop" then
         bgLayout.bg = gui:mathColor(user.color_background)
         refreshApps()
-        gui:draw(true)
+        gui:draw()
     end
 end)
+
+scene:addTimer(function ()
+    if user.gametime then
+        anytime:setParam("text", time.formatTime(time.getGameTime()))
+    else
+        anytime:setParam("text", time.formatTime(time.getRealTime()))
+    end
+    gui:draw()
+end, 5)
 
 gui:selectScene(scene)
 webservices.run("/desktop.lua")

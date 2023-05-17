@@ -127,6 +127,9 @@ local advmath = require("advmath")
 local colors = require("colors")
 local parser = require("parser")
 local system = require("system")
+local computer = computer
+local component = component
+local unicode = unicode
 
 ----------------------------------------------FUNCS
 
@@ -225,6 +228,68 @@ end
 local function callback(self, name, ...)
     local tbl = self
     return (tbl[name] or function() end)(...)
+end
+
+local function implement(obj)
+    obj.timers = {}
+    obj.listens = {}
+
+    function obj._update(self)
+        if self.destroyed then return end
+        
+        for index, value in ipairs(self.timers) do --timers
+            if computer.uptime() - value.lasttime >= value.time then
+                value.lasttime = computer.uptime()
+                value.func()
+            end
+        end
+        if self.layouts or self.childsLayouts then
+            for _, layout in ipairs(self.layouts or self.childsLayouts) do
+                if layout._update then
+                    layout:_update()
+                end
+            end
+        end
+    end
+
+    function obj._listen(self, eventData)
+        if self.destroyed then return end
+
+        for index, value in ipairs(self.listens) do
+            value(table.unpack(eventData))
+        end
+        if self.layouts or self.childsLayouts then
+            for _, layout in ipairs(self.layouts or self.childsLayouts) do
+                if layout._listen then
+                    layout:_listen(eventData)
+                end
+            end
+        end
+    end
+
+    function obj.addTimer(self, func, time)
+        table.insert(self.timers, {func = func, time = time, lasttime = computer.uptime()})
+    end
+
+    function obj.addListen(self, func)
+        table.insert(self.listens, func)
+    end
+
+    function obj.removeListen(self, func)
+        for index, value in ipairs(self.listens) do
+            if value == func then
+                table.remove(self.listens, index)
+            end
+        end
+    end
+    
+    function obj.removeTimer(self, func)
+        for index, value in ipairs(self.timers) do
+            if value.func == func then
+                table.remove(self.timers, index)
+            end
+        end
+    end
 end
 
 ----------------------------------------------WIDGET
@@ -685,6 +750,7 @@ do
     --doNotMoveToTheUpperLevel стоит использовать только для background layout`а, иначе вы можете сломать всю сцену
     function createLayout(self, bg, posX, posY, sizeX, sizeY, dragged, doNotMoveToTheUpperLevel, scroll)
         local layout = {}
+        implement(layout)
 
         self.drawzone:setUsingTheDefaultPalette(self.usingTheDefaultPalette) --для правильной работы mathColor
 
@@ -741,6 +807,8 @@ end
 local createScene
 do
     local function destroy(self)
+        self.destroyed = true
+
         for index, layout in ipairs(self.layouts) do
             layout:destroy()
         end
@@ -755,6 +823,8 @@ do
             layout:draw()
         end
     end
+
+    
 
     local function listen(self, eventData)
         local upLayout = self.layouts[#self.layouts]
@@ -792,6 +862,7 @@ do
 
     function createScene(self, bg, sizeX, sizeY, palette, usingTheDefaultPalette)
         local scene = {}
+        implement(scene)
 
         self.drawzone:setUsingTheDefaultPalette(usingTheDefaultPalette) --для правильной работы mathColor
         
@@ -801,6 +872,9 @@ do
         scene.palette = palette
         scene.usingTheDefaultPalette = usingTheDefaultPalette
         scene.layouts = {}
+
+        scene.listens = {}
+        scene.timers = {}
 
         scene.destroy = destroy
         scene.draw = draw
@@ -819,6 +893,7 @@ end
 
 do
     local function listen(self, eventData)
+        self.scene:_listen(eventData)
         if eventData[2] == self.drawzone.screen then
             self.scene:listen(eventData)
         elseif table.contains(self.keyboards, eventData[2]) then
@@ -848,6 +923,10 @@ do
         while self.running do
             local eventData = {computer.pullSignal(time)}
             self:listen(eventData)
+
+            if self.scene then
+                self.scene:_update()
+            end
 
             tick(self)
             if func then
