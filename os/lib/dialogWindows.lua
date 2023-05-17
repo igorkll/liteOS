@@ -1,6 +1,8 @@
 local system = require("system")
 local gui = system.gui
 
+--PS вместо scene вы можете передать layout при создании окна, чтобы оно появилось как дочернее
+
 ----------------------------------------------
 
 local dialogWindows = {}
@@ -16,6 +18,8 @@ end
 function dialogWindows.getWindowSize(scene, minX, minY)
     return math.max(dialogWindows.windowSizeX, minX or -1), math.max(dialogWindows.windowSizeY, minY or -1)
 end
+
+----------------------------------------------
 
 function dialogWindows.message(scene, label, text, color, textColor)
     scene = scene or system.scene
@@ -40,9 +44,65 @@ function dialogWindows.message(scene, label, text, color, textColor)
     local returnTbl = {}
     function layout.onDestroy()
         returnTbl.destroyed = true
+        gui.callback(returnTbl, "onUpdate")
     end
-    return layout, returnTbl
+    return returnTbl, layout
 end
+
+function dialogWindows.selectColor(scene, label)
+    scene = scene or system.scene
+    label = label or "color pic"
+
+    local sizeX = 12
+    local sizeY = 7
+
+    local posX, posY = dialogWindows.getWindowPos(scene, sizeX, sizeY)
+    local layout = scene:createLayout(
+        gui:getColor("gray"),
+        posX,
+        posY,
+        sizeX,
+        sizeY,
+        true
+    )
+    layout:createExitButton()
+    layout:createLabel(label)
+
+    local returnTbl = {}
+    function layout.onDestroy()
+        returnTbl.destroyed = true
+        gui.callback(returnTbl, "onUpdate")
+    end
+
+    local i = 0
+    for x = 0, 3 do
+        for y = 0, 3 do
+            local currentI = i
+            layout:createWidget({
+                type = "button",
+                notAutoReleased = true,
+
+                posX = (x * 2) + 3,
+                posY = y + 3,
+                sizeX = 2,
+                sizeY = 1,
+
+                onReleaseInBox = function ()
+                    returnTbl.color = currentI
+                    gui.callback(returnTbl, "onUpdate", currentI)
+                end,
+
+                bg = gui:getColor(i),
+                pressed_bg = gui:getColor("white"),
+            })
+            i = i + 1
+        end
+    end
+    
+    return returnTbl, layout
+end
+
+----------------------------------------------
 
 function dialogWindows.error(scene, text)
     return dialogWindows.message(scene, "error", text, gui:getColor("red"))

@@ -180,6 +180,10 @@ local function touchInBox(box, eventData, startX, startY)
 end
 
 local function getColor(self, name, disableTable) --возврашяет цвет подходяший для вывода
+    if type(name) == "number" then
+        name = colors[name]
+    end
+
     if self.drawzone.usingTheDefaultPalette then --если палитра
         return colors[name] --то вернуть индекс
     else
@@ -212,6 +216,10 @@ local function getColor(self, name, disableTable) --возврашяет цве�
             return drawer.palette_computercraft2[colors[name]] --а если не палитра, то цвета второго тира
         end
     end
+end
+
+local function getAColor(self, name)
+    return mathColor(self, getColor(self, name))
 end
 
 local function callback(self, name, ...)
@@ -848,8 +856,8 @@ do
         end
     end
 
-    local function draw(self)
-        if not self.allowDraw then return end
+    local function draw(self, force)
+        if not self.allowDraw and not force then return end
         self.allowDraw = false
 
         self.drawzone:draw_begin()
@@ -887,8 +895,9 @@ do
 
         obj.createScene = createScene
 
+        obj.callback = callback
         obj.mathColor = mathColor
-        obj.getColor = getColor
+        obj.getColor = getAColor
         return obj
     end
 

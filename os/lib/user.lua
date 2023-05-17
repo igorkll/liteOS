@@ -2,11 +2,17 @@ local fs = require("filesystem")
 local serialization = require("serialization")
 local user = {}
 user.configPath = "/data/config.tbl"
-user.defaultConfig = {timezone = 0}
+user.defaultConfig = {
+    timezone = 0
+}
 user.currentConfig = table.clone(user.defaultConfig)
 
-if not fs.exists(user.configPath) then
+local function save()
     fs.writeFile(user.configPath, serialization.serialize(user.currentConfig))
+end
+
+if not fs.exists(user.configPath) then
+    save()
 else
     local data = fs.readFile(user.configPath)
     if data then
@@ -23,7 +29,7 @@ end
 
 function user.setUserConfig(config)
     user.currentConfig = config
-    fs.writeFile(user.configPath, serialization.serialize(user.currentConfig))
+    save()
 end
 
 
@@ -31,5 +37,6 @@ setmetatable(user, {__index = function (tbl, key)
     return tbl.currentConfig[key]
 end, __newindex = function (tbl, key, value)
     tbl.currentConfig[key] = value
+    save()
 end})
 return user

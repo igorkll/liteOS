@@ -152,7 +152,7 @@ end, function (addr, path)
             str = str .. char
             char = empty.read(event, math.huge)
         until not char
-        --empty.close(event) --само закроеться когда оно выгрузиться
+        empty.close(event)
         code, err = load(str, "=" .. path)
     end
     if err then

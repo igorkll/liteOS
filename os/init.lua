@@ -19,7 +19,7 @@ _G = _ENV
 
 computer.setArchitecture("Lua 5.3")
 
-_OSVERSION = "liteOS 1.0"
+_OSVERSION = "liteOS 0.1"
 bootaddress = computer.getBootAddress()
 bootfs = component.proxy(bootaddress)
 

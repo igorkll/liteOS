@@ -3,6 +3,8 @@ local autorun = require("autorun")
 local programs = require("programs")
 local system = require("system")
 local fs = require("filesystem")
+local user = require("user")
+local background = require("background")
 
 local gui = system.gui
 
@@ -11,7 +13,7 @@ local gui = system.gui
 scene = system.createScene()
 system.scene = scene
 
-bgLayout = scene:createLayout(gui:getColor("cyan"), 1, 1, system.rx, system.ry, false, true)
+bgLayout = scene:createLayout(gui:getColor(user.color_background or "cyan"), 1, 1, system.rx, system.ry, false, true)
 bgLayout:createWidget({
     type = "plane",
 
@@ -32,6 +34,8 @@ osButton = bgLayout:createWidget({
         osMenu:toUpper()
         osMenu:setParam("disable", not state)
         osMenu:setParam("hide", not state)
+        powerMenu:setParam("disable", true)
+        powerMenu:setParam("hide", true)
     end,
 
     bg = gui:getColor("blue"),
@@ -43,7 +47,7 @@ osButton = bgLayout:createWidget({
     sizeY = 1
 })
 
-osMenu = scene:createLayout(gui:getColor("gray"), 1, scene.sizeY - 20, 30, 20)
+osMenu = scene:createLayout(gui:getColor("gray"), 1, scene.sizeY - 10, 30, 10)
 osMenu:setParam("disable", true)
 osMenu:setParam("hide", true)
 osMenu:createWidget({
@@ -141,6 +145,14 @@ end
 refreshApps()
 
 -------------------------------------------------------
+
+background.addListen(function (name)
+    if name == "refresh_desktop" then
+        bgLayout.bg = gui:getColor(user.color_background or "cyan")
+        refreshApps()
+        gui:draw(true)
+    end
+end)
 
 gui:selectScene(scene)
 webservices.run("/desktop.lua")

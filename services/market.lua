@@ -1,5 +1,6 @@
 local webservices = require("webservices")
 local fs = require("filesystem")
+local system = require("system")
 
 --------------------------------------------------
 
@@ -37,8 +38,7 @@ end
 for name in pairs(apps) do
     install(name)
 end
-
---------------------------------------------------
+system.refresh_desktop()
 
 --------------------------------------------------
 

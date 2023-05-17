@@ -5,6 +5,7 @@ local internet = require("internet")
 local json = require("json")
 local logger = require("logger")
 local fs = require("filesystem")
+local user = require("user")
 
 ---------------------------
 
@@ -57,6 +58,13 @@ function system.createScene(bg, sizeX, sizeY, palette)
         system.usingTheDefaultPalette
     )
 end
+
+function system.refresh_desktop()
+    computer.pushSignal("refresh_desktop")
+    system.palette = user.palette or drawer.palette_computercraft2
+end
+
+-------------------------------------------------
 
 function system.update()
     local folder = "/os"

@@ -1,5 +1,6 @@
 local dialogWindows = require("dialogWindows")
 local system = require("system")
+local user = require("user")
 local gui = system.gui
 local scene = system.scene
 
@@ -25,6 +26,15 @@ layout:createWidget({
 
     posX = 2,
     posY = 3,
-    sizeX = 16,
-    sizeY = 1
+    sizeX = 24,
+    sizeY = 1,
+
+    onClick = function ()
+        dialogWindows.selectColor(scene).onUpdate = function (color)
+            if color then
+                user.color_background = color
+                system.refresh_desktop()
+            end
+        end
+    end
 })
