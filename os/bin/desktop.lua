@@ -130,22 +130,21 @@ powerMenu:createWidget({
 
 -------------------------------------------------------apps menu
 
-local function refreshList()
+apps_list = {}
+apps_buttons = {}
+function refreshApps()
     apps_list = {}
     for _, data in ipairs(programs.list()) do
         if fs.isDirectory(data.path) then
             table.insert(apps_list, data)
         end
     end
-end
 
-apps_buttons = {}
-function flushApps()
+
     for _, app_button in ipairs(apps_buttons) do
         app_button:destroy()
     end
     apps_buttons = {}
-
     for i, app in ipairs(apps_list) do
         table.insert(apps_buttons, bgLayout:createWidget({
             type = "button",
@@ -157,16 +156,17 @@ function flushApps()
             sizeX = 16,
             sizeY = 1,
 
-            onClick = function ()
-                programs.guiout_execute(app.path)
+            onClick = function (_, _, eventData)
+                local press_type = eventData[5]
+
+                if press_type == 0 then
+                    programs.guiout_execute(app.path)
+                else
+
+                end
             end
         }))
     end
-end
-
-function refreshApps()
-    refreshList()
-    flushApps()
 end
 
 refreshApps()

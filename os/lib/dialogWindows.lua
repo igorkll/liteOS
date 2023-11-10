@@ -45,6 +45,7 @@ function dialogWindows.message(scene, label, text, color, textColor)
     function layout.onDestroy()
         returnTbl.destroyed = true
         gui.callback(returnTbl, "onUpdate")
+        gui.callback(returnTbl, "onDestroy")
     end
     return returnTbl, layout
 end
@@ -72,6 +73,7 @@ function dialogWindows.selectColor(scene, label)
     function layout.onDestroy()
         returnTbl.destroyed = true
         gui.callback(returnTbl, "onUpdate")
+        gui.callback(returnTbl, "onDestroy")
     end
 
     local i = 0

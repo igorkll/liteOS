@@ -309,18 +309,20 @@ do
         
         if self.type == "button" then
             local touchinbox = touchInBox(self, eventData, self.layout.posX, self.layout.posY)
+
             if self.togle then
                 if eventData[1] == "touch" and touchinbox then
                     self.state = not self.state
 
                     self.gui:draw()
 
-                    callback(self, "onTogle", eventData[6], self.state)
+                    local sendDatas = {eventData[6], self.state, eventData}
+                    callback(self, "onTogle", table.unpack(sendDatas))
                     if self.state then
-                        callback(self, "onClick", eventData[6], self.state)
+                        callback(self, "onClick", table.unpack(sendDatas))
                     else
-                        callback(self, "onRelease", eventData[6], self.state)
-                        callback(self, "onReleaseInBox", eventData[6], self.state)
+                        callback(self, "onRelease", table.unpack(sendDatas))
+                        callback(self, "onReleaseInBox", table.unpack(sendDatas))
                     end
                 end
             else
@@ -330,17 +332,21 @@ do
                         if not self.state then
                             self.state = true
                             self.gui:draw()
-                            callback(self, "onTogle", eventData[6], self.state)
-                            callback(self, "onClick", eventData[6], self.state)
+
+                            local sendDatas = {eventData[6], self.state, eventData}
+                            callback(self, "onTogle", table.unpack(sendDatas))
+                            callback(self, "onClick", table.unpack(sendDatas))
                         end
                     elseif eventData[1] == "drop" then
                         if self.state then
                            self.state = false
                             self.gui.redrawFlag = true
-                            callback(self, "onTogle", eventData[6], self.state)
-                            callback(self, "onRelease", eventData[6], self.state)
+
+                            local sendDatas = {eventData[6], self.state, eventData}
+                            callback(self, "onTogle", table.unpack(sendDatas))
+                            callback(self, "onRelease", table.unpack(sendDatas))
                             if touchinbox then
-                                callback(self, "onReleaseInBox", eventData[6], self.state)
+                                callback(self, "onReleaseInBox", table.unpack(sendDatas))
                             end
                         end
                     end
@@ -348,16 +354,18 @@ do
                     if eventData[1] == "touch" and touchinbox then
                         self.state = true
                         self.gui:draw()
-                        local uptime = computer.uptime()
-                        callback(self, "onTogle", eventData[6], self.state)
-                        callback(self, "onClick", eventData[6], self.state)
+                        --local uptime = computer.uptime()
+                        local sendDatas = {eventData[6], self.state, eventData}
+                        callback(self, "onTogle", table.unpack(sendDatas))
+                        callback(self, "onClick", table.unpack(sendDatas))
 
                         self.state = false
                         self.gui:draw()
-                        local uptime = computer.uptime()
-                        callback(self, "onTogle", eventData[6], self.state)
-                        callback(self, "onRelease", eventData[6], self.state)
-                        callback(self, "onReleaseInBox", eventData[6], self.state)
+                        --local uptime = computer.uptime()
+                        local sendDatas = {eventData[6], self.state, eventData}
+                        callback(self, "onTogle", table.unpack(sendDatas))
+                        callback(self, "onRelease", table.unpack(sendDatas))
+                        callback(self, "onReleaseInBox", table.unpack(sendDatas))
                     end
                 end
             end
